@@ -8,8 +8,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Dialogs.AddEditRobotDialogFragment;
@@ -195,7 +196,6 @@ public class RobotInfoAdapter extends RecyclerView.Adapter<RobotInfoAdapter.View
                     break;
 
                 default:
-
                     FragmentManager fragmentManager = activity.getFragmentManager();
                     ConnectionProgressDialogFragment f = new ConnectionProgressDialogFragment(info);
                     f.show(fragmentManager, "ConnectionProgressDialog");

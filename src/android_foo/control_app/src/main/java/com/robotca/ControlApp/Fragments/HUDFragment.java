@@ -100,7 +100,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Odome
 
             speedView = (TextView) view.findViewById(R.id.hud_speed);
             turnrateView = (TextView) view.findViewById(R.id.hud_turnrate);
-//            locationView = (TextView) view.findViewById(R.id.hud_location);
+            // locationView = (TextView) view.findViewById(R.id.hud_location);
             latView = (TextView) view.findViewById(R.id.hud_gps_lat);
             longView = (TextView) view.findViewById(R.id.hud_gps_long);
 
@@ -110,7 +110,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Odome
         }
 
         // Get WifiManager
-        wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         
         // Find the Emergency Stop Button
         // Emergency stop button

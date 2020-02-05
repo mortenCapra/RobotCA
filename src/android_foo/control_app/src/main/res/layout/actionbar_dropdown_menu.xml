@@ -19,5 +19,4 @@
         android:layout_toLeftOf="@id/spinner_control_mode"
         android:layout_toStartOf="@id/spinner_control_mode"/>
 
-
 </RelativeLayout>

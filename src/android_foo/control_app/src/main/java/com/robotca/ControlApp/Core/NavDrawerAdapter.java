@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class NavDrawerAdapter extends ArrayAdapter<DrawerItem> {
 
-    Context context;
-    List<DrawerItem> drawerItemList;
-    int layoutResID;
+    private Context context;
+    private List<DrawerItem> drawerItemList;
+    private int layoutResID;
 
     /**
      * Creates a NavDrawerAdapter.

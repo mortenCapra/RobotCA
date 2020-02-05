@@ -1,6 +1,6 @@
 package com.robotca.ControlApp.Core;
 
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;

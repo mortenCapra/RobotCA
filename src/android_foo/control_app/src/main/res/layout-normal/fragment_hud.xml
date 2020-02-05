@@ -22,6 +22,7 @@
         android:layout_height="match_parent"
         android:layout_toLeftOf="@id/emergency_stop_button"
         android:layout_toStartOf="@id/emergency_stop_button">
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -108,7 +109,6 @@
                     android:layout_weight="1"/>
 
             </LinearLayout>
-
 
         </RelativeLayout>
     </HorizontalScrollView>

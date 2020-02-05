@@ -3,23 +3,19 @@ package com.robotca.ControlApp;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.view.GravityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-//import android.app.Fragment;
 import android.widget.AdapterView;
 import android.widget.ListView;
-//import android.app.FragmentManager;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -33,16 +29,17 @@ import com.robotca.ControlApp.Core.NavDrawerAdapter;
 import com.robotca.ControlApp.Fragments.AboutFragmentRobotChooser;
 import com.robotca.ControlApp.Fragments.HelpFragment;
 
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
 import java.util.ArrayList;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Activity for choosing a Robot with which to connect. The user can connect to a previously connected
@@ -83,29 +80,29 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
 
         this.setContentView(R.layout.robot_chooser);
 
-//        mEmptyView = findViewById(R.id.robot_empty_view);
-        mRecyclerView = (RecyclerView) findViewById(R.id.robot_recycler_view);
+        // mEmptyView = findViewById(R.id.robot_empty_view);
+        mRecyclerView = findViewById(R.id.robot_recycler_view);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mToolbar = (Toolbar) findViewById(R.id.robot_chooser_toolbar);
+        mToolbar = findViewById(R.id.robot_chooser_toolbar);
         setSupportActionBar(mToolbar);
 
         RobotStorage.load(this);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.profileDrawer);
+        mDrawerLayout = findViewById(R.id.profileDrawer);
         mFeatureTitles = getResources().getStringArray(R.array.chooser_titles); //Where you set drawer item titles
-        mDrawerList = (ListView) findViewById(R.id.left_drawer2);
+        mDrawerList = findViewById(R.id.left_drawer2);
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
         }
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar, R.string.drawer_open,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+                R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 //getActionBar().setTitle(mTitle);
@@ -349,7 +346,8 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                                     .getDefaultSharedPreferences(RobotChooser.this)
                                     .edit()
                                     .putBoolean(FIRST_TIME_LAUNCH_KEY, true)
-                                    .commit();
+                                    //.commit()
+                                    .apply();
                         }
                     });
                 }
@@ -428,12 +426,12 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
      * @param info The new RobotInfo
      * @return True if the RobotInfo was added successfully, false otherwise
      */
-    public boolean addRobot(RobotInfo info) {
+    public void addRobot(RobotInfo info) {
         RobotStorage.add(this, info);
 
         mAdapter.notifyItemInserted(RobotStorage.getRobots().size() - 1);
 
-        return true;
+        // return true;
     }
 
     /**
@@ -456,7 +454,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
      * @param position The position of the RobotInfo to remove
      * @return The removed RobotInfo if it existed
      */
-    public RobotInfo removeRobot(int position) {
+    public void removeRobot(int position) {
         RobotInfo removed = RobotStorage.remove(this, position);
 
         if (removed != null) {
@@ -467,7 +465,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
             mAdapter.notifyDataSetChanged();
         }
 
-        return removed;
+        // return removed;
     }
 
     /**

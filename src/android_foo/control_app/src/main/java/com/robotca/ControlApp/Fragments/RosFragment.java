@@ -1,6 +1,5 @@
 package com.robotca.ControlApp.Fragments;
 
-
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 

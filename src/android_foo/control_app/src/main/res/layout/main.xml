@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,12 +27,22 @@
                 tools:layout="@layout/fragment_hud" />
 
             <fragment
-                android:id="@+id/joystick_fragment"
+                android:id="@+id/joystick_fragment_right"
                 android:name="com.robotca.ControlApp.Fragments.JoystickFragment"
-                android:layout_width="150dip"
-                android:layout_height="150dip"
+                android:layout_width="200dip"
+                android:layout_height="200dip"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                tools:layout="@layout/fragment_joystick_view" />
+
+            <fragment
+                android:id="@+id/joystick_fragment_left"
+                android:name="com.robotca.ControlApp.Fragments.JoystickFragment"
+                android:layout_width="200dip"
+                android:layout_height="200dip"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
                 tools:layout="@layout/fragment_joystick_view" />
 
@@ -48,6 +58,6 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp"
             android:listSelector="@android:color/darker_gray" />
-    </android.support.v4.widget.DrawerLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </RelativeLayout>

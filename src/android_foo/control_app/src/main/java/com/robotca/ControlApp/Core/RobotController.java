@@ -2,7 +2,7 @@ package com.robotca.ControlApp.Core;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.robotca.ControlApp.ControlApp;
@@ -329,6 +329,7 @@ public class RobotController implements NodeMain, Savable {
             currentVelocityCommand.getAngular().setX(0.0);
             currentVelocityCommand.getAngular().setY(0.0);
             currentVelocityCommand.getAngular().setZ(-angularVelocityZ);
+
         } else {
             Log.w("Emergency Stop", "currentVelocityCommand is null");
         }

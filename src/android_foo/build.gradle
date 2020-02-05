@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Mike
+ * Copyright (C) 2011 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,29 +15,24 @@
  */
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
+    gradleVersion = '4.10.2'
 }
 
 buildscript {
-
-    apply from: "https://github.com/rosjava/android_core/raw/indigo/buildscript.gradle"
-    dependencies {
-        //Add this to fix the gradle plugin issues
-        classpath 'com.android.tools.build:gradle:1.5.0'
-
-        // TEST
-        classpath 'junit:junit:4.12'
-        classpath 'org.mockito:mockito-core:1.10.19'
-    }
+    apply from: "https://github.com/rosjava/android_core/raw/kinetic/buildscript.gradle"
 }
 
 apply plugin: 'catkin'
 
-
 allprojects {
-    /* A github url provides a good standard unique name for your project */
-    group 'com.github.sccapstone.robotca'
-    //version = project.catkin.pkg.version
+    group 'com.github.rosjava.android_apps'
+    version = project.catkin.pkg.version
+    repositories {
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
 }
 
 subprojects {
@@ -61,12 +56,12 @@ subprojects {
 
     afterEvaluate { project ->
         android {
-            // Exclude a few files that are duplicated across our dependencies and
-            // prevent packaging Android applications.
             packagingOptions {
-                exclude "META-INF/LICENSE.txt"
-                exclude "META-INF/NOTICE.txt"
+                /* https://github.com/rosjava/android_core/issues/194 */
+                exclude 'META-INF/LICENSE.txt'
+                exclude 'META-INF/NOTICE.txt'
             }
+            flavorDimensions 'default'
         }
     }
 }

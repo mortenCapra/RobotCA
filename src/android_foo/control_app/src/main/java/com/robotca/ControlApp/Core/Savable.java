@@ -1,7 +1,7 @@
 package com.robotca.ControlApp.Core;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Interface for objects that can be loaded and saved with Bundles.

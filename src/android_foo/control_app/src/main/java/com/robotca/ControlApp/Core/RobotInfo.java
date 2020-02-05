@@ -2,7 +2,7 @@ package com.robotca.ControlApp.Core;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.net.URI;
 import java.util.List;

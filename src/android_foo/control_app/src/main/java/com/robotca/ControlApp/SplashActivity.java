@@ -38,11 +38,11 @@ public class SplashActivity extends Activity {
                         Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, OVERLAY_REQUEST_CODE);
             } else {
-                goToNextActivity(2000L);
+                goToNextActivity(2L);
             }
         }
         else {
-            goToNextActivity(2000L);
+            goToNextActivity(2L);
         }
     }
 
@@ -64,10 +64,10 @@ public class SplashActivity extends Activity {
                             "to run, it will now be closed.").create().show();
                     finish();
                 } else {
-                    goToNextActivity(100L);
+                    goToNextActivity(1L);
                 }
             } else {
-                goToNextActivity(100L);
+                goToNextActivity(1L);
             }
         }
     }

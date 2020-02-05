@@ -1,6 +1,6 @@
 package com.robotca.ControlApp.Core.Plans;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 
 import com.robotca.ControlApp.Core.ControlMode;

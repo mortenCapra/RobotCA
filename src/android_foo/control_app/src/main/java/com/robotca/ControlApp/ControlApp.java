@@ -7,20 +7,18 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -107,7 +105,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     int fragmentsCreatedCounter = 0;
 
     // For enabling/disabling the action menu
-//    private boolean actionMenuEnabled = true;
+    // private boolean actionMenuEnabled = true;
     // The ActionBar spinner menu
     private Spinner actionMenuSpinner;
 
@@ -122,8 +120,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // Specifies how close waypoints need to be to be considered touching
     private static final double MINIMUM_WAYPOINT_DISTANCE = 1.0;
 
-//    // Laser scan map // static so that it doesn't need to be saved/loaded every time the screen rotates
-//    private static LaserScanMap laserScanMap;
+    // Laser scan map // static so that it doesn't need to be saved/loaded every time the screen rotates
+    // private static LaserScanMap laserScanMap;
 
     // Bundle keys
     private static final String WAYPOINT_BUNDLE_ID = "com.robotca.ControlApp.waypoints";
@@ -141,8 +139,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         waypoints = new LinkedList<>();
 
-//        // Create the laserScanMap
-//        laserScanMap = new LaserScanMap();
+        // Create the laserScanMap
+        // laserScanMap = new LaserScanMap();
     }
 
     /**
@@ -162,17 +160,17 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         if (ROBOT_INFO != null) {
             ROBOT_INFO.save(editor);
 
-//            editor.putString(getString(R.string.prefs_joystick_topic_edittext_key), ROBOT_INFO.getJoystickTopic());
-//            editor.putString(getString(R.string.prefs_laserscan_topic_edittext_key), ROBOT_INFO.getLaserTopic());
-//            editor.putString(getString(R.string.prefs_camera_topic_edittext_key), ROBOT_INFO.getCameraTopic());
-//            editor.putString(getString(R.string.prefs_navsat_topic_edittext_key), ROBOT_INFO.getNavSatTopic());
-//            editor.putString(getString(R.string.prefs_odometry_topic_edittext_key), ROBOT_INFO.getOdometryTopic());
-//            editor.putString(getString(R.string.prefs_pose_topic_edittext_key), ROBOT_INFO.getPoseTopic());
+        // editor.putString(getString(R.string.prefs_joystick_topic_edittext_key), ROBOT_INFO.getJoystickTopic());
+        // editor.putString(getString(R.string.prefs_laserscan_topic_edittext_key), ROBOT_INFO.getLaserTopic());
+        // editor.putString(getString(R.string.prefs_camera_topic_edittext_key), ROBOT_INFO.getCameraTopic());
+        // editor.putString(getString(R.string.prefs_navsat_topic_edittext_key), ROBOT_INFO.getNavSatTopic());
+        // editor.putString(getString(R.string.prefs_odometry_topic_edittext_key), ROBOT_INFO.getOdometryTopic());
+        // editor.putString(getString(R.string.prefs_pose_topic_edittext_key), ROBOT_INFO.getPoseTopic());
         }
 
-//        editor.putBoolean(getString(R.string.prefs_warning_checkbox_key), true);
-//        editor.putBoolean(getString(R.string.prefs_warning_safemode_key), true);
-//        editor.putBoolean(getString(R.string.prefs_warning_beep_key), true);
+        // editor.putBoolean(getString(R.string.prefs_warning_checkbox_key), true);
+        // editor.putBoolean(getString(R.string.prefs_warning_safemode_key), true);
+        // editor.putBoolean(getString(R.string.prefs_warning_beep_key), true);
 
         editor.apply();
 
@@ -180,8 +178,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         setContentView(R.layout.main);
 
         mFeatureTitles = getResources().getStringArray(R.array.feature_titles); // Where you set drawer item titles
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerList = findViewById(R.id.left_drawer);
 
         if (getActionBar() != null) {
             ActionBar actionBar = getActionBar();
@@ -193,7 +191,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             LayoutInflater inflater = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.actionbar_dropdown_menu, null);
 
-            actionMenuSpinner = (Spinner) v.findViewById(R.id.spinner_control_mode);
+            actionMenuSpinner = v.findViewById(R.id.spinner_control_mode);
 
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                     R.array.motion_plans, android.R.layout.simple_spinner_item);
@@ -207,7 +205,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-               /* R.drawable.ic_drawer,*/ R.string.drawer_open,
+                // R.drawable.ic_drawer,
+                R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 //getActionBar().setTitle(mTitle);
@@ -250,7 +249,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         mDrawerList.setOnItemClickListener(this);
 
         // Find the Joystick fragment
-        joystickFragment = (JoystickFragment) getFragmentManager().findFragmentById(R.id.joystick_fragment);
+        joystickFragment = (JoystickFragment) getFragmentManager().findFragmentById(R.id.joystick_fragment_left);
 
         // Create the RobotController
         controller = new RobotController(this);
@@ -372,8 +371,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             // Create and add a WarningSystem
             controller.addLaserScanListener(warningSystem = new WarningSystem(this));
 
-//            // Add the LaserScanMap
-//            controller.addLaserScanListener(laserScanMap);
+            // Add the LaserScanMap
+            // controller.addLaserScanListener(laserScanMap);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -438,23 +437,22 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return controller.stop(cancelMotionPlan);
     }
 
-//    /**
-//     * @return The current laser scan map
-//     */
-//    public static LaserScanMap getLaserScanMap()
-//    {
-//        return laserScanMap;
-//    }
+    // /**
+    // * @return The current laser scan map
+    // */
+    // public static LaserScanMap getLaserScanMap()
+    // {
+    //      return laserScanMap;
+    // }
 
-
-//    /**
-//     * Call to stop the Robot.
-//     *
-//     * @return True if a resumable RobotPlan was stopped
-//     */
-//    public boolean stopRobot() {
-//        return stopRobot(true);
-//    }
+    // /**
+    // * Call to stop the Robot.
+    // *
+    // * @return True if a resumable RobotPlan was stopped
+    // */
+    // public boolean stopRobot() {
+    //      return stopRobot(true);
+    // }
 
     /**
      * Locks/unlocks the screen orientation.
@@ -698,30 +696,30 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//
-//        for (int i = 0; i < menu.size(); i++) {
-//            menu.getItem(i).setChecked(false);
-//
-//            if (i == 1)
-//                menu.getItem(1).setEnabled(actionMenuEnabled && joystickFragment.hasAccelerometer());
-//            else
-//                menu.getItem(i).setEnabled(actionMenuEnabled);
-//        }
-//
-//        menu.getItem(getControlMode().ordinal()).setChecked(true);
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_control_app, menu);
-//        menu.getItem(0).setChecked(true);
-//        return true;
-//    }
+    /*@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        for (int i = 0; i < menu.size(); i++) {
+        menu.getItem(i).setChecked(false);
+
+        if (i == 1)
+            menu.getItem(1).setEnabled(actionMenuEnabled && joystickFragment.hasAccelerometer());
+        else
+            menu.getItem(i).setEnabled(actionMenuEnabled);
+        }
+
+        menu.getItem(getControlMode().ordinal()).setChecked(true);
+
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_control_app, menu);
+        menu.getItem(0).setChecked(true);
+        return true;
+    }*/
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -979,7 +977,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             });
         }
     }
-
 
     /**
      * Enables/disables the action bar menu.

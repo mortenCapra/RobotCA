@@ -41,6 +41,7 @@ public class PreferencesFragment extends PreferenceFragment {
      */
     @Override
     public void onPause() {
+        super.onPause();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         ControlApp.ROBOT_INFO.load(prefs);

@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.robotca.ControlApp.R;
 
@@ -21,7 +21,6 @@ public class ConfirmDeleteDialogFragment extends DialogFragment {
     public static final String NAME_KEY = "DELETE_ITEM_NAME_KEY";
     /** Bundle key for the position of the RobotItem being deleted */
     public static final String POSITION_KEY = "DELETE_ITEM_POSITION_KEY";
-
     private DialogListener mListener;
     private String mItemName;
     private int mPosition;

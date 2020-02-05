@@ -20,6 +20,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/robot_name"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/robot_name_edit_text"
             android:layout_width="match_parent"
@@ -46,6 +47,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/master_uri"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/master_uri_edit_view"
             android:layout_width="match_parent"
