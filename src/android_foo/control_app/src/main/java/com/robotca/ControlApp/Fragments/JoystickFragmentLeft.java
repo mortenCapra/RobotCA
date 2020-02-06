@@ -88,7 +88,7 @@ public class JoystickFragmentLeft extends Fragment {
 
         switch (controlMode) {
             case Joystick:
-                show();
+                hide();
                 break;
 
             case TwoJoystick:
@@ -96,7 +96,7 @@ public class JoystickFragmentLeft extends Fragment {
                 break;
 
             case Tilt:
-                show();
+                hide();
                 break;
 
             default:
