@@ -15,6 +15,7 @@ import com.robotca.ControlApp.Core.Plans.WaypointPlan;
  */
 public enum ControlMode {
     Joystick (true), // Joystick control
+    TwoJoystick (true), // Two Joystick control
     Tilt (true), // Tilt sensor control
     SimpleWaypoint (false), // SimpleWaypoint control
     Waypoint (false), // Potential field waypoint control

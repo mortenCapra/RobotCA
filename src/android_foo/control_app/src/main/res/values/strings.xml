@@ -145,6 +145,7 @@
     <!-- Motion plan names -->
     <string name="use_tilt_sensor_string">Use Tilt</string>
     <string name="joystick_control">Joystick Control</string>
+    <string name="two_joystick_control">Two Joystick Control</string>
     <string name="motion_control">Tilt Control</string>
     <string name="simple_waypoint_control">Simple Waypoint Control</string>
     <string name="waypoint_control">Waypoint Control</string>
@@ -153,6 +154,7 @@
     <!-- Array of Motion plan names -->
     <string-array name="motion_plans">
         <item>Joystick</item>
+        <item>Two Joystick</item>
         <item>Tilt</item>
         <item>Simple Waypoint</item>
         <item>Waypoint</item>
