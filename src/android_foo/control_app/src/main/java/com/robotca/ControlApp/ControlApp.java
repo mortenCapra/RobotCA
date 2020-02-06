@@ -47,7 +47,8 @@ import com.robotca.ControlApp.Core.WarningSystem;
 import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
 import com.robotca.ControlApp.Fragments.HUDFragment;
-import com.robotca.ControlApp.Fragments.JoystickFragment;
+import com.robotca.ControlApp.Fragments.JoystickFragmentLeft;
+import com.robotca.ControlApp.Fragments.JoystickFragmentRight;
 import com.robotca.ControlApp.Fragments.LaserScanFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
 import com.robotca.ControlApp.Fragments.OverviewFragment;
@@ -90,7 +91,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private NodeConfiguration nodeConfiguration;
 
     // Fragment for the Joystick
-    private JoystickFragment joystickFragment;
+    private JoystickFragmentRight joystickFragmentRight;
+    private JoystickFragmentLeft joystickFragmentLeft;
     // Fragment for the HUD
     private HUDFragment hudFragment;
 
@@ -126,7 +128,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // Bundle keys
     private static final String WAYPOINT_BUNDLE_ID = "com.robotca.ControlApp.waypoints";
     private static final String SELECTED_VIEW_NUMBER_BUNDLE_ID = "com.robotca.ControlApp.drawerIndex";
-    private static final String CONTROL_MODE_BUNDLE_ID = "com.robotca.Views.Fragments.JoystickFragment.controlMode";
+    private static final String CONTROL_MODE_BUNDLE_ID = "com.robotca.Views.Fragments.JoystickFragmentRight.controlMode";
+    private static final String CONTROL_MODE_BUNDLE_ID_LEFT = "com.robotca.Views.Fragments.JoystickFragmentLeft.controlMode";
 
     // The saved instance state
     private Bundle savedInstanceState;
@@ -249,7 +252,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         mDrawerList.setOnItemClickListener(this);
 
         // Find the Joystick fragment
-        joystickFragment = (JoystickFragment) getFragmentManager().findFragmentById(R.id.joystick_fragment_left);
+        joystickFragmentRight = (JoystickFragmentRight) getFragmentManager().findFragmentById(R.id.joystick_fragment_right);
+        joystickFragmentLeft = (JoystickFragmentLeft) getFragmentManager().findFragmentById(R.id.joystick_fragment_left);
 
         // Create the RobotController
         controller = new RobotController(this);
@@ -269,6 +273,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 waypointsChanged();
             }
 
+            setControlMode(ControlMode.values()[savedInstanceState.getInt(CONTROL_MODE_BUNDLE_ID_LEFT)]);
             setControlMode(ControlMode.values()[savedInstanceState.getInt(CONTROL_MODE_BUNDLE_ID)]);
             drawerIndex = savedInstanceState.getInt(SELECTED_VIEW_NUMBER_BUNDLE_ID);
 
@@ -281,6 +286,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         {
             actionMenuSpinner.setSelection(getControlMode().ordinal());
         }
+
+        joystickFragmentLeft.hide();
     }
 
     @Override
@@ -300,8 +307,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         if (controller != null)
             controller.stop();
 
-        if (joystickFragment != null)
-            joystickFragment.stop();
+        if (joystickFragmentLeft != null)
+            joystickFragmentLeft.stop();
+
+        if (joystickFragmentRight != null)
+            joystickFragmentRight.stop();
         onTrimMemory(TRIM_MEMORY_BACKGROUND);
         super.onStop();
 
@@ -316,8 +326,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         if (controller != null)
             controller.stop();
 
-        if (joystickFragment != null)
-            joystickFragment.stop();
+        if (joystickFragmentLeft != null)
+            joystickFragmentLeft.stop();
+
+        if (joystickFragmentRight != null)
+            joystickFragmentRight.stop();
 
         onTrimMemory(TRIM_MEMORY_BACKGROUND);
         onTrimMemory(TRIM_MEMORY_COMPLETE);
@@ -357,7 +370,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    joystickFragment.invalidate();
+                    joystickFragmentLeft.invalidate();
+                    joystickFragmentRight.invalidate();
                 }
             });
 
@@ -367,7 +381,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             // Add the HUDFragment to the RobotController's odometry listener
             controller.addOdometryListener(hudFragment);
             // Add the JoystickView to the RobotController's odometry listener
-            controller.addOdometryListener(joystickFragment.getJoystickView());
+            controller.addOdometryListener(joystickFragmentLeft.getJoystickView());
+            controller.addOdometryListener(joystickFragmentRight.getJoystickView());
             // Create and add a WarningSystem
             controller.addLaserScanListener(warningSystem = new WarningSystem(this));
 
@@ -433,7 +448,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      */
     public boolean stopRobot(boolean cancelMotionPlan) {
         Log.d(TAG, "Stopping Robot");
-        joystickFragment.stop();
+        joystickFragmentLeft.stop();
+        joystickFragmentRight.stop();
         return controller.stop(cancelMotionPlan);
     }
 
@@ -498,8 +514,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         Bundle args = new Bundle();
 
-        if (joystickFragment != null && getControlMode().ordinal() <= ControlMode.Tilt.ordinal()) {
-            joystickFragment.show();
+        if (joystickFragmentRight != null && getControlMode().ordinal() <= ControlMode.Tilt.ordinal()) {
+            joystickFragmentRight.show();
+        }
+
+        if (joystickFragmentLeft != null && getControlMode().ordinal() == ControlMode.TwoJoystick.ordinal()) {
+            joystickFragmentLeft.show();
         }
 
         if (hudFragment != null) {
@@ -561,8 +581,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 break;
 
             case 5:
-                if (joystickFragment != null)
-                    joystickFragment.hide();
+                if (joystickFragmentRight != null || joystickFragmentLeft != null)
+                    joystickFragmentLeft.hide();
+                    joystickFragmentRight.hide();
                 if (hudFragment != null) {
                     hudFragment.hide();
 
@@ -579,8 +600,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 break;
 
             case 6:
-                if (joystickFragment != null)
-                    joystickFragment.hide();
+                if (joystickFragmentRight != null || joystickFragmentLeft != null)
+                    joystickFragmentLeft.hide();
+                    joystickFragmentRight.hide();
                 if (hudFragment != null) {
                     hudFragment.hide();
 
@@ -660,8 +682,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
         switch (item.getItemId()) {
+
             case R.id.action_joystick_control:
                 setControlMode(ControlMode.Joystick);
+                return true;
+
+            case R.id.action_two_joystick_control:
+                setControlMode(ControlMode.TwoJoystick);
                 return true;
 
             case R.id.action_motion_control:
@@ -703,7 +730,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         menu.getItem(i).setChecked(false);
 
         if (i == 1)
-            menu.getItem(1).setEnabled(actionMenuEnabled && joystickFragment.hasAccelerometer());
+            menu.getItem(1).setEnabled(actionMenuEnabled && joystickFragmentRight.hasAccelerometer());
         else
             menu.getItem(i).setEnabled(actionMenuEnabled);
         }
@@ -751,7 +778,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      * @return the Robot's current ControlMode
      */
     public ControlMode getControlMode() {
-        return joystickFragment.getControlMode();
+        return joystickFragmentRight.getControlMode();
     }
 
     /**
@@ -761,14 +788,18 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      */
     public void setControlMode(ControlMode controlMode) {
 
-        if (joystickFragment.getControlMode() == controlMode)
+        if (joystickFragmentRight.getControlMode() == controlMode)
+            return;
+
+        if (joystickFragmentLeft.getControlMode() == controlMode)
             return;
 
         // Lock the orientation for tilt controls
         lockOrientation(controlMode == ControlMode.Tilt);
 
         // Notify the Joystick on the new ControlMode
-        joystickFragment.setControlMode(controlMode);
+        joystickFragmentRight.setControlMode(controlMode);
+        joystickFragmentLeft.setControlMode(controlMode);
         hudFragment.toggleEmergencyStopUI(true);
 
         // If the ControlMode has an associated RobotPlan, run the plan
