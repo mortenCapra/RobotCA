@@ -249,7 +249,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         mDrawerList.setOnItemClickListener(this);
 
         // Find the Joystick fragment
-        joystickFragment = (JoystickFragment) getFragmentManager().findFragmentById(R.id.joystick_fragment_left);
+        joystickFragment = (JoystickFragment) getFragmentManager().findFragmentById(R.id.joystick_fragment_right);
 
         // Create the RobotController
         controller = new RobotController(this);
