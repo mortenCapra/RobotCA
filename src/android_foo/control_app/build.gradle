@@ -55,7 +55,8 @@ dependencies {
 
     implementation 'androidx.core:core:1.0.0'
 
-    implementation 'org.osmdroid:osmdroid-android:5.2@aar'
+    implementation 'org.osmdroid:osmdroid-android:6.1.5'
+    //implementation 'org.osmdroid:osmdroid-android:5.2@aar'
     implementation(name:'osmbonuspack_v5.8.1', ext:'aar')
     implementation 'org.apache.commons:commons-lang3:3.3.2'
     implementation 'com.squareup.okhttp:okhttp:2.6.0'
