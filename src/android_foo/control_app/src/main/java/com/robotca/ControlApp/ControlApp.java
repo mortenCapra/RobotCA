@@ -1,5 +1,6 @@
 package com.robotca.ControlApp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +18,8 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -54,6 +58,7 @@ import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -74,6 +79,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public static final String NOTIFICATION_TICKER = "ROS Control";
     /** Notification title for the App */
     public static final String NOTIFICATION_TITLE = "ROS Control";
+    /** Permission request code */
+    private static final int PERMISSIONS_REQUEST_CODE = 123;
 
     /** The RobotInfo of the connected Robot */
     public static RobotInfo ROBOT_INFO;
@@ -150,6 +157,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // Check for permissions
+        checkPermissions();
 
         // Set default preference values
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1011,5 +1021,44 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    /**
+     * Check for Permissions
+     */
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                + ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                + ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.CAMERA
+                }, PERMISSIONS_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.CAMERA
+                }, PERMISSIONS_REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE:
+                if ((grantResults.length > 0) && (grantResults[0] + grantResults[1] + grantResults[2] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
     }
 }
