@@ -78,7 +78,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         myLocationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
         // Location overlay using Android's GPS
         secondMyLocationOverlay = new MyLocationNewOverlay(mapView);
-        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(mapView.getContext(), this);
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this);
 
         // Allow GPS updates
         myLocationOverlay.enableMyLocation();
@@ -122,7 +122,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
 
         IMapController mapViewController = mapView.getController();
-        mapViewController.setZoom(18);
+        mapViewController.setZoom(18.0);
 
         return view;
     }
