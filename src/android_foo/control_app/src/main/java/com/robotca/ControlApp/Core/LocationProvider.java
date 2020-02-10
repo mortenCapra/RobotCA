@@ -52,6 +52,11 @@ public class LocationProvider implements IMyLocationProvider, MessageListener<Na
     }
 
     @Override
+    public void destroy() {
+
+    }
+
+    @Override
     public void onNewMessage(NavSatFix navSatFix) {
         LOCATION.setLatitude(navSatFix.getLatitude());
         LOCATION.setLongitude(navSatFix.getLongitude());

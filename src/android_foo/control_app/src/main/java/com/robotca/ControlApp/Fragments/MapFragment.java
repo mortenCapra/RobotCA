@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.R;
@@ -22,6 +23,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.overlays.GroundOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -43,6 +45,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
+    private Button robotRecenterButton;
 
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
 
@@ -58,12 +61,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_map, null);
         mapView = (MapView) view.findViewById(R.id.mapview);
-        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        robotRecenterButton = (Button) view.findViewById(R.id.recenter);
 
-        Button robotRecenterButton = (Button) view.findViewById(R.id.recenter);
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         mapView.setClickable(true);
-        mapView.setBuiltInZoomControls(true);
+        //mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
         mapView.setUseDataConnection(true);
         mapView.setTileSource(TileSourceFactory.MAPNIK);

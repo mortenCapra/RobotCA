@@ -9,14 +9,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Updated to support newest osmdroid version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
     </list>
     <ignored path="android_foo.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,7 +28,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="fcb0f6c2" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="R52MA18LLCD" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -51,29 +47,48 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_joystick_view.xml">
-          <provider editor-type-id="text-editor" />
-          <provider selected="true" editor-type-id="android-designer2" />
+        <entry file="file://$PROJECT_DIR$/control_app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="630">
+              <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/SplashActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="335">
+              <caret line="73" selection-start-line="73" selection-end-line="73" />
             </state>
           </provider>
-          <provider editor-type-id="android-designer2" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="55" lean-forward="true" selection-start-line="55" selection-end-line="55" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+            <state relative-caret-position="365">
+              <caret line="1050" lean-forward="true" selection-start-line="1050" selection-end-line="1050" />
             </state>
           </provider>
-          <provider editor-type-id="android-designer2" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="139">
+              <caret line="24" selection-start-line="24" selection-end-line="24" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -81,6 +96,9 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>left</find>
+      <find>http://local</find>
+      <find>tileprovider</find>
+      <find>Imap</find>
     </findStrings>
   </component>
   <component name="GenerateSignedApkSettings">
@@ -90,6 +108,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="feature/twoJoystickControlmode" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -98,13 +121,18 @@
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotStorage.java" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/PreferencesFragment.java" />
-        <option value="$PROJECT_DIR$/control_app/build.gradle" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" />
-        <option value="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/SplashActivity.java" />
+        <option value="$PROJECT_DIR$/control_app/build.gradle" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" />
       </list>
     </option>
   </component>
@@ -120,6 +148,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -160,20 +191,6 @@
             <path>
               <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
               <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="Layers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="Views" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
             </path>
             <path>
@@ -181,13 +198,6 @@
               <item name="control_app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
               <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
-              <item name="main" type="c431d0b8:AndroidResGroupNode" />
             </path>
             <path>
               <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
@@ -197,9 +207,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -207,6 +214,8 @@
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="192.168.1.2:5555" />
     <property name="DEBUGGABLE_DEVICE" value="oneplus-a0001-192.168.1.2:5555" />
     <property name="DEBUGGABLE_PROCESS" value="com.robotca.ControlApp" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="R52MA18LLCD" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-02-10T12:23:30.944Z" />
     <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/control_app" />
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.Flavors" value="" />
@@ -454,14 +463,28 @@
       <option name="project" value="LOCAL" />
       <updated>1463274075270</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added newest osmdroid version">
+      <created>1581340348974</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1581340348974</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Now checking for permissions at run time, required at API 23 or higher">
+      <created>1581340974190</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1581340974190</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22136137" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21250692" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Captures" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -472,7 +495,7 @@
       <window_info id="Resources Explorer" order="8" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32937366" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32954547" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32937366" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.32045454" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -485,8 +508,8 @@
       <window_info anchor="bottom" id="Application Servers" order="12" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.3272727" />
       <window_info anchor="bottom" id="Android Profiler" order="14" />
-      <window_info anchor="bottom" id="Build" order="15" visible="true" weight="0.32937366" />
-      <window_info anchor="bottom" id="Logcat" order="16" />
+      <window_info anchor="bottom" id="Build" order="15" weight="0.26349893" />
+      <window_info anchor="bottom" id="Logcat" order="16" visible="true" weight="0.30669546" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -494,7 +517,7 @@
       <window_info anchor="right" id="Gradle" order="4" />
       <window_info anchor="right" id="Android Model" order="5" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="6" />
-      <window_info anchor="right" id="Preview" order="7" visible="true" weight="0.32982844" />
+      <window_info anchor="right" id="Preview" order="7" weight="0.32982844" />
       <window_info anchor="right" id="Capture Analysis" order="8" />
       <window_info anchor="right" id="Device File Explorer" order="9" side_tool="true" />
       <window_info anchor="right" id="Theme Preview" order="10" />
@@ -510,7 +533,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix control issues, icons, preferences, and dependencies" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix control issues, icons, preferences, and dependencies" />
+    <MESSAGE value="Added newest osmdroid version" />
+    <MESSAGE value="Now checking for permissions at run time, required at API 23 or higher" />
+    <option name="LAST_COMMIT_MESSAGE" value="Now checking for permissions at run time, required at API 23 or higher" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -520,12 +545,6 @@
           <line>45</line>
           <properties />
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java</url>
-          <line>159</line>
-          <properties />
-          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -572,18 +591,18 @@
         <state>
           <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
           <folding>
-            <element signature="e#1625#1687#0" expanded="false" />
-            <element signature="e#1744#1804#0" expanded="false" />
-            <element signature="e#1865#1928#0" expanded="false" />
-            <element signature="e#1985#2045#0" expanded="false" />
-            <element signature="e#2104#2166#0" expanded="false" />
-            <element signature="e#2221#2279#0" expanded="false" />
-            <element signature="e#2342#2402#0" expanded="false" />
-            <element signature="e#2455#2507#0" expanded="false" />
-            <element signature="e#2560#2612#0" expanded="false" />
-            <element signature="e#2680#2742#0" expanded="false" />
-            <element signature="e#2812#2813#0" expanded="false" />
-            <element signature="e#2863#2864#0" expanded="false" />
+            <element signature="e#1625#1687#0" />
+            <element signature="e#1744#1804#0" />
+            <element signature="e#1865#1928#0" />
+            <element signature="e#1985#2045#0" />
+            <element signature="e#2104#2166#0" />
+            <element signature="e#2221#2279#0" />
+            <element signature="e#2342#2402#0" />
+            <element signature="e#2455#2507#0" />
+            <element signature="e#2560#2612#0" />
+            <element signature="e#2680#2742#0" />
+            <element signature="e#2812#2813#0" />
+            <element signature="e#2863#2864#0" />
           </folding>
         </state>
       </provider>
@@ -592,13 +611,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="173" column="19" selection-start-line="173" selection-start-column="19" selection-end-line="173" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="396" column="16" selection-start-line="396" selection-start-column="16" selection-end-line="396" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -613,7 +625,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="25" selection-start-line="25" selection-end-line="25" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -621,7 +632,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -641,11 +651,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/raw/faq.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Layers/LaserScanRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -668,7 +674,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -684,9 +689,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/drawable-xxhdpi/ros_logo.png">
       <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/androidTest/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -710,14 +712,6 @@
     <entry file="file://$PROJECT_DIR$/local.properties">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="4" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-manifest" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/gradle.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -739,42 +733,97 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11686">
-          <caret line="182" lean-forward="true" selection-start-line="182" selection-end-line="182" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="40" lean-forward="true" selection-start-line="40" selection-end-line="40" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_joystick_view.xml">
       <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="90">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml">
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+        <state relative-caret-position="270">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/tileprovider/modules/MapTileModuleProviderBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="213" selection-start-line="213" selection-end-line="213" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="481">
+          <caret line="89" lean-forward="true" selection-start-line="89" selection-end-line="89" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/SplashActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="335">
+          <caret line="73" selection-start-line="73" selection-end-line="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="55" lean-forward="true" selection-start-line="55" selection-end-line="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/androidTest/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-manifest" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="4" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="365">
+          <caret line="1050" lean-forward="true" selection-start-line="1050" selection-end-line="1050" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
