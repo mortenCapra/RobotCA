@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +28,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
@@ -45,8 +46,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
-    private Button robotRecenterButton;
+    Button robotRecenterButton, clearMarkersButton;
 
+    private int position = 0;
+
+    ArrayList<Polyline> polylines = new ArrayList<>();
+    ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
 
     /**
@@ -62,6 +68,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_map, null);
         mapView = (MapView) view.findViewById(R.id.mapview);
         robotRecenterButton = (Button) view.findViewById(R.id.recenter);
+        clearMarkersButton = view.findViewById(R.id.clear_markers);
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -124,6 +131,22 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         IMapController mapViewController = mapView.getController();
         mapViewController.setZoom(18.0);
 
+        clearMarkersButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Marker marker: markers) {
+                    mapView.getOverlays().remove(marker);
+                }
+                for (int i = 0; i < polylines.size(); i++) {
+                    mapView.getOverlayManager().remove(polylines.get(i));
+                }
+                markers.clear();
+                geoPoints.clear();
+                polylines.clear();
+                position = 0;
+            }
+        });
+
         return view;
     }
 
@@ -147,8 +170,23 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      */
     @Override
     public boolean longPressHelper(GeoPoint geoPoint) {
+        geoPoints.add(geoPoint);
 
-        GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
+        Marker marker = new Marker(mapView);
+        marker.setPosition(geoPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setDraggable(true);
+        marker.setInfoWindow(null);
+        //marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+        addMarker(marker);
+
+        if (markers.size() > 1)
+        {
+            addLines(position);
+            position++;
+        }
+
+        /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
         myGroundOverlay.setPosition(geoPoint);
         try {
             //noinspection ConstantConditions,deprecation
@@ -167,10 +205,32 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 //
 //        Toast.makeText(mapView.getContext(), "Marked on (" + geoPoint.getLatitude() + "," +
 //                geoPoint.getLongitude() + ")", Toast.LENGTH_LONG).show();
-
+*/
         return true;
     }
 
+    public void addMarker(Marker marker) {
+        mapView.getOverlays().add(marker);
+        mapView.invalidate();
+        markers.add(marker);
+    }
+
+    public void removeMarker(Marker marker) {
+        mapView.getOverlays().remove(marker);
+        mapView.invalidate();
+        markers.remove(marker);
+    }
+
+    public void addLines(int position) {
+        Polyline polyline = new Polyline();
+        polylines.add(polyline);
+        ArrayList<GeoPoint> test = new ArrayList<>();
+        test.add(geoPoints.get(geoPoints.size() - 2));
+        test.add(geoPoints.get(geoPoints.size() - 1));
+        polylines.get(position).setPoints(test);
+        mapView.getOverlayManager().add(polylines.get(position));
+        test.clear();
+    }
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
     @SuppressWarnings("unused")
