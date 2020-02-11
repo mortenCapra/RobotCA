@@ -20,4 +20,13 @@
     android:layout_alignParentBottom="true"
     android:text="@string/center"/>
 
+    <Button
+        android:id="@+id/clear_markers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/recenter"
+        android:text="@string/clear_markers" />
+
 </RelativeLayout>
