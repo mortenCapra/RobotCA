@@ -47,17 +47,19 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
-    Button robotRecenterButton, clearMarkersButton;
+    Button robotRecenterButton, clearAreaButton, clearRouteButton, areaButton, routingButton;
 
-    private int position = 0;
+    private int areaPosition = 0;
 
     ArrayList<Double> results = new ArrayList<>();
-    ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-    ArrayList<Marker> markers = new ArrayList<>();
+    ArrayList<Marker> areaMarkers = new ArrayList<>();
+    ArrayList<Marker> routingMarkers = new ArrayList<>();
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
+    private String markerStrategy = "area";
 
     Polygon polygon;
+    Polyline route;
 
     /**
      * Default Constructor.
@@ -72,7 +74,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_map, null);
         mapView = (MapView) view.findViewById(R.id.mapview);
         robotRecenterButton = (Button) view.findViewById(R.id.recenter);
-        clearMarkersButton = view.findViewById(R.id.clear_markers);
+        clearAreaButton = view.findViewById(R.id.clear_area_button);
+        areaButton = view.findViewById(R.id.area_button);
+        routingButton = view.findViewById(R.id.routing_button);
+        clearRouteButton = view.findViewById(R.id.clear_route_button);
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -135,21 +140,48 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         IMapController mapViewController = mapView.getController();
         mapViewController.setZoom(18.0);
 
-        clearMarkersButton.setOnClickListener(new OnClickListener() {
+        clearAreaButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Marker marker: markers) {
+                for (Marker marker: areaMarkers) {
                     mapView.getOverlays().remove(marker);
                 }
-                /*for (int i = 0; i < polylines.size(); i++) {
-                    mapView.getOverlayManager().remove(polylines.get(i));
-                }*/
                 mapView.getOverlays().remove(polygon);
-                markers.clear();
+                areaMarkers.clear();
                 geoPoints.clear();
-                //polylines.clear();
-                position = 0;
+                areaPosition = 0;
                 polygon = null;
+                mapView.invalidate();
+            }
+        });
+
+        clearRouteButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Marker marker: routingMarkers) {
+                    mapView.getOverlays().remove(marker);
+                }
+                mapView.getOverlays().remove(route);
+                routingMarkers.clear();
+                waypoints.clear();
+                route = null;
+                mapView.invalidate();
+            }
+        });
+
+        areaButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markerStrategy = "area";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        routingButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markerStrategy = "routing";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -176,21 +208,29 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      */
     @Override
     public boolean longPressHelper(GeoPoint geoPoint) {
-        geoPoints.add(geoPoint);
-
         Marker marker = new Marker(mapView);
         marker.setPosition(geoPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setDraggable(true);
         marker.setInfoWindow(null);
-        //marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         addMarker(marker);
 
-        if (markers.size() > 1)
-        {
-            addArea(position, geoPoint);
-            position++;
+        if (markerStrategy.equals("area")) {
+            geoPoints.add(geoPoint);
+            marker.setDefaultIcon();
+            if (areaMarkers.size() > 1) {
+                addArea(areaPosition, geoPoint);
+                areaPosition++;
+            }
+        } else if(markerStrategy.equals("routing")){
+            waypoints.add(geoPoint);
+            marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+            if(routingMarkers.size() > 1) {
+                addRoute(geoPoint);
+            }
         }
+
+        addMarker(marker);
 
         /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
         myGroundOverlay.setPosition(geoPoint);
@@ -205,7 +245,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.getOverlays().add(myGroundOverlay);
         mapView.postInvalidate();
 
-//        // keep storage of markers and current location
+//        // keep storage of areaMarkers and current location
 //        waypoints.add(myLocationOverlay.getMyLocation());
 //        waypoints.add(geoPoint);
 //
@@ -215,16 +255,38 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
+    private void addRoute(GeoPoint geoPoint) {
+        if (route != null){
+            route.addPoint(geoPoint);
+            mapView.invalidate();
+
+        } else {
+            route = new Polyline();
+            route.setPoints(waypoints);
+            mapView.getOverlayManager().add(route);
+            mapView.invalidate();
+
+        }
+    }
+
     public void addMarker(Marker marker) {
         mapView.getOverlays().add(marker);
         mapView.invalidate();
-        markers.add(marker);
+        if(markerStrategy.equals("area"))
+            areaMarkers.add(marker);
+        else if(markerStrategy.equals("routing")){
+            routingMarkers.add(marker);
+        }
     }
 
     public void removeMarker(Marker marker) {
         mapView.getOverlays().remove(marker);
         mapView.invalidate();
-        markers.remove(marker);
+        if(markerStrategy.equals("area"))
+            areaMarkers.remove(marker);
+        else if(markerStrategy.equals("routing")){
+            routingMarkers.remove(marker);
+        }
     }
 
     public void addArea(int position, GeoPoint geoPoint) {
