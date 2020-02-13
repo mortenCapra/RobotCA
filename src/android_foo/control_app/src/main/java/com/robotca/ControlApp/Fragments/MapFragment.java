@@ -50,6 +50,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     Button robotRecenterButton, clearAreaButton, clearRouteButton, areaButton, routingButton;
 
     private int areaPosition = 0;
+    private int routePosition = 0;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
@@ -225,13 +226,30 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         } else if(markerStrategy.equals("routing")){
             waypoints.add(geoPoint);
             marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+            marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    waypoints.add(routingMarkers.indexOf(marker), marker.getPosition());
+                    route.setPoints(waypoints);
+                    mapView.invalidate();
+                }
+
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                    waypoints.remove(marker.getPosition());
+
+
+                }
+            });
             if(routingMarkers.size() > 1) {
-                addRoute(geoPoint);
+                addRoute(routePosition, geoPoint);
             }
         }
-
-        addMarker(marker);
-
         /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
         myGroundOverlay.setPosition(geoPoint);
         try {
@@ -255,7 +273,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    private void addRoute(GeoPoint geoPoint) {
+    private void addRoute(int position, GeoPoint geoPoint) {
         if (route != null){
             route.addPoint(geoPoint);
             mapView.invalidate();
