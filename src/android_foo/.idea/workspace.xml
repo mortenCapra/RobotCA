@@ -48,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="265" lean-forward="true" selection-start-line="265" selection-end-line="265" />
+            <state relative-caret-position="1095">
+              <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
             </state>
           </provider>
         </entry>
@@ -115,6 +115,59 @@
       <pane id="AndroidView">
         <subPane>
           <expand>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Core" type="462c0819:PsiDirectoryNode" />
+              <item name="Plans" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Fragments" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="drawable" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
             <path>
               <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -804,8 +857,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="265" lean-forward="true" selection-start-line="265" selection-end-line="265" />
+        <state relative-caret-position="1095">
+          <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
         </state>
       </provider>
     </entry>
