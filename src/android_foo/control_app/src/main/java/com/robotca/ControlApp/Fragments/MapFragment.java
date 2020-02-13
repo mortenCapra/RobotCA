@@ -19,7 +19,6 @@ import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.overlays.GroundOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.config.Configuration;
@@ -29,10 +28,12 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Fragment containing the Map screen showing the real-world position of the Robot.
@@ -50,10 +51,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     private int position = 0;
 
+    ArrayList<Double> results = new ArrayList<>();
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
+
+    Polygon polygon;
 
     /**
      * Default Constructor.
@@ -137,13 +141,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 for (Marker marker: markers) {
                     mapView.getOverlays().remove(marker);
                 }
-                for (int i = 0; i < polylines.size(); i++) {
+                /*for (int i = 0; i < polylines.size(); i++) {
                     mapView.getOverlayManager().remove(polylines.get(i));
-                }
+                }*/
+                mapView.getOverlays().remove(polygon);
                 markers.clear();
                 geoPoints.clear();
-                polylines.clear();
+                //polylines.clear();
                 position = 0;
+                polygon = null;
             }
         });
 
@@ -182,7 +188,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         if (markers.size() > 1)
         {
-            addLines(position);
+            addArea(position, geoPoint);
             position++;
         }
 
@@ -221,15 +227,67 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         markers.remove(marker);
     }
 
-    public void addLines(int position) {
-        Polyline polyline = new Polyline();
+    public void addArea(int position, GeoPoint geoPoint) {
+        /*Polyline polyline = new Polyline();
         polylines.add(polyline);
         ArrayList<GeoPoint> test = new ArrayList<>();
         test.add(geoPoints.get(geoPoints.size() - 2));
         test.add(geoPoints.get(geoPoints.size() - 1));
         polylines.get(position).setPoints(test);
         mapView.getOverlayManager().add(polylines.get(position));
-        test.clear();
+        test.clear();*/
+
+        if (polygon != null)
+        {
+            mapView.getOverlays().remove(polygon);
+
+            geoPoints.remove(geoPoints.size() - 2);
+
+            double newLon = geoPoint.getLongitude();
+            double newLat = geoPoint.getLatitude();
+
+            for (int i = 0; i < geoPoints.size() - 1; i++) {
+                double lon = geoPoints.get(i).getLongitude();
+                double lat = geoPoints.get(i).getLatitude();
+
+                double distance = Math.sqrt(Math.pow((newLon - lon), 2) + Math.pow((newLat - lat), 2));
+
+                results.add(distance);
+                results = results;
+            }
+
+            ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
+            Collections.sort(copyResults);
+            double minValue = copyResults.get(0);
+            double secondMinValue = copyResults.get(1);
+
+            int i = results.indexOf(minValue);
+
+            geoPoints.add(i + 1, geoPoint);
+            geoPoints.remove(geoPoints.size() - 1);
+
+            //geoPoints.remove(geoPoints.size() - 2);
+            mapView.getOverlayManager().remove(polygon);
+
+            polygon.getFillPaint().setARGB(75, 255, 0, 0);
+            geoPoints.add(geoPoints.get(0));
+            polygon.setPoints(geoPoints);
+
+            mapView.getOverlayManager().add(polygon);
+            mapView.invalidate();
+
+            results.clear();
+            copyResults.clear();
+        } else {
+            polygon = new Polygon();
+
+            polygon.getFillPaint().setARGB(75, 255, 0, 0);
+            geoPoints.add(geoPoints.get(0));
+            polygon.setPoints(geoPoints);
+
+            mapView.getOverlayManager().add(polygon);
+            mapView.invalidate();
+        }
     }
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
