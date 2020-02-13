@@ -86,4 +86,10 @@ public class SplashActivity extends Activity {
         startActivity(intent);
         finish();
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        checkDrawOverlayPermission();
+    }
 }
