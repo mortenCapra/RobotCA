@@ -44,20 +44,21 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     // Log tag String
     private static final String TAG = "MapFragment";
 
+    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
+
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
     Button robotRecenterButton, clearMarkersButton;
 
-    private int position = 0;
-
     ArrayList<Double> results = new ArrayList<>();
-    ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
 
     Polygon polygon;
+
+    boolean movingMarker = false;
 
     /**
      * Default Constructor.
@@ -78,7 +79,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         mapView.setClickable(true);
-        //mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
         mapView.setUseDataConnection(true);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -147,9 +147,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 mapView.getOverlays().remove(polygon);
                 markers.clear();
                 geoPoints.clear();
-                //polylines.clear();
-                position = 0;
                 polygon = null;
+                mapView.invalidate();
             }
         });
 
@@ -184,34 +183,53 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         marker.setDraggable(true);
         marker.setInfoWindow(null);
         //marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+
+        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            GeoPoint markerGeo;
+            Marker markerPos;
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                movingMarker = true;
+
+                int index = geoPoints.indexOf(markerGeo);
+
+                if (markerPos.getPosition() == markers.get(0).getPosition()) {
+                    geoPoints.remove(markerGeo);
+                    geoPoints.add(0, marker.getPosition());
+                    geoPoints.set(geoPoints.indexOf(geoPoints.get(geoPoints.size() - 1)), marker.getPosition());
+                } else {
+                    geoPoints.remove(markerGeo);
+                    geoPoints.add(index, marker.getPosition());
+                }
+
+                //geoPoints.remove(markerGeo);
+                //geoPoints.add(index, marker.getPosition());
+
+                markers.remove(markerPos);
+                markers.add(index, marker);
+
+                addArea();
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                markerGeo = marker.getPosition();
+                markerPos = marker;
+            }
+        });
+
         addMarker(marker);
 
         if (markers.size() > 1)
         {
-            addArea(position, geoPoint);
-            position++;
+            addArea();
         }
 
-        /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
-        myGroundOverlay.setPosition(geoPoint);
-        try {
-            //noinspection ConstantConditions,deprecation
-            myGroundOverlay.setImage(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
-        }
-        catch (NullPointerException e) {
-            Log.e(TAG, "", e);
-        }
-        myGroundOverlay.setDimensions(25.0f);
-        mapView.getOverlays().add(myGroundOverlay);
-        mapView.postInvalidate();
-
-//        // keep storage of markers and current location
-//        waypoints.add(myLocationOverlay.getMyLocation());
-//        waypoints.add(geoPoint);
-//
-//        Toast.makeText(mapView.getContext(), "Marked on (" + geoPoint.getLatitude() + "," +
-//                geoPoint.getLongitude() + ")", Toast.LENGTH_LONG).show();
-*/
         return true;
     }
 
@@ -227,19 +245,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         markers.remove(marker);
     }
 
-    public void addArea(int position, GeoPoint geoPoint) {
-        /*Polyline polyline = new Polyline();
-        polylines.add(polyline);
-        ArrayList<GeoPoint> test = new ArrayList<>();
-        test.add(geoPoints.get(geoPoints.size() - 2));
-        test.add(geoPoints.get(geoPoints.size() - 1));
-        polylines.get(position).setPoints(test);
-        mapView.getOverlayManager().add(polylines.get(position));
-        test.clear();*/
+    public void addArea() {
 
         if (polygon != null)
         {
-            mapView.getOverlays().remove(polygon);
+            /*mapView.getOverlays().remove(polygon);
 
             geoPoints.remove(geoPoints.size() - 2);
 
@@ -250,34 +260,38 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 double lon = geoPoints.get(i).getLongitude();
                 double lat = geoPoints.get(i).getLatitude();
 
-                double distance = Math.sqrt(Math.pow((newLon - lon), 2) + Math.pow((newLat - lat), 2));
+                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
 
                 results.add(distance);
-                results = results;
             }
 
             ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
             Collections.sort(copyResults);
             double minValue = copyResults.get(0);
-            double secondMinValue = copyResults.get(1);
 
-            int i = results.indexOf(minValue);
+            int index = results.indexOf(minValue);
 
-            geoPoints.add(i + 1, geoPoint);
             geoPoints.remove(geoPoints.size() - 1);
 
-            //geoPoints.remove(geoPoints.size() - 2);
+            geoPoints.add(index + 1, geoPoint);
+
+            results.clear();
+            copyResults.clear();*/
+
             mapView.getOverlayManager().remove(polygon);
 
+            if (!movingMarker) {
+                geoPoints.remove(geoPoints.size() - 2);
+                geoPoints.add(geoPoints.get(0));
+            }
+
             polygon.getFillPaint().setARGB(75, 255, 0, 0);
-            geoPoints.add(geoPoints.get(0));
             polygon.setPoints(geoPoints);
 
             mapView.getOverlayManager().add(polygon);
             mapView.invalidate();
 
-            results.clear();
-            copyResults.clear();
+            movingMarker = false;
         } else {
             polygon = new Polygon();
 
@@ -288,6 +302,23 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             mapView.getOverlayManager().add(polygon);
             mapView.invalidate();
         }
+    }
+
+    public static double computeDistanceToKilometers(double startLat, double startLon, double endLat, double endLon) {
+        double dLat = Math.toRadians((endLat - startLat));
+        double dLon = Math.toRadians((endLon - startLon));
+
+        startLat = Math.toRadians(startLat);
+        endLat = Math.toRadians(endLat);
+
+        double a = haversin(dLat) + Math.cos(startLat) * Math.cos(endLat) * haversin(dLon);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
+    }
+
+    public static double haversin(double val) {
+        return Math.pow(Math.sin(val / 2), 2);
     }
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
