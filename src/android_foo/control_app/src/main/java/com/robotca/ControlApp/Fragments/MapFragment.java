@@ -361,7 +361,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 geoPointCheck++;
             }
 
-            area.getFillPaint().setARGB(75, 255, 0, 0);
+            area.getFillPaint().setARGB(75, 0, 255, 0);
             area.setPoints(geoPoints);
 
             mapView.getOverlayManager().add(area);
@@ -371,7 +371,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         } else {
             area = new Polygon();
 
-            area.getFillPaint().setARGB(75, 255, 0, 0);
+            area.getFillPaint().setARGB(75, 0, 255, 0);
             geoPoints.add(geoPoints.get(0));
             area.setPoints(geoPoints);
 
