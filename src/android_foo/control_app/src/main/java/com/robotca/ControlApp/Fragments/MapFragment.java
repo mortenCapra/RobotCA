@@ -141,9 +141,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 for (Marker marker: markers) {
                     mapView.getOverlays().remove(marker);
                 }
-                /*for (int i = 0; i < polylines.size(); i++) {
-                    mapView.getOverlayManager().remove(polylines.get(i));
-                }*/
                 mapView.getOverlays().remove(polygon);
                 markers.clear();
                 geoPoints.clear();
@@ -177,16 +174,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public boolean longPressHelper(GeoPoint geoPoint) {
         geoPoints.add(geoPoint);
 
-        Marker marker = new Marker(mapView);
-        marker.setPosition(geoPoint);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setDraggable(true);
-        marker.setInfoWindow(null);
+        Marker newMarker = new Marker(mapView);
+        newMarker.setPosition(geoPoint);
+        newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        newMarker.setDraggable(true);
+        newMarker.setInfoWindow(null);
         //marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
 
-        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-            GeoPoint markerGeo;
-            Marker markerPos;
+        newMarker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            GeoPoint startMarker;
             @Override
             public void onMarkerDrag(Marker marker) {
 
@@ -196,38 +192,31 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             public void onMarkerDragEnd(Marker marker) {
                 movingMarker = true;
 
-                int index = geoPoints.indexOf(markerGeo);
+                int index = geoPoints.indexOf(startMarker);
 
-                if (markerPos.getPosition() == markers.get(0).getPosition()) {
-                    geoPoints.remove(markerGeo);
-                    geoPoints.add(0, marker.getPosition());
+                if (newMarker.getPosition() == markers.get(0).getPosition()) {
+                    geoPoints.set(0, marker.getPosition());
                     geoPoints.set(geoPoints.indexOf(geoPoints.get(geoPoints.size() - 1)), marker.getPosition());
                 } else {
-                    geoPoints.remove(markerGeo);
-                    geoPoints.add(index, marker.getPosition());
+                    geoPoints.set(index, marker.getPosition());
                 }
 
-                //geoPoints.remove(markerGeo);
-                //geoPoints.add(index, marker.getPosition());
+                markers.set(markers.indexOf(newMarker), marker);
 
-                markers.remove(markerPos);
-                markers.add(index, marker);
-
-                addArea();
+                addArea(marker.getPosition());
             }
 
             @Override
             public void onMarkerDragStart(Marker marker) {
-                markerGeo = marker.getPosition();
-                markerPos = marker;
+                startMarker = marker.getPosition();
             }
         });
 
-        addMarker(marker);
+        addMarker(newMarker);
 
         if (markers.size() > 1)
         {
-            addArea();
+            addArea(geoPoint);
         }
 
         return true;
@@ -245,43 +234,40 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         markers.remove(marker);
     }
 
-    public void addArea() {
+    public void addArea(GeoPoint geoPoint) {
 
         if (polygon != null)
         {
-            /*mapView.getOverlays().remove(polygon);
-
-            geoPoints.remove(geoPoints.size() - 2);
-
-            double newLon = geoPoint.getLongitude();
-            double newLat = geoPoint.getLatitude();
-
-            for (int i = 0; i < geoPoints.size() - 1; i++) {
-                double lon = geoPoints.get(i).getLongitude();
-                double lat = geoPoints.get(i).getLatitude();
-
-                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
-
-                results.add(distance);
-            }
-
-            ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
-            Collections.sort(copyResults);
-            double minValue = copyResults.get(0);
-
-            int index = results.indexOf(minValue);
-
-            geoPoints.remove(geoPoints.size() - 1);
-
-            geoPoints.add(index + 1, geoPoint);
-
-            results.clear();
-            copyResults.clear();*/
-
-            mapView.getOverlayManager().remove(polygon);
+            mapView.getOverlays().remove(polygon);
 
             if (!movingMarker) {
                 geoPoints.remove(geoPoints.size() - 2);
+
+                double newLon = geoPoint.getLongitude();
+                double newLat = geoPoint.getLatitude();
+
+                for (int i = 0; i < geoPoints.size() - 1; i++) {
+                    double lon = geoPoints.get(i).getLongitude();
+                    double lat = geoPoints.get(i).getLatitude();
+
+                    double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
+
+                    results.add(distance);
+                }
+
+                ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
+                Collections.sort(copyResults);
+                double minValue = copyResults.get(0);
+
+                int index = results.indexOf(minValue);
+
+                geoPoints.remove(geoPoints.size() - 1);
+
+                geoPoints.add(index + 1, geoPoint);
+
+                results.clear();
+                copyResults.clear();
+
                 geoPoints.add(geoPoints.get(0));
             }
 
