@@ -3,8 +3,12 @@ package com.robotca.ControlApp.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +20,7 @@ import android.widget.Toast;
 import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.LocationProvider;
+import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
@@ -50,14 +55,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     Button robotRecenterButton, clearAreaButton, clearRouteButton, areaButton, routingButton;
 
     private int areaPosition = 0;
-    private int routePosition = 0;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
     ArrayList<Marker> routingMarkers = new ArrayList<>();
-    ArrayList<GeoPoint> waypoints = new ArrayList<>();
-    private String markerStrategy = "area";
+    ArrayList<GeoPoint> wayPoints = new ArrayList<>();
+    private String markerStrategy = "route";
 
     Polygon polygon;
     Polyline route;
@@ -71,9 +75,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("geoPoints", geoPoints);
+        outState.putParcelableArrayList("wayPoints", wayPoints);
         outState.putInt("areaPosition", areaPosition);
-        outState.putInt("routePosition", routePosition);
+        outState.putString("markerStrategy", markerStrategy);
     }
+
+
 
     @Nullable
     @Override
@@ -171,7 +179,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 }
                 mapView.getOverlays().remove(route);
                 routingMarkers.clear();
-                waypoints.clear();
+                wayPoints.clear();
                 route = null;
                 mapView.invalidate();
             }
@@ -192,6 +200,20 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
             }
         });
+
+        if(savedInstanceState != null) {
+            areaPosition = savedInstanceState.getInt("areaPosition");
+            markerStrategy = savedInstanceState.getString("markerStrategy");
+            geoPoints = savedInstanceState.getParcelableArrayList("geoPoints");
+            wayPoints = savedInstanceState.getParcelableArrayList("wayPoints");
+
+            if(!geoPoints.isEmpty()){
+                addArea(areaPosition ,geoPoints.get(geoPoints.size()-1));
+            }
+            if(!wayPoints.isEmpty()){
+                addRoute(wayPoints.get(wayPoints.size()-1));
+            }
+        }
 
         return view;
     }
@@ -231,7 +253,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 areaPosition++;
             }
         } else if(markerStrategy.equals("routing")){
-            waypoints.add(geoPoint);
+            wayPoints.add(geoPoint);
             marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
             marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
                 @Override
@@ -241,19 +263,19 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-                    waypoints.add(routingMarkers.indexOf(marker)+1, marker.getPosition());
-                    route.setPoints(waypoints);
+                    wayPoints.add(routingMarkers.indexOf(marker)+1, marker.getPosition());
+                    route.setPoints(wayPoints);
                     mapView.invalidate();
                 }
 
                 @Override
                 public void onMarkerDragStart(Marker marker) {
-                    waypoints.remove(marker.getPosition());
+                    wayPoints.remove(marker.getPosition());
 
 
                 }
             });
-        addRoute(routePosition, geoPoint);
+        addRoute(geoPoint);
         }
         /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
         myGroundOverlay.setPosition(geoPoint);
@@ -278,15 +300,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    private void addRoute(int position, GeoPoint geoPoint) {
+    private void addRoute(GeoPoint geoPoint) {
         if (route != null){
             route.addPoint(geoPoint);
             mapView.invalidate();
 
         } else {
             route = new Polyline();
-            waypoints.add(0, myLocationOverlay.getMyLocation());
-            route.setPoints(waypoints);
+            wayPoints.add(0, myLocationOverlay.getMyLocation());
+            route.setPoints(wayPoints);
             mapView.getOverlayManager().add(route);
             mapView.invalidate();
 
