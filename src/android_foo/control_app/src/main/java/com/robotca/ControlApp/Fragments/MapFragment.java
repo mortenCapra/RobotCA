@@ -51,9 +51,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MapView mapView;
     Button robotRecenterButton, clearAreaButton, clearRouteButton, areaButton, routingButton;
 
-    private int areaPosition = 0;
-    private int routePosition = 0;
-
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
@@ -61,10 +58,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
     private String markerStrategy = "area";
 
-    Polygon polygon;
+    Polygon area;
     Polyline route;
 
     boolean movingMarker = false;
+    int geoPointCheck = 0;
 
     /**
      * Default Constructor.
@@ -150,12 +148,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 for (Marker marker: areaMarkers) {
                     mapView.getOverlays().remove(marker);
                 }
-                mapView.getOverlays().remove(polygon);
+                mapView.getOverlays().remove(area);
                 areaMarkers.clear();
                 geoPoints.clear();
-                areaPosition = 0;
-                polygon = null;
+                area = null;
                 mapView.invalidate();
+                geoPointCheck = 0;
             }
         });
 
@@ -213,73 +211,60 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      */
     @Override
     public boolean longPressHelper(GeoPoint geoPoint) {
-        Marker marker = new Marker(mapView);
-        marker.setPosition(geoPoint);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setDraggable(true);
-        marker.setInfoWindow(null);
-        addMarker(marker);
-        geoPoints.add(geoPoint);
-
         Marker newMarker = new Marker(mapView);
         newMarker.setPosition(geoPoint);
         newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         newMarker.setDraggable(true);
         newMarker.setInfoWindow(null);
-        //marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
-
-        newMarker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-            GeoPoint startMarker;
-            @Override
-            public void onMarkerDrag(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-                movingMarker = true;
-
-                int index = geoPoints.indexOf(startMarker);
-
-                if (newMarker.getPosition() == markers.get(0).getPosition()) {
-                    geoPoints.set(0, marker.getPosition());
-                    geoPoints.set(geoPoints.indexOf(geoPoints.get(geoPoints.size() - 1)), marker.getPosition());
-                } else {
-                    geoPoints.set(index, marker.getPosition());
-                }
-
-                markers.set(markers.indexOf(newMarker), marker);
-
-                addArea(marker.getPosition());
-            }
-
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-                startMarker = marker.getPosition();
-            }
-        });
-
         addMarker(newMarker);
 
         if (markerStrategy.equals("area")) {
             geoPoints.add(geoPoint);
-            marker.setDefaultIcon();
-            if (areaMarkers.size() > 1) {
-                addArea(areaPosition, geoPoint);
-                areaPosition++;
-            }
-        } else if(markerStrategy.equals("routing")){
-            waypoints.add(geoPoint);
-            marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
-            marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            newMarker.setDefaultIcon();
+            newMarker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+                GeoPoint startMarker;
                 @Override
                 public void onMarkerDrag(Marker marker) {
 
                 }
-        if (markers.size() > 1)
-        {
-            addArea(geoPoint);
-        }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    movingMarker = true;
+
+                    int index = geoPoints.indexOf(startMarker);
+
+                    if (newMarker.getPosition() == areaMarkers.get(0).getPosition()) {
+                        geoPoints.set(0, marker.getPosition());
+                        geoPoints.set(geoPoints.indexOf(geoPoints.get(geoPoints.size() - 1)), marker.getPosition());
+                    } else {
+                        geoPoints.set(index, marker.getPosition());
+                    }
+
+                    areaMarkers.set(areaMarkers.indexOf(newMarker), marker);
+
+                    addArea(marker.getPosition());
+                }
+
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                    startMarker = marker.getPosition();
+                }
+            });
+
+
+            if (areaMarkers.size() > 1) {
+                addArea(geoPoint);
+            }
+
+        } else if(markerStrategy.equals("routing")){
+            waypoints.add(geoPoint);
+            newMarker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+            newMarker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
@@ -291,38 +276,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
                     waypoints.remove(marker.getPosition());
-
-
                 }
             });
             if(routingMarkers.size() > 1) {
-                addRoute(routePosition, geoPoint);
+                addRoute(geoPoint);
             }
         }
-        /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
-        myGroundOverlay.setPosition(geoPoint);
-        try {
-            //noinspection ConstantConditions,deprecation
-            myGroundOverlay.setImage(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
-        }
-        catch (NullPointerException e) {
-            Log.e(TAG, "", e);
-        }
-        myGroundOverlay.setDimensions(25.0f);
-        mapView.getOverlays().add(myGroundOverlay);
-        mapView.postInvalidate();
 
-//        // keep storage of areaMarkers and current location
-//        waypoints.add(myLocationOverlay.getMyLocation());
-//        waypoints.add(geoPoint);
-//
-//        Toast.makeText(mapView.getContext(), "Marked on (" + geoPoint.getLatitude() + "," +
-//                geoPoint.getLongitude() + ")", Toast.LENGTH_LONG).show();
-*/
         return true;
     }
 
-    private void addRoute(int position, GeoPoint geoPoint) {
+    private void addRoute(GeoPoint geoPoint) {
         if (route != null){
             route.addPoint(geoPoint);
             mapView.invalidate();
@@ -358,11 +322,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     public void addArea(GeoPoint geoPoint) {
 
-        if (polygon != null)
+        if (area != null)
         {
-            mapView.getOverlays().remove(polygon);
+            mapView.getOverlays().remove(area);
 
-            if (!movingMarker) {
+            if (!movingMarker && geoPointCheck >= 2) {
                 geoPoints.remove(geoPoints.size() - 2);
 
                 double newLon = geoPoint.getLongitude();
@@ -391,23 +355,27 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 copyResults.clear();
 
                 geoPoints.add(geoPoints.get(0));
+            } else if (geoPointCheck < 2) {
+                geoPoints.remove(geoPoints.size() - 2);
+                geoPoints.add(geoPoints.get(0));
+                geoPointCheck++;
             }
 
-            polygon.getFillPaint().setARGB(75, 255, 0, 0);
-            polygon.setPoints(geoPoints);
+            area.getFillPaint().setARGB(75, 255, 0, 0);
+            area.setPoints(geoPoints);
 
-            mapView.getOverlayManager().add(polygon);
+            mapView.getOverlayManager().add(area);
             mapView.invalidate();
 
             movingMarker = false;
         } else {
-            polygon = new Polygon();
+            area = new Polygon();
 
-            polygon.getFillPaint().setARGB(75, 255, 0, 0);
+            area.getFillPaint().setARGB(75, 255, 0, 0);
             geoPoints.add(geoPoints.get(0));
-            polygon.setPoints(geoPoints);
+            area.setPoints(geoPoints);
 
-            mapView.getOverlayManager().add(polygon);
+            mapView.getOverlayManager().add(area);
             mapView.invalidate();
         }
     }
