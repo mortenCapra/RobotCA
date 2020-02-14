@@ -68,6 +68,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public MapFragment() {
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("areaPosition", areaPosition);
+        outState.putInt("routePosition", routePosition);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -234,7 +241,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-                    waypoints.add(routingMarkers.indexOf(marker), marker.getPosition());
+                    waypoints.add(routingMarkers.indexOf(marker)+1, marker.getPosition());
                     route.setPoints(waypoints);
                     mapView.invalidate();
                 }
@@ -246,9 +253,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 }
             });
-            if(routingMarkers.size() > 1) {
-                addRoute(routePosition, geoPoint);
-            }
+        addRoute(routePosition, geoPoint);
         }
         /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
         myGroundOverlay.setPosition(geoPoint);
@@ -280,6 +285,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         } else {
             route = new Polyline();
+            waypoints.add(0, myLocationOverlay.getMyLocation());
             route.setPoints(waypoints);
             mapView.getOverlayManager().add(route);
             mapView.invalidate();
