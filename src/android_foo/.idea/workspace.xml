@@ -10,9 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Updated to support newest osmdroid version">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
     </list>
     <ignored path="android_foo.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,6 +26,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="fcb0f6c2" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -48,8 +47,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1095">
-              <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
+            <state relative-caret-position="1800">
+              <caret line="153" lean-forward="true" selection-start-line="153" selection-end-line="153" />
             </state>
           </provider>
         </entry>
@@ -62,6 +61,7 @@
       <find>http://local</find>
       <find>tileprovider</find>
       <find>Imap</find>
+      <find>computedistanceand</find>
     </findStrings>
   </component>
   <component name="GenerateSignedApkSettings">
@@ -111,7 +111,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -147,14 +146,6 @@
               <item name="control_app" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="Core" type="462c0819:PsiDirectoryNode" />
-              <item name="Plans" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
               <item name="Fragments" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -164,20 +155,15 @@
             </path>
             <path>
               <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="drawable" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -746,24 +732,24 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_joystick_view.xml">
-      <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="android-designer2" />
+      <provider editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" selection-start-line="6" selection-end-line="6" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/tileprovider/modules/MapTileModuleProviderBase.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -794,16 +780,16 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/androidTest/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor" />
       <provider editor-type-id="android-manifest" />
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="19" column="4" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
         </state>
       </provider>
-      <provider editor-type-id="android-manifest" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -827,12 +813,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="22" column="11" lean-forward="true" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/os/Looper.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -857,8 +843,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1095">
-          <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
+        <state relative-caret-position="1800">
+          <caret line="153" lean-forward="true" selection-start-line="153" selection-end-line="153" />
         </state>
       </provider>
     </entry>
