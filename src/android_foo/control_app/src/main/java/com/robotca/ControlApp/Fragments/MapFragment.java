@@ -44,7 +44,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
-    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, areaButton, routingButton, obstacleButton, newObstacleButton;
+    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, areaButton, routingButton, newObstacleButton;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
@@ -66,7 +66,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     boolean movingMarker = false;
 
-    int obstacleCounter = 0;
     int areaPointCheck = 0;
     int obstaclePointCheck = 0;
 
@@ -87,7 +86,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         areaButton = view.findViewById(R.id.area_button);
         routingButton = view.findViewById(R.id.routing_button);
         clearRouteButton = view.findViewById(R.id.clear_route_button);
-        obstacleButton = view.findViewById(R.id.obstacle_button);
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
 
@@ -204,7 +202,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 obstacle = null;
                 mapView.invalidate();
                 obstaclePointCheck = 0;
-                obstacleCounter = 0;
             }
         });
 
@@ -226,19 +223,16 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
         });
 
-        obstacleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Change marking strategy to obstacle
-                markerStrategy = "obstacle";
-                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
-            }
-        });
-
         newObstacleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                obstacleCounter++;
+                markerStrategy = "obstacle";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+
+                for (Marker marker: obstacleMarkers) {
+                    marker.setDraggable(false);
+                }
+
                 obstacle = null;
                 allObstacleMarkers.add(obstacleMarkers);
                 allObstaclePoints.add(obstaclePoints);
@@ -326,7 +320,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 break;
 
             case "obstacle":
-                //allObstacleMarkers.get(obstacleCounter).add(marker);
                 obstacleMarkers.add(marker);
                 break;
         }
@@ -463,7 +456,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 results.clear();
 
                 areaPoints.add(areaPoints.get(0));
-            } else if (areaPointCheck < 2) {
+            } else if (areaPointCheck < 2 && !movingMarker) {
                 areaPoints.remove(areaPoints.size() - 2);
                 areaPoints.add(areaPoints.get(0));
                 areaPointCheck++;
@@ -505,7 +498,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 results.clear();
 
                 obstaclePoints.add(obstaclePoints.get(0));
-            } else if (obstaclePointCheck < 2) {
+            } else if (obstaclePointCheck < 2 && !movingMarker) {
                 obstaclePoints.remove(obstaclePoints.size() - 2);
                 obstaclePoints.add(obstaclePoints.get(0));
                 obstaclePointCheck++;
