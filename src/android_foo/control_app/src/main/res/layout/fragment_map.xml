@@ -33,12 +33,6 @@
             android:text="@string/Area" />
 
         <Button
-            android:id="@+id/obstacle_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/obstacle" />
-
-        <Button
             android:id="@+id/new_obstacle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
