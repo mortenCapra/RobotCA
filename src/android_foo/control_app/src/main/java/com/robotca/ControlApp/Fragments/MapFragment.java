@@ -29,6 +29,7 @@ import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.lang.annotation.Native;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -43,22 +44,31 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
-    Button robotRecenterButton, clearAreaButton, clearRouteButton, areaButton, routingButton;
+    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, areaButton, routingButton, obstacleButton, newObstacleButton;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
     ArrayList<Marker> routingMarkers = new ArrayList<>();
+    ArrayList<Marker> obstacleMarkers = new ArrayList<>();
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<GeoPoint> waypoints = new ArrayList<>();
+    ArrayList<GeoPoint> obstaclePoints = new ArrayList<>();
+    ArrayList<Polygon> obstacles = new ArrayList<>();
+
+    ArrayList<ArrayList<Marker>> allObstacleMarkers = new ArrayList<>();
+    ArrayList<ArrayList<GeoPoint>> allObstaclePoints = new ArrayList<>();
 
     private String markerStrategy = "area";
 
     Polygon area;
+    Polygon obstacle;
     Polyline route;
 
     boolean movingMarker = false;
 
+    int obstacleCounter = 0;
     int areaPointCheck = 0;
+    int obstaclePointCheck = 0;
 
     /**
      * Default Constructor.
@@ -77,6 +87,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         areaButton = view.findViewById(R.id.area_button);
         routingButton = view.findViewById(R.id.routing_button);
         clearRouteButton = view.findViewById(R.id.clear_route_button);
+        obstacleButton = view.findViewById(R.id.obstacle_button);
+        clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
+        newObstacleButton = view.findViewById(R.id.new_obstacle_button);
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -107,64 +120,132 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Set up the Center button
         robotRecenterButton.setFocusable(false);
-        robotRecenterButton.setOnLongClickListener((View v) -> {
-            // Center or recenter on Android with a long press
-            mapView.postInvalidate();
-            myLocationOverlay.disableFollowLocation();
-            mapView.postInvalidate();
-            Toast.makeText(mapView.getContext(), "Centered on you", Toast.LENGTH_SHORT).show();
-            secondMyLocationOverlay.enableFollowLocation();
-            mapView.postInvalidate();
-            return true;
+        robotRecenterButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // Center or recenter on Android with a long press
+                mapView.postInvalidate();
+                myLocationOverlay.disableFollowLocation();
+                mapView.postInvalidate();
+                Toast.makeText(mapView.getContext(), "Centered on you", Toast.LENGTH_SHORT).show();
+                secondMyLocationOverlay.enableFollowLocation();
+                mapView.postInvalidate();
+                return true;
+            }
         });
 
-        robotRecenterButton.setOnClickListener((View v) -> {
-            // Center or recenter on robot with a tap
-            secondMyLocationOverlay.disableFollowLocation();
-            mapView.postInvalidate();
-            Toast.makeText(mapView.getContext(), "Centered on the Robot", Toast.LENGTH_SHORT).show();
-            myLocationOverlay.enableFollowLocation();
-            mapView.postInvalidate();
+        robotRecenterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Center or recenter on robot with a tap
+                secondMyLocationOverlay.disableFollowLocation();
+                mapView.postInvalidate();
+                Toast.makeText(mapView.getContext(), "Centered on the Robot", Toast.LENGTH_SHORT).show();
+                myLocationOverlay.enableFollowLocation();
+                mapView.postInvalidate();
+            }
         });
 
         IMapController mapViewController = mapView.getController();
         mapViewController.setZoom(18.0);
 
-        clearAreaButton.setOnClickListener((View v) -> {
-            // Clear area on map
-            for (Marker marker: areaMarkers) {
-                mapView.getOverlays().remove(marker);
+        clearAreaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear area on map
+                for (Marker marker: areaMarkers) {
+                    mapView.getOverlays().remove(marker);
+                }
+                mapView.getOverlays().remove(area);
+                areaMarkers.clear();
+                areaPoints.clear();
+                area = null;
+                mapView.invalidate();
+                areaPointCheck = 0;
             }
-            mapView.getOverlays().remove(area);
-            areaMarkers.clear();
-            areaPoints.clear();
-            area = null;
-            mapView.invalidate();
-            areaPointCheck = 0;
         });
 
-        clearRouteButton.setOnClickListener((View v) -> {
-            // Clear route on map
-            for (Marker marker: routingMarkers) {
-                mapView.getOverlays().remove(marker);
+        clearRouteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear route on map
+                for (Marker marker: routingMarkers) {
+                    mapView.getOverlays().remove(marker);
+                }
+                mapView.getOverlays().remove(route);
+                routingMarkers.clear();
+                waypoints.clear();
+                route = null;
+                mapView.invalidate();
             }
-            mapView.getOverlays().remove(route);
-            routingMarkers.clear();
-            waypoints.clear();
-            route = null;
-            mapView.invalidate();
         });
 
-        areaButton.setOnClickListener((View v) -> {
-            // Change marking strategy to area
-            markerStrategy = "area";
-            Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+        clearObstacleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear obstacle on map
+                allObstacleMarkers.add(obstacleMarkers);
+                allObstaclePoints.add(obstaclePoints);
+
+                for (int i = 0; i < allObstacleMarkers.size(); i++) {
+                    for (Marker marker: allObstacleMarkers.get(i)) {
+                        mapView.getOverlays().remove(marker);
+                    }
+                }
+
+                for (Polygon polygon: obstacles) {
+                    mapView.getOverlays().remove(polygon);
+                }
+
+                allObstacleMarkers.clear();
+                allObstaclePoints.clear();
+                obstacleMarkers.clear();
+                obstaclePoints.clear();
+                obstacle = null;
+                mapView.invalidate();
+                obstaclePointCheck = 0;
+                obstacleCounter = 0;
+            }
         });
 
-        routingButton.setOnClickListener((View v) -> {
-            // Change marking strategy to routing
-            markerStrategy = "routing";
-            Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+        areaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Change marking strategy to area
+                markerStrategy = "area";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        routingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Change marking strategy to routing
+                markerStrategy = "routing";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        obstacleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Change marking strategy to obstacle
+                markerStrategy = "obstacle";
+                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        newObstacleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                obstacleCounter++;
+                obstacle = null;
+                allObstacleMarkers.add(obstacleMarkers);
+                allObstaclePoints.add(obstaclePoints);
+                obstacleMarkers = new ArrayList<>();
+                obstaclePoints = new ArrayList<>();
+                obstaclePointCheck = 0;
+            }
         });
 
         return view;
@@ -197,23 +278,35 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         newMarker.setInfoWindow(null);
         addMarker(newMarker);
 
-        if (markerStrategy.equals("area")) {
-            areaPoints.add(geoPoint);
+        switch (markerStrategy) {
+            case "area":
+                areaPoints.add(geoPoint);
 
-            handleAreaMarker(newMarker);
+                handleAreaMarker(newMarker);
 
-            if (areaMarkers.size() > 1) {
-                addArea(geoPoint);
-            }
+                if (areaMarkers.size() > 1) {
+                    addArea(geoPoint);
+                }
+                break;
 
-        } else if(markerStrategy.equals("routing")){
-            waypoints.add(geoPoint);
+            case "routing":
+                waypoints.add(geoPoint);
 
-            handleRouteMarker(newMarker);
+                handleRouteMarker(newMarker);
 
-            if(routingMarkers.size() > 1) {
-                addRoute(geoPoint);
-            }
+                if(routingMarkers.size() > 1) {
+                    addRoute(geoPoint);
+                }
+                break;
+
+            case "obstacle":
+                obstaclePoints.add(geoPoint);
+
+                handleObstacleMarker(newMarker);
+
+                if (obstacleMarkers.size() > 1) {
+                    addObstacle(geoPoint);
+                }
         }
 
         return true;
@@ -222,10 +315,20 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public void addMarker(Marker marker) {
         mapView.getOverlays().add(marker);
         mapView.invalidate();
-        if(markerStrategy.equals("area"))
-            areaMarkers.add(marker);
-        else if(markerStrategy.equals("routing")){
-            routingMarkers.add(marker);
+
+        switch (markerStrategy) {
+            case "area":
+                areaMarkers.add(marker);
+                break;
+
+            case "routing":
+                routingMarkers.add(marker);
+                break;
+
+            case "obstacle":
+                //allObstacleMarkers.get(obstacleCounter).add(marker);
+                obstacleMarkers.add(marker);
+                break;
         }
     }
 
@@ -264,6 +367,40 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 areaMarkers.set(areaMarkers.indexOf(marker), marker);
 
                 addArea(marker.getPosition());
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                startMarker = marker.getPosition();
+            }
+        });
+    }
+
+    private void handleObstacleMarker(Marker marker) {
+        marker.setDefaultIcon();
+        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            GeoPoint startMarker;
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                movingMarker = true;
+
+                int index = obstaclePoints.indexOf(startMarker);
+
+                if (marker.getPosition() == obstacleMarkers.get(0).getPosition()) {
+                    obstaclePoints.set(0, marker.getPosition());
+                    obstaclePoints.set(obstaclePoints.indexOf(obstaclePoints.get(obstaclePoints.size() - 1)), marker.getPosition());
+                } else {
+                    obstaclePoints.set(index, marker.getPosition());
+                }
+
+                obstacleMarkers.set(obstacleMarkers.indexOf(marker), marker);
+
+                addObstacle(marker.getPosition());
             }
 
             @Override
@@ -350,17 +487,72 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
+    private void addObstacle(GeoPoint geoPoint) {
+
+        if (obstacle != null)
+        {
+            mapView.getOverlays().remove(obstacle);
+
+            if (!movingMarker && obstaclePointCheck >= 2) {
+                obstaclePoints.remove(obstaclePoints.size() - 2);
+
+                int index = calculateClosestMarker(geoPoint);
+
+                obstaclePoints.remove(obstaclePoints.size() - 1);
+
+                obstaclePoints.add(index + 1, geoPoint);
+
+                results.clear();
+
+                obstaclePoints.add(obstaclePoints.get(0));
+            } else if (obstaclePointCheck < 2) {
+                obstaclePoints.remove(obstaclePoints.size() - 2);
+                obstaclePoints.add(obstaclePoints.get(0));
+                obstaclePointCheck++;
+            }
+
+            obstacle.getFillPaint().setARGB(75, 255, 0, 0);
+            obstacle.setPoints(obstaclePoints);
+
+            mapView.getOverlayManager().add(obstacle);
+            mapView.invalidate();
+
+            movingMarker = false;
+        } else {
+            obstacle = new Polygon();
+            obstacle.getFillPaint().setARGB(75, 255, 0, 0);
+            obstaclePoints.add(obstaclePoints.get(0));
+            obstacle.setPoints(obstaclePoints);
+
+            mapView.getOverlayManager().add(obstacle);
+            mapView.invalidate();
+            obstacles.add(obstacle);
+        }
+    }
+
     private int calculateClosestMarker(GeoPoint geoPoint) {
         double newLon = geoPoint.getLongitude();
         double newLat = geoPoint.getLatitude();
 
-        for (int i = 0; i < areaPoints.size() - 1; i++) {
-            double lon = areaPoints.get(i).getLongitude();
-            double lat = areaPoints.get(i).getLatitude();
+        if (markerStrategy.equals("area"))
+        {
+            for (int i = 0; i < areaPoints.size() - 1; i++) {
+                double lon = areaPoints.get(i).getLongitude();
+                double lat = areaPoints.get(i).getLatitude();
 
-            double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
+                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
 
-            results.add(distance);
+                results.add(distance);
+            }
+        } else if (markerStrategy.equals("obstacle")) {
+            for (int i = 0; i < obstaclePoints.size() - 1; i++) {
+                double lon = obstaclePoints.get(i).getLongitude();
+                double lat = obstaclePoints.get(i).getLatitude();
+
+                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
+
+                results.add(distance);
+            }
         }
 
         ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
