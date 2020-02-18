@@ -279,7 +279,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 handleAreaMarker(newMarker);
 
                 if (areaMarkers.size() > 1) {
-                    addArea(geoPoint);
+                    addArea(geoPoint, area, areaPointCheck, areaPoints);
                 }
                 break;
 
@@ -299,7 +299,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 handleObstacleMarker(newMarker);
 
                 if (obstacleMarkers.size() > 1) {
-                    addObstacle(geoPoint);
+                    addArea(geoPoint, obstacle, obstaclePointCheck, obstaclePoints);
                 }
         }
 
@@ -359,7 +359,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 areaMarkers.set(areaMarkers.indexOf(marker), marker);
 
-                addArea(marker.getPosition());
+                addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
             }
 
             @Override
@@ -393,7 +393,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 obstacleMarkers.set(obstacleMarkers.indexOf(marker), marker);
 
-                addObstacle(marker.getPosition());
+                addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
             }
 
             @Override
@@ -429,7 +429,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         if (route != null){
             route.addPoint(geoPoint);
             mapView.invalidate();
-
         } else {
             route = new Polyline();
             route.setPoints(waypoints);
@@ -438,119 +437,99 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
-    private void addArea(GeoPoint geoPoint) {
+    private void addArea(GeoPoint geoPoint, Polygon polygon, int pointCheck, ArrayList<GeoPoint> points) {
+        if (polygon != null) {
+            mapView.getOverlays().remove(polygon);
 
-        if (area != null)
-        {
-            mapView.getOverlays().remove(area);
+            if (!movingMarker && pointCheck >= 2) {
+                points.remove(points.size() - 2);
 
-            if (!movingMarker && areaPointCheck >= 2) {
-                areaPoints.remove(areaPoints.size() - 2);
+                int index = calculateClosestMarker(geoPoint, points);
 
-                int index = calculateClosestMarker(geoPoint);
-
-                areaPoints.remove(areaPoints.size() - 1);
-
-                areaPoints.add(index + 1, geoPoint);
+                points.remove(points.size() - 1);
+                points.add(index + 1, geoPoint);
+                points.add(points.get(0));
 
                 results.clear();
-
-                areaPoints.add(areaPoints.get(0));
-            } else if (areaPointCheck < 2 && !movingMarker) {
-                areaPoints.remove(areaPoints.size() - 2);
-                areaPoints.add(areaPoints.get(0));
-                areaPointCheck++;
+            } else if (pointCheck < 2 && !movingMarker) {
+                points.remove(points.size() - 2);
+                points.add(points.get(0));
+                pointCheck++;
             }
 
-            area.getFillPaint().setARGB(75, 0, 255, 0);
-            area.setPoints(areaPoints);
+            if (markerStrategy.equals("area")) {
+                polygon.getFillPaint().setARGB(180, 0, 255, 0);
+            } else if (markerStrategy.equals("obstacle")) {
+                polygon.getFillPaint().setARGB(180, 255, 0, 0);
+            }
 
-            mapView.getOverlayManager().add(area);
+            polygon.setPoints(points);
+
+            mapView.getOverlayManager().add(polygon);
             mapView.invalidate();
 
             movingMarker = false;
         } else {
-            area = new Polygon();
-            area.getFillPaint().setARGB(75, 0, 255, 0);
-            areaPoints.add(areaPoints.get(0));
-            area.setPoints(areaPoints);
+            polygon = new Polygon();
 
-            mapView.getOverlayManager().add(area);
-            mapView.invalidate();
-        }
-    }
-
-    private void addObstacle(GeoPoint geoPoint) {
-
-        if (obstacle != null)
-        {
-            mapView.getOverlays().remove(obstacle);
-
-            if (!movingMarker && obstaclePointCheck >= 2) {
-                obstaclePoints.remove(obstaclePoints.size() - 2);
-
-                int index = calculateClosestMarker(geoPoint);
-
-                obstaclePoints.remove(obstaclePoints.size() - 1);
-
-                obstaclePoints.add(index + 1, geoPoint);
-
-                results.clear();
-
-                obstaclePoints.add(obstaclePoints.get(0));
-            } else if (obstaclePointCheck < 2 && !movingMarker) {
-                obstaclePoints.remove(obstaclePoints.size() - 2);
-                obstaclePoints.add(obstaclePoints.get(0));
-                obstaclePointCheck++;
+            if (markerStrategy.equals("area")) {
+                polygon.getFillPaint().setARGB(180, 0, 255, 0);
+            } else if (markerStrategy.equals("obstacle")) {
+                polygon.getFillPaint().setARGB(180, 255, 0, 0);
             }
 
-            obstacle.getFillPaint().setARGB(75, 255, 0, 0);
-            obstacle.setPoints(obstaclePoints);
+            points.add(points.get(0));
+            polygon.setPoints(points);
 
-            mapView.getOverlayManager().add(obstacle);
+            mapView.getOverlayManager().add(polygon);
             mapView.invalidate();
 
-            movingMarker = false;
-        } else {
-            obstacle = new Polygon();
-            obstacle.getFillPaint().setARGB(75, 255, 0, 0);
-            obstaclePoints.add(obstaclePoints.get(0));
-            obstacle.setPoints(obstaclePoints);
+            if (markerStrategy.equals("obstacle")) {
+                obstacles.add(polygon);
+            }
+        }
 
-            mapView.getOverlayManager().add(obstacle);
-            mapView.invalidate();
-            obstacles.add(obstacle);
+        if (markerStrategy.equals("area")) {
+            area = polygon;
+            areaPointCheck = pointCheck;
+            areaPoints = points;
+        } else if (markerStrategy.equals("obstacle")) {
+            obstacle = polygon;
+            obstaclePointCheck = pointCheck;
+            obstaclePoints = points;
         }
     }
 
-    private int calculateClosestMarker(GeoPoint geoPoint) {
+    private int calculateClosestMarker(GeoPoint geoPoint, ArrayList<GeoPoint> points) {
         double newLon = geoPoint.getLongitude();
         double newLat = geoPoint.getLatitude();
 
-        if (markerStrategy.equals("area"))
-        {
-            for (int i = 0; i < areaPoints.size() - 1; i++) {
-                double lon = areaPoints.get(i).getLongitude();
-                double lat = areaPoints.get(i).getLatitude();
+        for (int i = 0; i < points.size() - 1; i++) {
+            double lon = points.get(i).getLongitude();
+            double lat = points.get(i).getLatitude();
 
-                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
+            double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
 
-                results.add(distance);
-            }
-        } else if (markerStrategy.equals("obstacle")) {
-            for (int i = 0; i < obstaclePoints.size() - 1; i++) {
-                double lon = obstaclePoints.get(i).getLongitude();
-                double lat = obstaclePoints.get(i).getLatitude();
-
-                double distance = computeDistanceToKilometers(lat, lon, newLat, newLon);
-
-                results.add(distance);
-            }
+            results.add(distance);
         }
 
         ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
         Collections.sort(copyResults);
         double minValue = copyResults.get(0);
+        double secondMinValue = copyResults.get(1);
+
+        if (markerStrategy.equals("area"))
+        {
+            areaPoints = points;
+
+        } else if (markerStrategy.equals("obstacle")) {
+
+            obstaclePoints = points;
+        }
+
+        if (results.indexOf(minValue) > results.indexOf(secondMinValue)) {
+            return results.indexOf(secondMinValue);
+        }
 
         return results.indexOf(minValue);
     }
