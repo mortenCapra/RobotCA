@@ -359,7 +359,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 areaMarkers.set(areaMarkers.indexOf(marker), marker);
 
-                addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
+                if (markerStrategy.equals("obstacle")) {
+                    markerStrategy = "area";
+                    addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
+                    markerStrategy = "obstacle";
+                } else if (markerStrategy.equals("area")) {
+                    addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
+                }
             }
 
             @Override
@@ -393,7 +399,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 obstacleMarkers.set(obstacleMarkers.indexOf(marker), marker);
 
-                addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
+                if (markerStrategy.equals("area")) {
+                    markerStrategy = "obstacle";
+                    addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
+                    markerStrategy = "area";
+                } else if (markerStrategy.equals("obstacle")) {
+                    addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
+                }
             }
 
             @Override
