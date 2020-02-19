@@ -18,7 +18,10 @@ public enum ControlMode {
     Tilt (true), // Tilt sensor control
     SimpleWaypoint (false), // SimpleWaypoint control
     Waypoint (false), // Potential field waypoint control
-    RandomWalk (false); // Random walk
+    RandomWalk (false), // Random walk
+    Routing (false),
+    Area (false),
+    Obstacles (false);
 
     // Whether the user directly controls the Robot in this mode
     public final boolean USER_CONTROLLED;
