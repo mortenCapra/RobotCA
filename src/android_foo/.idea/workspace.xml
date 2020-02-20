@@ -9,9 +9,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Updated .gitignore">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Possible to move polygon on click">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="android_foo.iws" />
@@ -28,7 +26,6 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="R52MA18LLCD" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -58,13 +55,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="79" selection-start-line="79" selection-end-line="79" />
+            <state relative-caret-position="450">
+              <caret line="206" selection-start-line="206" selection-end-line="206" />
               <folding>
-                <element signature="e#9439#9440#0" expanded="true" />
-                <element signature="e#9505#9506#0" expanded="true" />
-                <element signature="e#10177#10178#0" expanded="true" />
-                <element signature="e#10247#10248#0" expanded="true" />
+                <element signature="e#13373#13374#0" expanded="true" />
+                <element signature="e#13439#13440#0" expanded="true" />
+                <element signature="e#14923#14924#0" expanded="true" />
+                <element signature="e#14989#14990#0" expanded="true" />
+                <element signature="e#15661#15662#0" expanded="true" />
+                <element signature="e#15731#15732#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -83,6 +82,17 @@
       <find>onsaveinstancestate</find>
       <find>areaMarkers</find>
       <find>points</find>
+      <find>getcontrolmode</find>
+      <find>getcontrolapp</find>
+      <find>controlMode</find>
+      <find>controlmode</find>
+      <find>getheading</find>
+      <find>simplewaypoint</find>
+      <find>getOverlayManager</find>
+      <find>allobstaclemarkers</find>
+      <find>.start</find>
+      <find>start</find>
+      <find>waypoint</find>
     </findStrings>
   </component>
   <component name="GenerateSignedApkSettings">
@@ -94,7 +104,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="feature/cleaning" />
+        <entry key="$PROJECT_DIR$/../.." value="feature/routeAreaToControlMode" />
       </map>
     </option>
   </component>
@@ -109,13 +119,15 @@
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java" />
-        <option value="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/SplashActivity.java" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java" />
-        <option value="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" />
         <option value="$PROJECT_DIR$/control_app/build.gradle" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RobotPlan.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" />
+        <option value="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" />
       </list>
     </option>
@@ -133,8 +145,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -191,6 +201,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -496,14 +508,76 @@
       <option name="project" value="LOCAL" />
       <updated>1581932654762</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Fixed crashes when moving areapoints if less than 4">
+      <created>1581948628828</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1581948628828</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Removed obstacle button">
+      <created>1581948672913</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1581948672913</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Updated addArea function to include area and obstacle">
+      <created>1582018028890</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1582018028890</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Fixed moving marker with multiple areas">
+      <created>1582022144407</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1582022144407</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Added Routing, Area and Obstacles to Enum">
+      <created>1582112816656</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1582112816657</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Added broadcastreceiver and lifecycle to register and unregister, added buttons and making them visible based on what receiver gets.">
+      <created>1582113028440</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1582113028440</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added broadcastmanager to send intent with controlMode">
+      <created>1582113109152</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1582113109152</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added save obstacle button and clear all button">
+      <created>1582113186308</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1582113186308</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Removed save obstacle button and better deletion of obstacles on click">
+      <created>1582121436212</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1582121436212</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21250692" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21250692" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Captures" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -515,7 +589,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32937366" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32937366" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.32721382" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3488121" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -526,8 +600,8 @@
       <window_info anchor="bottom" id="Gradle Console" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Application Servers" order="12" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.3272727" />
-      <window_info anchor="bottom" id="Android Profiler" order="14" />
-      <window_info anchor="bottom" id="Build" order="15" weight="0.26349893" />
+      <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Build" order="15" visible="true" weight="0.26349893" />
       <window_info anchor="bottom" id="Logcat" order="16" weight="0.30669546" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -559,7 +633,16 @@
     <MESSAGE value="Updated .gitignore" />
     <MESSAGE value="Save area and markers when switching fragments" />
     <MESSAGE value="Cleaned up and created functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up and created functions" />
+    <MESSAGE value="Fixed crashes when moving areapoints if less than 4" />
+    <MESSAGE value="Removed obstacle button" />
+    <MESSAGE value="Updated addArea function to include area and obstacle" />
+    <MESSAGE value="Fixed moving marker with multiple areas" />
+    <MESSAGE value="Added Routing, Area and Obstacles to Enum" />
+    <MESSAGE value="Added broadcastreceiver and lifecycle to register and unregister, added buttons and making them visible based on what receiver gets." />
+    <MESSAGE value="Added broadcastmanager to send intent with controlMode" />
+    <MESSAGE value="Added save obstacle button and clear all button" />
+    <MESSAGE value="Removed save obstacle button and better deletion of obstacles on click" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed save obstacle button and better deletion of obstacles on click" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -572,13 +655,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java</url>
-          <line>283</line>
+          <line>425</line>
           <properties />
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java</url>
-          <line>329</line>
+          <line>473</line>
           <properties />
           <option name="timeStamp" value="46" />
         </line-breakpoint>
@@ -586,20 +669,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-          <folding>
-            <element signature="e#347#856#0" />
-            <element signature="e#865#1416#0" />
-            <element signature="e#1426#1999#0" />
-            <element signature="e#2008#2800#0" />
-            <element signature="e#2810#3097#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/android/sdk/sources/android-23/android/content/SharedPreferences.java" />
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -647,34 +716,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="45" column="33" selection-start-line="45" selection-start-column="33" selection-end-line="45" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/SimpleWaypointPlan.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="25" selection-start-line="25" selection-end-line="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/WaypointPlan.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RandomWalkPlan.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="63" column="34" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/LaserScanView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
         </state>
       </provider>
     </entry>
@@ -754,35 +795,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="336" lean-forward="true" selection-start-line="336" selection-end-line="336" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_joystick_view.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
       <provider editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" selection-start-line="6" selection-end-line="6" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/tileprovider/modules/MapTileModuleProviderBase.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -813,36 +847,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/androidTest/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml">
       <provider editor-type-id="android-manifest" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="4" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
-        </state>
-      </provider>
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/views/overlay/DefaultOverlayManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="201">
           <caret line="343" selection-start-line="343" selection-end-line="343" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="11" lean-forward="true" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
         </state>
       </provider>
     </entry>
@@ -860,10 +871,134 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/os/Looper.java">
+    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/app/FragmentManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
-          <caret line="154" selection-start-line="154" selection-end-line="154" />
+          <caret line="2067" selection-start-line="2067" selection-end-line="2067" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="175" lean-forward="true" selection-start-line="175" selection-end-line="175" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="754" column="35" selection-start-line="754" selection-start-column="25" selection-end-line="754" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/SimpleWaypointPlan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="469">
+          <caret line="72" lean-forward="true" selection-start-line="72" selection-end-line="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/LaserScanView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="904">
+          <caret line="72" selection-start-line="72" selection-end-line="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/androidTest/java/com/robotca/ControlApp/Core/RobotControllerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="146" column="41" selection-start-line="146" selection-start-column="41" selection-end-line="146" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="19" column="4" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest" />
+    </entry>
+    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/app/Activity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="3629" selection-start-line="3629" selection-end-line="3629" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/widget/AdapterView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="1307" selection-start-line="1307" selection-end-line="1307" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/app/Fragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="498">
+          <caret line="2568" selection-start-line="2568" selection-end-line="2568" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/android/os/Looper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="217" selection-start-line="217" selection-end-line="217" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/IWaypointProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="38" column="50" selection-start-line="38" selection-start-column="50" selection-end-line="38" selection-end-column="50" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/WaypointPlan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-540">
+          <caret line="67" lean-forward="true" selection-start-line="67" selection-end-line="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RobotPlan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RandomWalkPlan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="645">
+          <caret line="50" selection-start-line="50" selection-end-line="50" />
         </state>
       </provider>
     </entry>
@@ -876,13 +1011,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="79" selection-start-line="79" selection-end-line="79" />
+        <state relative-caret-position="450">
+          <caret line="206" selection-start-line="206" selection-end-line="206" />
           <folding>
-            <element signature="e#9439#9440#0" expanded="true" />
-            <element signature="e#9505#9506#0" expanded="true" />
-            <element signature="e#10177#10178#0" expanded="true" />
-            <element signature="e#10247#10248#0" expanded="true" />
+            <element signature="e#13373#13374#0" expanded="true" />
+            <element signature="e#13439#13440#0" expanded="true" />
+            <element signature="e#14923#14924#0" expanded="true" />
+            <element signature="e#14989#14990#0" expanded="true" />
+            <element signature="e#15661#15662#0" expanded="true" />
+            <element signature="e#15731#15732#0" expanded="true" />
           </folding>
         </state>
       </provider>
