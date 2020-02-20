@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 import android.view.Display;
@@ -58,7 +60,6 @@ import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
-import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -143,6 +144,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // The saved instance state
     private Bundle savedInstanceState;
 
+    private LocalBroadcastManager localBroadcastManager;
+
     /**
      * Default Constructor.
      */
@@ -165,6 +168,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         // Check for permissions
         checkPermissions();
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         // Set default preference values
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1020,6 +1025,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         setControlMode(ControlMode.values()[position]);
+        Intent intent = new Intent("KEY");
+        intent.putExtra("MODE", getControlMode());
+        localBroadcastManager.sendBroadcast(intent);
     }
 
     /**
