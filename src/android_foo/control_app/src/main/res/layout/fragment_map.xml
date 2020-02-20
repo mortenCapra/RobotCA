@@ -20,17 +20,23 @@
         android:gravity="bottom"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/routing_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/routing" />
+<!--        <Button-->
+<!--            android:id="@+id/routing_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/routing" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/area_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/Area" />-->
 
         <Button
-            android:id="@+id/area_button"
+            android:id="@+id/new_obstacle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Area" />
+            android:text="@string/new_obstacle" />
 
         <Button
             android:id="@+id/clear_route_button"
@@ -43,6 +49,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/clear_area" />
+
+        <Button
+            android:id="@+id/clear_obstacle_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_obstacle" />
+
+        <Button
+            android:id="@+id/clear_all_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_all" />
+
         <Button
             android:id="@+id/recenter"
             android:layout_width="wrap_content"

@@ -101,10 +101,13 @@
     <string name="center">Center View</string>
     <string name="clear_area">Clear Area</string>
     <string name="clear_route">Clear Route</string>
+    <string name="clear_obstacle">Clear Obstacles</string>
+    <string name="clear_all">Clear All</string>
     <string name="show_advanced_options">Show Advanced Options</string>
     <string name="ok">OK</string>
     <string name="routing">Routing</string>
     <string name="Area">Area</string>
+    <string name="new_obstacle">New Obstacle</string>
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">
@@ -161,6 +164,9 @@
         <item>Simple Waypoint</item>
         <item>Waypoint</item>
         <item>Random Walk</item>
+        <item>Routing</item>
+        <item>Area</item>
+        <item>Obstacles</item>
     </string-array>
 
 
