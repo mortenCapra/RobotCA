@@ -9,9 +9,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="merge into develop">
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="saving state">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
     </list>
     <ignored path="android_foo.iws" />
@@ -49,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2207">
-              <caret line="215" column="9" selection-start-line="215" selection-start-column="9" selection-end-line="215" selection-end-column="9" />
+            <state relative-caret-position="315">
+              <caret line="227" column="69" lean-forward="true" selection-start-line="227" selection-start-column="69" selection-end-line="227" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -58,16 +57,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
+            <state relative-caret-position="8445">
               <caret line="638" column="2" selection-start-line="638" selection-start-column="2" selection-end-line="638" selection-end-column="2" />
               <folding>
+                <element signature="e#15430#15431#0" expanded="true" />
                 <element signature="e#15463#15464#0" expanded="true" />
+                <element signature="e#15553#15554#0" expanded="true" />
                 <element signature="e#15587#15588#0" expanded="true" />
+                <element signature="e#15683#15684#0" expanded="true" />
                 <element signature="e#15719#15720#0" expanded="true" />
-                <element signature="e#22581#22906#0" expanded="true" />
-                <element signature="e#22905#22906#0" expanded="true" />
+                <element signature="e#26367#26368#0" expanded="true" />
                 <element signature="e#26423#26424#0" expanded="true" />
+                <element signature="e#31619#31620#0" expanded="true" />
                 <element signature="e#31663#31664#0" expanded="true" />
+                <element signature="e#32036#32037#0" expanded="true" />
                 <element signature="e#32068#32069#0" expanded="true" />
               </folding>
             </state>
@@ -123,16 +126,16 @@
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/SplashActivity.java" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" />
-        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" />
         <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="67" />
-    <option name="y" value="27" />
-    <option name="width" value="1400" />
-    <option name="height" value="907" />
+    <option name="y" value="25" />
+    <option name="width" value="893" />
+    <option name="height" value="432" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -140,40 +143,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="Fragments" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
-              <item name="control_app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="Layers" type="462c0819:PsiDirectoryNode" />
-            </path>
             <path>
               <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -182,7 +155,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -199,6 +173,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/android/sdk" />
+    <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
     <property name="project.structure.last.edited" value="Build Variants" />
@@ -482,7 +457,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581601878105</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="saving state">
+      <created>1581689270603</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1581689270603</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -495,10 +477,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1853" height="889" extended-state="6" />
+    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21472053" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21416713" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Captures" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -521,8 +503,8 @@
       <window_info anchor="bottom" id="Gradle Console" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Application Servers" order="12" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.3272727" />
-      <window_info anchor="bottom" id="Android Profiler" order="14" />
-      <window_info anchor="bottom" id="Build" order="15" weight="0.2618421" />
+      <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Build" order="15" visible="true" weight="0.2613391" />
       <window_info anchor="bottom" id="Logcat" order="16" weight="0.30669546" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -554,16 +536,17 @@
     <MESSAGE value="fix of overlay-permission" />
     <MESSAGE value="merge into develop" />
     <MESSAGE value="Robot beeing first geopoint of route" />
-    <option name="LAST_COMMIT_MESSAGE" value="Robot beeing first geopoint of route" />
+    <MESSAGE value="saving state" />
+    <option name="LAST_COMMIT_MESSAGE" value="saving state" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/main.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/tileprovider/modules/MapTileModuleProviderBase.java" />
     <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java">
@@ -634,6 +617,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="381">
           <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
@@ -646,7 +630,6 @@
           </folding>
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.5/da28b882fd6332d59de83f358b6f0c9edd5882c2/osmdroid-android-6.1.5-sources.jar!/org/osmdroid/events/MapEventsReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -853,27 +836,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="638" column="2" selection-start-line="638" selection-start-column="2" selection-end-line="638" selection-end-column="2" />
-          <folding>
-            <element signature="e#15463#15464#0" expanded="true" />
-            <element signature="e#15587#15588#0" expanded="true" />
-            <element signature="e#15719#15720#0" expanded="true" />
-            <element signature="e#22581#22906#0" expanded="true" />
-            <element signature="e#22905#22906#0" expanded="true" />
-            <element signature="e#26423#26424#0" expanded="true" />
-            <element signature="e#31663#31664#0" expanded="true" />
-            <element signature="e#32068#32069#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="315">
+          <caret line="227" column="69" lean-forward="true" selection-start-line="227" selection-start-column="69" selection-end-line="227" selection-end-column="69" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java">
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2207">
-          <caret line="215" column="9" selection-start-line="215" selection-start-column="9" selection-end-line="215" selection-end-column="9" />
+        <state relative-caret-position="8445">
+          <caret line="638" column="2" selection-start-line="638" selection-start-column="2" selection-end-line="638" selection-end-column="2" />
+          <folding>
+            <element signature="e#15430#15431#0" expanded="true" />
+            <element signature="e#15463#15464#0" expanded="true" />
+            <element signature="e#15553#15554#0" expanded="true" />
+            <element signature="e#15587#15588#0" expanded="true" />
+            <element signature="e#15683#15684#0" expanded="true" />
+            <element signature="e#15719#15720#0" expanded="true" />
+            <element signature="e#26367#26368#0" expanded="true" />
+            <element signature="e#26423#26424#0" expanded="true" />
+            <element signature="e#31619#31620#0" expanded="true" />
+            <element signature="e#31663#31664#0" expanded="true" />
+            <element signature="e#32036#32037#0" expanded="true" />
+            <element signature="e#32068#32069#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

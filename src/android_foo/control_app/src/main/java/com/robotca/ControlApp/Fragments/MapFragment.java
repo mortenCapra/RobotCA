@@ -212,10 +212,26 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
             if(!wayPoints.isEmpty()){
                 addRoute(wayPoints.get(wayPoints.size()-1));
+                wayPoints.remove(1);
+                for(int i = 1; i < wayPoints.size(); i++){
+                    initializeRouteMarker(wayPoints.get(i));
+                }
             }
         }
 
         return view;
+    }
+
+    private void initializeRouteMarker(GeoPoint geoPoint) {
+        Marker marker = new Marker(mapView);
+        marker.setPosition(geoPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setDraggable(true);
+        marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
+        setRouteDragListener(marker);
+        mapView.getOverlays().add(marker);
+        mapView.invalidate();
+        routingMarkers.add(marker);
     }
 
     /**
@@ -255,26 +271,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         } else if(markerStrategy.equals("routing")){
             wayPoints.add(geoPoint);
             marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
-            marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-                @Override
-                public void onMarkerDrag(Marker marker) {
-
-                }
-
-                @Override
-                public void onMarkerDragEnd(Marker marker) {
-                    wayPoints.add(routingMarkers.indexOf(marker)+1, marker.getPosition());
-                    route.setPoints(wayPoints);
-                    mapView.invalidate();
-                }
-
-                @Override
-                public void onMarkerDragStart(Marker marker) {
-                    wayPoints.remove(marker.getPosition());
-
-
-                }
-            });
+            setRouteDragListener(marker);
         addRoute(geoPoint);
         }
         /*GroundOverlay myGroundOverlay = new GroundOverlay(getActivity());
@@ -298,6 +295,26 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 //                geoPoint.getLongitude() + ")", Toast.LENGTH_LONG).show();
 */
         return true;
+    }
+
+    private void setRouteDragListener(Marker marker){
+        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDrag(Marker marker) {
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                wayPoints.add(routingMarkers.indexOf(marker)+1, marker.getPosition());
+                route.setPoints(wayPoints);
+                mapView.invalidate();
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                wayPoints.remove(marker.getPosition());
+            }
+        });
     }
 
     private void addRoute(GeoPoint geoPoint) {
