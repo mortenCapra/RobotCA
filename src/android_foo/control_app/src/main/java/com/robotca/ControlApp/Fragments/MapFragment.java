@@ -28,6 +28,7 @@ import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 //import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
@@ -133,9 +134,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         myLocationOverlay.enableMyLocation();
         secondMyLocationOverlay.enableMyLocation();
 
-        // Center on and follow the robot by default
-        myLocationOverlay.enableFollowLocation();
-
         mapView.getOverlays().add(myLocationOverlay);
         mapView.getOverlays().add(secondMyLocationOverlay);
         mapView.getOverlays().add(0, mapEventsOverlay);
@@ -214,6 +212,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         if(savedInstanceState != null) {
 
             mapView.getController().setZoom(savedInstanceState.getDouble("zoomLevel"));
+            GeoPoint center = new GeoPoint(savedInstanceState.getDouble("mapLocationLat"), savedInstanceState.getDouble("mapLocationLong"));
+            myLocationOverlay.disableFollowLocation();
+            secondMyLocationOverlay.disableFollowLocation();
+            mapView.getController().setCenter(center);
+            mapView.invalidate();
             markerStrategy = savedInstanceState.getString("markerStrategy");
             wayPoints = savedInstanceState.getParcelableArrayList("wayPoints");
             areaPoints = savedInstanceState.getParcelableArrayList("areaPoints");
@@ -251,6 +254,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             //initialize Obstacles
             for (int i = 0; i < allObstaclePoints.size(); i++) {
                 Polygon polygon = new Polygon();
+                obstacles.add(polygon);
                 polygon.setPoints(allObstaclePoints.get(i));
                 polygon.getFillPaint().setARGB(180, 255, 0, 0);
                 mapView.getOverlays().add(polygon);
@@ -832,6 +836,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         outState.putInt("areaPointCheck", areaPointCheck);
         outState.putInt("obstaclePointCheck", obstaclePointCheck);
         outState.putDouble("zoomLevel", mapView.getZoomLevelDouble());
+        outState.putDouble("mapLocationLat", mapView.getMapCenter().getLatitude());
+        outState.putDouble("mapLocationLong", mapView.getMapCenter().getLongitude());
     }
 
     public void controlMode() {
