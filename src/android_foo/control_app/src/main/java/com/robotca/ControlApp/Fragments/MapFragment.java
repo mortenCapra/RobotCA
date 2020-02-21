@@ -228,27 +228,32 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             obstaclePointCheck = savedInstanceState.getInt("obstaclePointCheck");
             areaPointCheck = savedInstanceState.getInt("areaPointCheck");
 
-            //Initialize saved area
-            area = new Polygon();
-            area.setPoints(areaPoints);
-            area.getFillPaint().setARGB(180, 0, 255, 0);
-            mapView.getOverlays().add(area);
 
-            for (int i = 0; i < areaPoints.size()-1; i++){
-                Marker newMarker = initializeMarker(areaPoints.get(i));
-                areaMarkers.add(newMarker);
-                handleAreaMarker(newMarker);
+            //Initialize saved area
+            if (!areaPoints.isEmpty()) {
+                area = new Polygon();
+                area.setPoints(areaPoints);
+                area.getFillPaint().setARGB(180, 0, 255, 0);
+                mapView.getOverlays().add(area);
+
+                for (int i = 0; i < areaPoints.size() - 1; i++) {
+                    Marker newMarker = initializeMarker(areaPoints.get(i));
+                    areaMarkers.add(newMarker);
+                    handleAreaMarker(newMarker);
+                }
             }
 
             //initialize saved route
-            route = new Polyline();
-            route.setPoints(wayPoints);
-            mapView.getOverlays().add(route);
+            if (!wayPoints.isEmpty()) {
+                route = new Polyline();
+                route.setPoints(wayPoints);
+                mapView.getOverlays().add(route);
 
-            for (int i = 1; i < wayPoints.size(); i++){
-                Marker newMarker = initializeMarker(wayPoints.get(i));
-                routingMarkers.add(newMarker);
-                handleRouteMarker(newMarker);
+                for (int i = 1; i < wayPoints.size(); i++) {
+                    Marker newMarker = initializeMarker(wayPoints.get(i));
+                    routingMarkers.add(newMarker);
+                    handleRouteMarker(newMarker);
+                }
             }
 
             //initialize saved Obstacles
