@@ -228,7 +228,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             obstaclePointCheck = savedInstanceState.getInt("obstaclePointCheck");
             areaPointCheck = savedInstanceState.getInt("areaPointCheck");
 
-            //Initialize area
+            //Initialize saved area
             area = new Polygon();
             area.setPoints(areaPoints);
             area.getFillPaint().setARGB(180, 0, 255, 0);
@@ -240,7 +240,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 handleAreaMarker(newMarker);
             }
 
-            //initialize route
+            //initialize saved route
             route = new Polyline();
             route.setPoints(wayPoints);
             mapView.getOverlays().add(route);
@@ -251,7 +251,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 handleRouteMarker(newMarker);
             }
 
-            //initialize Obstacles
+            //initialize saved Obstacles
             for (int i = 0; i < allObstaclePoints.size(); i++) {
                 Polygon polygon = new Polygon();
                 obstacles.add(polygon);
@@ -275,11 +275,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     }
                 }
             }
-
-
             mapView.invalidate();
         }
-
+        controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
 
