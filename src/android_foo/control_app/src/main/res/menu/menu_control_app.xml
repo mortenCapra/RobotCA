@@ -17,6 +17,16 @@
 
         <item android:id="@+id/action_random_walk_control"
               android:title="@string/random_walk"/>
+
+        <item android:id="@+id/action_route_control"
+            android:title="@string/route_control" />
+
+        <item android:id="@+id/action_area_control"
+              android:title="@string/area_control" />
+
+        <item android:id="@+id/action_obstacle_control"
+              android:title="@string/obstacle_control" />
+
     </group>
 
 </menu>

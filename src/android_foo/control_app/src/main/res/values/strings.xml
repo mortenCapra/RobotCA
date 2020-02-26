@@ -156,6 +156,9 @@
     <string name="simple_waypoint_control">Simple Waypoint Control</string>
     <string name="waypoint_control">Waypoint Control</string>
     <string name="random_walk">Random Walk</string>
+    <string name="route_control">Route Control</string>
+    <string name="area_control">Area Control</string>
+    <string name="obstacle_control">Obstacle Control</string>
 
     <!-- Array of Motion plan names -->
     <string-array name="motion_plans">

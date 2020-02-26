@@ -695,6 +695,18 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 setControlMode(ControlMode.RandomWalk);
                 return true;
 
+            case R.id.action_route_control:
+                setControlMode(ControlMode.Routing);
+                return true;
+
+            case R.id.action_area_control:
+                setControlMode(ControlMode.Area);
+                return true;
+
+            case R.id.action_obstacle_control:
+                setControlMode(ControlMode.Obstacles);
+                return true;
+
             default:
                 return mDrawerToggle.onOptionsItemSelected(item);
         }
