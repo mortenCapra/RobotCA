@@ -7,9 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +25,13 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
+import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
+//import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
+//import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -50,15 +58,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
+
     Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton;
-    //Button areaButton, routingButton;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
     ArrayList<Marker> routingMarkers = new ArrayList<>();
     ArrayList<Marker> obstacleMarkers = new ArrayList<>();
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
-    ArrayList<GeoPoint> waypoints = new ArrayList<>();
+    ArrayList<GeoPoint> wayPoints = new ArrayList<>();
     ArrayList<GeoPoint> obstaclePoints = new ArrayList<>();
     ArrayList<Polygon> obstacles = new ArrayList<>();
 
@@ -93,35 +101,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public MapFragment() {
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter("KEY"));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter("KEY"));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        localBroadcastManager.unregisterReceiver(broadcastReceiver);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        localBroadcastManager.unregisterReceiver(broadcastReceiver);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,8 +110,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         robotRecenterButton = view.findViewById(R.id.recenter);
         clearAll = view.findViewById(R.id.clear_all_button);
         clearAreaButton = view.findViewById(R.id.clear_area_button);
-        //areaButton = view.findViewById(R.id.area_button);
-        //routingButton = view.findViewById(R.id.routing_button);
         clearRouteButton = view.findViewById(R.id.clear_route_button);
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
@@ -156,9 +133,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         // Allow GPS updates
         myLocationOverlay.enableMyLocation();
         secondMyLocationOverlay.enableMyLocation();
-
-        // Center on and follow the robot by default
-        myLocationOverlay.enableFollowLocation();
 
         mapView.getOverlays().add(myLocationOverlay);
         mapView.getOverlays().add(secondMyLocationOverlay);
@@ -198,141 +172,180 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Clear area on map
-                for (Marker marker: areaMarkers) {
-                    mapView.getOverlays().remove(marker);
-                }
-                mapView.getOverlays().remove(area);
-                areaMarkers.clear();
-                areaPoints.clear();
-                area = null;
-                mapView.invalidate();
-                areaPointCheck = 0;
+                clearAreaButton.performClick();
 
-                // Clear route on map
-                for (Marker marker: routingMarkers) {
-                    mapView.getOverlays().remove(marker);
-                }
-                mapView.getOverlays().remove(route);
-                routingMarkers.clear();
-                waypoints.clear();
-                route = null;
-                mapView.invalidate();
+                clearRouteButton.performClick();
 
-                // Clear obstacle on map
-                for (int i = 0; i < allObstacleMarkers.size(); i++) {
-                    for (Marker marker: allObstacleMarkers.get(i)) {
-                        mapView.getOverlays().remove(marker);
-                    }
-                }
-
-                for (Polygon polygon: obstacles) {
-                    mapView.getOverlays().remove(polygon);
-                }
-
-                allObstacleMarkers.clear();
-                allObstaclePoints.clear();
-                obstacleMarkers.clear();
-                obstaclePoints.clear();
-                obstacle = null;
-                mapView.invalidate();
-                obstaclePointCheck = 0;
+                clearObstacleButton.performClick();
             }
         });
 
         clearAreaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Clear area on map
-                for (Marker marker: areaMarkers) {
-                    mapView.getOverlays().remove(marker);
-                }
-                mapView.getOverlays().remove(area);
-                areaMarkers.clear();
-                areaPoints.clear();
-                area = null;
-                mapView.invalidate();
-                areaPointCheck = 0;
+                clearArea();
             }
         });
 
         clearRouteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Clear route on map
-                for (Marker marker: routingMarkers) {
-                    mapView.getOverlays().remove(marker);
-                }
-                mapView.getOverlays().remove(route);
-                routingMarkers.clear();
-                waypoints.clear();
-                route = null;
-                mapView.invalidate();
+                clearRoute();
             }
         });
 
         clearObstacleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Clear obstacle on map
-                for (int i = 0; i < allObstacleMarkers.size(); i++) {
-                    for (Marker marker: allObstacleMarkers.get(i)) {
-                        mapView.getOverlays().remove(marker);
-                    }
-                }
-
-                for (Polygon polygon: obstacles) {
-                    mapView.getOverlays().remove(polygon);
-                }
-
-                allObstacleMarkers.clear();
-                allObstaclePoints.clear();
-                obstacleMarkers.clear();
-                obstaclePoints.clear();
-                obstacle = null;
-                mapView.invalidate();
-                obstaclePointCheck = 0;
+                clearObstacleOnMap();
             }
         });
 
-        /*areaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Change marking strategy to area
-                markerStrategy = "area";
-                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
-            }
-        });*/
-
-        /*routingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Change marking strategy to routing
-                markerStrategy = "routing";
-                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
-            }
-        });*/
 
         newObstacleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                markerStrategy = "obstacle";
-                Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
-
-                for (Marker marker: obstacleMarkers) {
-                    marker.setDraggable(false);
-                }
-
-                obstacle = null;
-                obstacleMarkers = new ArrayList<>();
-                obstaclePoints = new ArrayList<>();
-                obstaclePointCheck = 0;
+                prepareForNewObstacle();
             }
         });
 
+        if(savedInstanceState != null) {
+
+            mapView.getController().setZoom(savedInstanceState.getDouble("zoomLevel"));
+            GeoPoint center = new GeoPoint(savedInstanceState.getDouble("mapLocationLat"), savedInstanceState.getDouble("mapLocationLong"));
+            myLocationOverlay.disableFollowLocation();
+            secondMyLocationOverlay.disableFollowLocation();
+            mapView.getController().setCenter(center);
+            mapView.invalidate();
+            markerStrategy = savedInstanceState.getString("markerStrategy");
+            wayPoints = savedInstanceState.getParcelableArrayList("wayPoints");
+            areaPoints = savedInstanceState.getParcelableArrayList("areaPoints");
+            obstaclePoints = savedInstanceState.getParcelableArrayList("obstaclePoints");
+            int size = savedInstanceState.getInt("size");
+            for (int i = 0; i < size; i++){
+                allObstaclePoints.add(i, savedInstanceState.getParcelableArrayList("item" + i));
+            }
+            obstaclePointCheck = savedInstanceState.getInt("obstaclePointCheck");
+            areaPointCheck = savedInstanceState.getInt("areaPointCheck");
+
+
+            //Initialize saved area
+            if (!areaPoints.isEmpty()) {
+                area = new Polygon();
+                area.setPoints(areaPoints);
+                area.getFillPaint().setARGB(180, 0, 255, 0);
+                mapView.getOverlays().add(area);
+
+                for (int i = 0; i < areaPoints.size() - 1; i++) {
+                    Marker newMarker = initializeMarker(areaPoints.get(i));
+                    areaMarkers.add(newMarker);
+                    handleAreaMarker(newMarker);
+                }
+            }
+
+            //initialize saved route
+            if (!wayPoints.isEmpty()) {
+                route = new Polyline();
+                route.setPoints(wayPoints);
+                mapView.getOverlays().add(route);
+
+                for (int i = 1; i < wayPoints.size(); i++) {
+                    Marker newMarker = initializeMarker(wayPoints.get(i));
+                    routingMarkers.add(newMarker);
+                    handleRouteMarker(newMarker);
+                }
+            }
+
+            //initialize saved Obstacles
+            for (int i = 0; i < allObstaclePoints.size(); i++) {
+                Polygon polygon = new Polygon();
+                obstacles.add(polygon);
+                polygon.setPoints(allObstaclePoints.get(i));
+                polygon.getFillPaint().setARGB(180, 255, 0, 0);
+                mapView.getOverlays().add(polygon);
+                ArrayList<Marker> markers = new ArrayList<>();
+                allObstacleMarkers.add(markers);
+                if (obstaclePoints == allObstaclePoints.get(i)){
+                    obstacle = polygon;
+                }
+
+                for (int j = 0; j < allObstaclePoints.get(i).size() - 1; j++){
+                    Marker newMarker = initializeMarker(allObstaclePoints.get(i).get(j));
+                    newMarker.setDraggable(false);
+                    markers.add(newMarker);
+                    handleObstacleMarker(newMarker);
+                    if (obstaclePoints == allObstaclePoints.get(i)){
+                        obstacleMarkers.add(newMarker);
+                        newMarker.setDraggable(true);
+                    }
+                }
+            }
+            mapView.invalidate();
+        }
+        controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
+        mapView.setMinZoomLevel(4.0);
 
         return view;
+    }
+
+    private void prepareForNewObstacle() {
+        markerStrategy = "obstacle";
+        Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
+
+        for (Marker marker: obstacleMarkers) {
+            marker.setDraggable(false);
+        }
+
+        obstacle = null;
+        obstacleMarkers = new ArrayList<>();
+        obstaclePoints = new ArrayList<>();
+        obstaclePointCheck = 0;
+    }
+
+    private void clearObstacleOnMap() {
+        for (int i = 0; i < allObstacleMarkers.size(); i++) {
+            for (Marker marker : allObstacleMarkers.get(i)) {
+                mapView.getOverlays().remove(marker);
+            }
+        }
+
+        for (Polygon polygon : obstacles) {
+            mapView.getOverlays().remove(polygon);
+        }
+
+        allObstacleMarkers.clear();
+        allObstaclePoints.clear();
+        obstacleMarkers.clear();
+        obstaclePoints.clear();
+        obstacle = null;
+        mapView.invalidate();
+        obstaclePointCheck = 0;
+    }
+
+    private void clearRoute() {
+        // Clear route on map
+        for (Marker marker : routingMarkers) {
+            mapView.getOverlays().remove(marker);
+        }
+        mapView.getOverlays().remove(route);
+        routingMarkers.clear();
+        wayPoints.clear();
+        route = null;
+        mapView.invalidate();
+    }
+
+    private void clearArea() {
+        // Clear area on map
+        for (Marker marker : areaMarkers) {
+            mapView.getOverlays().remove(marker);
+        }
+        mapView.getOverlays().remove(area);
+        areaMarkers.clear();
+        areaPoints.clear();
+        area = null;
+        mapView.invalidate();
+        areaPointCheck = 0;
     }
 
     /**
@@ -356,17 +369,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     @Override
     public boolean longPressHelper(GeoPoint geoPoint) {
         if (markerStrategy != null) {
-            Marker newMarker = new Marker(mapView);
-            newMarker.setPosition(geoPoint);
-            newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            newMarker.setDraggable(true);
-            newMarker.setInfoWindow(null);
-            addMarker(newMarker);
+            Marker newMarker = initializeMarker(geoPoint);
 
             switch (markerStrategy) {
                 case "area":
                     areaPoints.add(geoPoint);
-
+                    areaMarkers.add(newMarker);
                     handleAreaMarker(newMarker);
 
                     if (areaMarkers.size() > 1) {
@@ -375,17 +383,19 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     break;
 
                 case "routing":
-                    waypoints.add(geoPoint);
+                    wayPoints.add(geoPoint);
+                    routingMarkers.add(newMarker);
+
 
                     handleRouteMarker(newMarker);
-
-                    if (routingMarkers.size() > 1) {
-                        addRoute(geoPoint);
-                    }
+                    addRoute(geoPoint);
                     break;
 
                 case "obstacle":
                     obstaclePoints.add(geoPoint);
+                    obstacleMarkers.add(newMarker);
+                    if (!allObstacleMarkers.contains(obstacleMarkers))
+                        allObstacleMarkers.add(obstacleMarkers);
 
                     handleObstacleMarker(newMarker);
 
@@ -399,36 +409,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    public void addMarker(Marker marker) {
-        mapView.getOverlays().add(marker);
+    private Marker initializeMarker(GeoPoint geoPoint) {
+        Marker newMarker = new Marker(mapView);
+        newMarker.setPosition(geoPoint);
+        newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        newMarker.setDraggable(true);
+        newMarker.setInfoWindow(null);
+        mapView.getOverlays().add(newMarker);
         mapView.invalidate();
-
-        switch (markerStrategy) {
-            case "area":
-                areaMarkers.add(marker);
-                break;
-
-            case "routing":
-                routingMarkers.add(marker);
-                break;
-
-            case "obstacle":
-                obstacleMarkers.add(marker);
-                if (!allObstacleMarkers.contains(obstacleMarkers))
-                    allObstacleMarkers.add(obstacleMarkers);
-                break;
-        }
+        return newMarker;
     }
 
-    /*public void removeMarker(Marker marker) {
-        mapView.getOverlays().remove(marker);
-        mapView.invalidate();
-        if(markerStrategy.equals("area"))
-            areaMarkers.remove(marker);
-        else if(markerStrategy.equals("routing")){
-            routingMarkers.remove(marker);
-        }
-    }*/
 
     private void handleAreaMarker(Marker marker) {
         marker.setDefaultIcon();
@@ -520,14 +511,14 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                waypoints.add(routingMarkers.indexOf(marker), marker.getPosition());
-                route.setPoints(waypoints);
+                wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
+                route.setPoints(wayPoints);
                 mapView.invalidate();
             }
 
             @Override
             public void onMarkerDragStart(Marker marker) {
-                waypoints.remove(marker.getPosition());
+                wayPoints.remove(marker.getPosition());
             }
         });
     }
@@ -538,7 +529,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             mapView.invalidate();
         } else {
             route = new Polyline();
-            route.setPoints(waypoints);
+            wayPoints.add(0, myLocationOverlay.getMyLocation());
+            route.setPoints(wayPoints);
             mapView.getOverlays().add(1, route);
             mapView.invalidate();
         }
@@ -633,6 +625,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             if (markerStrategy.equals("obstacle")) {
                 obstacles.add(polygon);
             }
+
+            if (!allObstaclePoints.contains(obstaclePoints)) {
+                allObstaclePoints.add(obstaclePoints);
+            }
         }
 
         if (markerStrategy.equals("area")) {
@@ -643,9 +639,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
             obstaclePoints = points;
-            if (!allObstaclePoints.contains(obstaclePoints)) {
-                allObstaclePoints.add(obstaclePoints);
-            }
         }
     }
 
@@ -801,6 +794,53 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 results[2] = finalBearing;
             }
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter("KEY"));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter("KEY"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("areaPoints", areaPoints);
+        outState.putParcelableArrayList("wayPoints", wayPoints);
+        outState.putParcelableArrayList("obstaclePoints", obstaclePoints);
+        outState.putInt("size", allObstaclePoints.size());
+        for (int i = 0; i < allObstaclePoints.size(); i++){
+            outState.putParcelableArrayList("item" + i, allObstaclePoints.get(i));
+        }
+        outState.putString("markerStrategy", markerStrategy);
+        outState.putInt("areaPointCheck", areaPointCheck);
+        outState.putInt("obstaclePointCheck", obstaclePointCheck);
+        outState.putDouble("zoomLevel", mapView.getZoomLevelDouble());
+        outState.putDouble("mapLocationLat", mapView.getMapCenter().getLatitude());
+        outState.putDouble("mapLocationLong", mapView.getMapCenter().getLongitude());
     }
 
     public void controlMode() {

@@ -66,6 +66,7 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -117,6 +118,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // The ActionBar spinner menu
     private Spinner actionMenuSpinner;
 
+    // The index of the previously visible drawer
+
     // The index of the currently visible drawer
     private int drawerIndex = 1;
 
@@ -135,6 +138,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private static final String WAYPOINT_BUNDLE_ID = "com.robotca.ControlApp.waypoints";
     private static final String SELECTED_VIEW_NUMBER_BUNDLE_ID = "com.robotca.ControlApp.drawerIndex";
     private static final String CONTROL_MODE_BUNDLE_ID = "com.robotca.Views.Fragments.JoystickFragment.controlMode";
+
+    private HashMap<Integer, Fragment.SavedState> fragmentSavedStates = new HashMap<>();
 
     // The saved instance state
     private Bundle savedInstanceState;
@@ -407,6 +412,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        saveState(fragment, drawerIndex);
         selectItem(position);
     }
 
@@ -631,8 +637,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     .replace(R.id.content_frame, fragment)
                     .commit();
 
-            if (fragment instanceof Savable && savedInstanceState != null)
+            restoreState(fragment, position);
+
+            /*if (fragment instanceof Savable && savedInstanceState != null)
                 ((Savable) fragment).load(savedInstanceState);
+*/
         }
 
         // Highlight the selected item, update the title, and close the drawer
@@ -1079,6 +1088,20 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
                 return;
+        }
+    }
+
+    public void restoreState(Fragment fragment, int key){
+        if(fragmentSavedStates.get(key) != null){
+            if(!fragment.isAdded()){
+                fragment.setInitialSavedState(fragmentSavedStates.get(key));
+            }
+        }
+    }
+
+    public void saveState(Fragment fragment, int key){
+        if(fragment.isAdded()){
+            fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
 }
