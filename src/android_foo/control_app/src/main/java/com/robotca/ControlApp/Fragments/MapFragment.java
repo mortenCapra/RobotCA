@@ -201,7 +201,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
         });
 
-
         newObstacleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
