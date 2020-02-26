@@ -39,6 +39,7 @@ public class AreaPlan extends RobotPlan {
     @Override
     public void start(final RobotController controller) throws Exception {
 
+        robotPosition = mapFragment.getMyLocationOverlay().getMyLocation();
         areaPoints = mapFragment.getAreaPoints();
 
         double robotLat = robotPosition.getLatitude();
