@@ -857,5 +857,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 break;
         }
     }
+
+    public ArrayList<GeoPoint> getAreaPoints() {
+        return areaPoints;
+    }
+
+    public MyLocationNewOverlay getMyLocationOverlay() {
+        return myLocationOverlay;
+    }
 }
 
