@@ -8,12 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +22,8 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
-import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 //import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 //import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
@@ -45,7 +40,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Fragment containing the Map screen showing the real-world position of the Robot.
@@ -85,6 +79,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     int obstaclePointCheck = 0;
 
     ControlMode controlMode = ControlMode.Joystick;
+    ControlApp controlApp;
 
     private LocalBroadcastManager localBroadcastManager;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -99,6 +94,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      * Default Constructor.
      */
     public MapFragment() {
+    }
+
+    public MapFragment(ControlApp controlApp) {
+        this.controlApp = controlApp;
     }
 
     @Nullable
@@ -132,6 +131,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Allow GPS updates
         myLocationOverlay.enableMyLocation();
+        myLocationOverlay.enableFollowLocation();
         secondMyLocationOverlay.enableMyLocation();
 
         mapView.getOverlays().add(myLocationOverlay);
@@ -634,6 +634,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             area = polygon;
             areaPointCheck = pointCheck;
             areaPoints = points;
+            controlApp.setAreaPoints(areaPoints);
         } else if (markerStrategy.equals("obstacle")) {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
@@ -895,14 +896,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 clearObstacleButton.setVisibility(View.GONE);
                 break;
         }
-    }
-
-    public ArrayList<GeoPoint> getAreaPoints() {
-        return areaPoints;
-    }
-
-    public MyLocationNewOverlay getMyLocationOverlay() {
-        return myLocationOverlay;
     }
 }
 

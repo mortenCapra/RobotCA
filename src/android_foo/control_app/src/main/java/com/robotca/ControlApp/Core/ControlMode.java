@@ -58,7 +58,7 @@ public enum ControlMode {
                             .getDefaultSharedPreferences(controlApp)
                             .getString("edittext_random_walk_range_proximity", "1")));
                 break;
-            case Area: plan = new AreaPlan(); break;
+            case Area: plan = new AreaPlan(controlApp); break;
             default: plan = null; break;
         }
 
