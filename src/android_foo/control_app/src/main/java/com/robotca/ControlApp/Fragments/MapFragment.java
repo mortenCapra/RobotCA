@@ -25,8 +25,6 @@ import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
-//import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
-//import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
