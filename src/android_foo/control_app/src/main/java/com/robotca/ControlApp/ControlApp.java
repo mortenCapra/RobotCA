@@ -60,6 +60,9 @@ import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polygon;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -145,6 +148,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private Bundle savedInstanceState;
 
     private LocalBroadcastManager localBroadcastManager;
+
+    ArrayList<GeoPoint> areaPoints = new ArrayList<>();
 
     /**
      * Default Constructor.
@@ -577,7 +582,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 break;
 
             case 4:
-                fragment = new MapFragment();
+                fragment = new MapFragment(this);
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
@@ -1103,5 +1108,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         if(fragment.isAdded()){
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
+    }
+
+    public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
+        this.areaPoints = areaPoints;
+    }
+
+    public ArrayList<GeoPoint> getAreaPoints() {
+        return areaPoints;
     }
 }
