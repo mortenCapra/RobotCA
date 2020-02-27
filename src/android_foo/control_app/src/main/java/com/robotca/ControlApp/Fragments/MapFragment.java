@@ -138,6 +138,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.getOverlays().add(secondMyLocationOverlay);
         mapView.getOverlays().add(0, mapEventsOverlay);
 
+        myLocationOverlay.enableFollowLocation();
+
         // Set up the Center button
         robotRecenterButton.setFocusable(false);
         robotRecenterButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -149,7 +151,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on you", Toast.LENGTH_SHORT).show();
                 secondMyLocationOverlay.enableFollowLocation();
-                mapView.postInvalidate();
+                mapView.invalidate();
                 return true;
             }
         });
@@ -162,7 +164,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on the Robot", Toast.LENGTH_SHORT).show();
                 myLocationOverlay.enableFollowLocation();
-                mapView.postInvalidate();
+                mapView.invalidate();
             }
         });
 
@@ -285,6 +287,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
+        mapView.invalidate();
 
         return view;
     }
