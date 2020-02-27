@@ -128,8 +128,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // Log tag String
     private static final String TAG = "ControlApp";
-
     // List of waypoints
+
     private final LinkedList<Vector3> waypoints;
     // Specifies how close waypoints need to be to be considered touching
     private static final double MINIMUM_WAYPOINT_DISTANCE = 1.0;
