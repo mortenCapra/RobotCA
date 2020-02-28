@@ -171,7 +171,7 @@ public class LaserScanRenderer implements GLSurfaceView.Renderer, MessageListene
                     x -= xShift;
                     y += yShift;
 
-                    LaserScanRenderer.this.controlApp.addWaypointWithCheck(screenToWorld(x, y), cameraZoom);
+                    LaserScanRenderer.this.controlApp.addRobotPointWithCheck(screenToWorld(x, y), cameraZoom);
                 } catch (Exception ex) {
                     // Ignore
                 }
@@ -182,7 +182,7 @@ public class LaserScanRenderer implements GLSurfaceView.Renderer, MessageListene
             public void onLongPress(MotionEvent e) {
                 Log.d(TAG, "Long Press");
 
-                movePtIdx = controlApp.findWaypointAt(screenToWorld2(e.getX(), e.getY()), cameraZoom);
+                movePtIdx = controlApp.findRobotpointAt(screenToWorld2(e.getX(), e.getY()), cameraZoom);
 
 
                 if (movePtIdx != -1)
@@ -192,7 +192,7 @@ public class LaserScanRenderer implements GLSurfaceView.Renderer, MessageListene
                     isMoving = false;
 
                     // Grab the point
-                    movePt = controlApp.getWaypoints().get(movePtIdx);
+                    movePt = controlApp.getRobotPoints().get(movePtIdx);
 
                     PointF pos = new PointF();
                     drawPoint(null, movePt.getX(), movePt.getY(), 0.0f, 0, pos);
@@ -336,9 +336,9 @@ public class LaserScanRenderer implements GLSurfaceView.Renderer, MessageListene
 
                     Vector3 pt = screenToWorld2(mpXShift, mpYShift);
 
-                    synchronized (controlApp.getWaypoints()) {
-                        controlApp.getWaypoints().remove(movePtIdx);
-                        controlApp.getWaypoints().add(movePtIdx, pt);
+                    synchronized (controlApp.getRobotPoints()) {
+                        controlApp.getRobotPoints().remove(movePtIdx);
+                        controlApp.getRobotPoints().add(movePtIdx, pt);
                     }
                 }
 
@@ -579,12 +579,12 @@ public class LaserScanRenderer implements GLSurfaceView.Renderer, MessageListene
 //        gl.glDepthFunc(GL10.GL_GEQUAL);
 
         // Lock on waypoints to prevent modifications while reading
-        synchronized (controlApp.getWaypoints()) {
+        synchronized (controlApp.getRobotPoints()) {
 
-            b = Vertices.allocateBuffer(3 * controlApp.getWaypoints().size());
+            b = Vertices.allocateBuffer(3 * controlApp.getRobotPoints().size());
             b.rewind();
 
-            for (Vector3 pt : controlApp.getWaypoints()) {
+            for (Vector3 pt : controlApp.getRobotPoints()) {
 
                 drawPoint(gl, pt.getX(), pt.getY(), 0.0f, 0, res);
 

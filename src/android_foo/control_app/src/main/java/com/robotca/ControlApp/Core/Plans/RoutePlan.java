@@ -6,7 +6,6 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Utils;
-import com.robotca.ControlApp.Fragments.HUDFragment;
 
 import org.ros.rosjava_geometry.Vector3;
 
@@ -14,22 +13,24 @@ import org.ros.rosjava_geometry.Vector3;
  * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
  *
  * Created by Nathaniel Stone on 3/4/16.
+ *
  */
-public class SimpleWaypointPlan extends RobotPlan {
+public class RoutePlan extends RobotPlan {
 
     private static final double MINIMUM_DISTANCE = 1.0;
     private final ControlApp controlApp;
 
     private static final String TAG = "SimpleWaypointPlan";
 
-    private static final double MAX_SPEED = 0.75;
+    private static final double MAX_SPEED = 1.00;
 
     /**
-     * Creates a SimpleWaypointPlan for the specified ControlApp.
+     * Creates a RoutePlan for the specified ControlApp.
      * @param controlApp The ControlApp
      */
-    public SimpleWaypointPlan (ControlApp controlApp) {
+    public RoutePlan(ControlApp controlApp) {
         this.controlApp = controlApp;
+        stop();
     }
 
     /**
@@ -37,7 +38,7 @@ public class SimpleWaypointPlan extends RobotPlan {
      */
     @Override
     public ControlMode getControlMode() {
-        return ControlMode.SimpleWaypoint;
+        return ControlMode.Routing;
     }
 
     @Override
