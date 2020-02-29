@@ -343,7 +343,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         route = null;
         mapView.invalidate();
         ((ControlApp) getActivity()).clearRoute();
-        initialPoint = myLocationOverlay.getMyLocation();
     }
 
     private void clearArea() {

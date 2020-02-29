@@ -1114,7 +1114,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public void clearRoute(){
         controller.stop();
         routePoints.clear();
-        controller.runPlan(new RoutePlan(this));
     }
 
     public void alterPointInRoute(Vector3 oldV, Vector3 newV){
