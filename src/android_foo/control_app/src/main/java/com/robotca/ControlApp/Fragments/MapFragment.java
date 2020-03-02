@@ -658,6 +658,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             results.add(distance);
         }
 
+        @SuppressWarnings("unchecked")
         ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
         Collections.sort(copyResults);
         double minValue = copyResults.get(0);
