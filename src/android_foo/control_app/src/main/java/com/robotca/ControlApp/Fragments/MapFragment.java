@@ -79,7 +79,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     int obstaclePointCheck = 0;
 
     ControlMode controlMode = ControlMode.Joystick;
-    ControlApp controlApp;
 
     private LocalBroadcastManager localBroadcastManager;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -94,10 +93,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      * Default Constructor.
      */
     public MapFragment() {
-    }
-
-    public MapFragment(ControlApp controlApp) {
-        this.controlApp = controlApp;
     }
 
     @Nullable
@@ -169,7 +164,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
 
         IMapController mapViewController = mapView.getController();
-        mapViewController.setZoom(18.0);
+        mapViewController.setZoom(23.0);
 
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,6 +318,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         obstacle = null;
         mapView.invalidate();
         obstaclePointCheck = 0;
+        ((ControlApp) getActivity()).setObstaclePoints(null);
     }
 
     private void clearRoute() {
@@ -348,6 +344,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         area = null;
         mapView.invalidate();
         areaPointCheck = 0;
+        ((ControlApp) getActivity()).setAreaPoints(null);
     }
 
     /**
@@ -630,6 +627,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
+                ((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
             }
         }
 
@@ -637,11 +635,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             area = polygon;
             areaPointCheck = pointCheck;
             areaPoints = points;
-            controlApp.setAreaPoints(areaPoints);
+            ((ControlApp) getActivity()).setAreaPoints(areaPoints);
         } else if (markerStrategy.equals("obstacle")) {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
             obstaclePoints = points;
+            //((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
         }
     }
 
@@ -854,9 +853,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
 
                 clearAll.setVisibility(View.VISIBLE);
-                //routingButton.setVisibility(View.VISIBLE);
                 clearRouteButton.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
@@ -867,9 +864,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
 
                 clearAll.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.VISIBLE);
                 clearAreaButton.setVisibility(View.VISIBLE);
-                //routingButton.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
@@ -882,19 +877,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 clearAll.setVisibility(View.VISIBLE);
                 newObstacleButton.setVisibility(View.VISIBLE);
                 clearObstacleButton.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
-                //routingButton.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
                 break;
 
             default:
                 Toast.makeText(mapView.getContext(), "Change Control Mode to Routing, Area or Obstacles to add markers", Toast.LENGTH_SHORT).show();
 
-                //routingButton.setVisibility(View.GONE);
                 clearAll.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
