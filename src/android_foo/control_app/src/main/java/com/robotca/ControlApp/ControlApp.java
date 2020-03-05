@@ -148,6 +148,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private LocalBroadcastManager localBroadcastManager;
 
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
+    ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
 
     /**
      * Default Constructor.
@@ -580,7 +581,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 break;
 
             case 4:
-                fragment = new MapFragment(this);
+                fragment = new MapFragment();
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
@@ -1114,5 +1115,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public ArrayList<GeoPoint> getAreaPoints() {
         return areaPoints;
+    }
+
+    public void setObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
+        this.obstaclePoints.add(obstaclePoints);
+    }
+
+    public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {
+        return obstaclePoints;
     }
 }
