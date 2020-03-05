@@ -1,9 +1,7 @@
 package com.robotca.ControlApp.Core.Plans;
 
-import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
