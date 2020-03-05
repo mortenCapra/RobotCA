@@ -534,7 +534,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-            Vector3 oldV = createVectorFromGeoPoint(marker.getPosition());
+            Vector3 oldV;
             @Override
             public void onMarkerDrag(Marker marker) {
 
@@ -551,6 +551,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             @Override
             public void onMarkerDragStart(Marker marker) {
                 wayPoints.remove(marker.getPosition());
+                oldV = createVectorFromGeoPoint(marker.getPosition());
             }
         });
     }
