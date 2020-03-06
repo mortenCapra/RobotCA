@@ -3,10 +3,14 @@ package com.robotca.ControlApp.Core;
 import android.preference.PreferenceManager;
 
 import com.robotca.ControlApp.ControlApp;
+import com.robotca.ControlApp.Core.Plans.AreaPlan;
 import com.robotca.ControlApp.Core.Plans.RandomWalkPlan;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.Core.Plans.RoutePlan;
 import com.robotca.ControlApp.Core.Plans.WaypointPlan;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polygon;
 
 /**
  * Enum for different ways to control the Robot.
@@ -53,6 +57,7 @@ public enum ControlMode {
                             .getDefaultSharedPreferences(controlApp)
                             .getString("edittext_random_walk_range_proximity", "1")));
                 break;
+            case Area: plan = new AreaPlan(controlApp); break;
             default: plan = null; break;
         }
 

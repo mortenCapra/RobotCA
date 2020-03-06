@@ -22,7 +22,7 @@ import com.robotca.ControlApp.R;
 
 import org.ros.message.MessageListener;
 
-import nav_msgs.Odometry;
+import sensor_msgs.Imu;
 
 /**
  * Simple fragment showing info about the Robot's current state.
@@ -32,7 +32,7 @@ import nav_msgs.Odometry;
  *
  * @author Nathaniel Stone
  */
-public class HUDFragment extends SimpleFragment implements MessageListener<Odometry>{
+public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
 
     @SuppressWarnings("unused")
     private static final String TAG = "HUDFragment";
@@ -149,10 +149,10 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Odome
      * @param message The Odometry message
      */
     @Override
-    public void onNewMessage(Odometry message) {
+    public void onNewMessage(Imu message) {
 
-        updateUI(message.getTwist().getTwist().getLinear().getX(),
-                message.getTwist().getTwist().getAngular().getZ());
+        updateUI(message.getLinearAcceleration().getX(),
+                message.getAngularVelocity().getZ());
     }
 
     /**

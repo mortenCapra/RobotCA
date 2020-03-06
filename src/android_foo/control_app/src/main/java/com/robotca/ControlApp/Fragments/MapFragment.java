@@ -8,12 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +26,7 @@ import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
-//import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
-//import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -47,7 +41,6 @@ import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Fragment containing the Map screen showing the real-world position of the Robot.
@@ -135,6 +128,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Allow GPS updates
         myLocationOverlay.enableMyLocation();
+        myLocationOverlay.enableFollowLocation();
         secondMyLocationOverlay.enableMyLocation();
 
         mapView.getOverlays().add(myLocationOverlay);
@@ -174,7 +168,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
 
         IMapController mapViewController = mapView.getController();
-        mapViewController.setZoom(18.0);
+        mapViewController.setZoom(23.0);
 
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +201,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 clearObstacleOnMap();
             }
         });
-
 
         newObstacleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -330,6 +323,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         obstacle = null;
         mapView.invalidate();
         obstaclePointCheck = 0;
+        ((ControlApp) getActivity()).setObstaclePoints(null);
     }
 
     private void clearRoute() {
@@ -356,6 +350,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         area = null;
         mapView.invalidate();
         areaPointCheck = 0;
+        ((ControlApp) getActivity()).setAreaPoints(null);
     }
 
     /**
@@ -661,6 +656,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
+                ((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
             }
         }
 
@@ -668,10 +664,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             area = polygon;
             areaPointCheck = pointCheck;
             areaPoints = points;
+            ((ControlApp) getActivity()).setAreaPoints(areaPoints);
         } else if (markerStrategy.equals("obstacle")) {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
             obstaclePoints = points;
+            //((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
         }
     }
 
@@ -688,6 +686,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             results.add(distance);
         }
 
+        @SuppressWarnings("unchecked")
         ArrayList<Double> copyResults = (ArrayList<Double>) results.clone();
         Collections.sort(copyResults);
         double minValue = copyResults.get(0);
@@ -883,9 +882,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
 
                 clearAll.setVisibility(View.VISIBLE);
-                //routingButton.setVisibility(View.VISIBLE);
                 clearRouteButton.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
@@ -896,9 +893,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
 
                 clearAll.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.VISIBLE);
                 clearAreaButton.setVisibility(View.VISIBLE);
-                //routingButton.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
@@ -911,19 +906,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 clearAll.setVisibility(View.VISIBLE);
                 newObstacleButton.setVisibility(View.VISIBLE);
                 clearObstacleButton.setVisibility(View.VISIBLE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
-                //routingButton.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
                 break;
 
             default:
                 Toast.makeText(mapView.getContext(), "Change Control Mode to Routing, Area or Obstacles to add markers", Toast.LENGTH_SHORT).show();
 
-                //routingButton.setVisibility(View.GONE);
                 clearAll.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
-                //areaButton.setVisibility(View.GONE);
                 clearAreaButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);

@@ -61,6 +61,7 @@ import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
+import org.osmdroid.util.GeoPoint;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -149,6 +150,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private Bundle savedInstanceState;
 
     private LocalBroadcastManager localBroadcastManager;
+
+    ArrayList<GeoPoint> areaPoints = new ArrayList<>();
+    ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
 
     /**
      * Default Constructor.
@@ -710,6 +714,14 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 setControlMode(ControlMode.RandomWalk);
                 return true;
 
+            case R.id.action_area_control:
+                setControlMode(ControlMode.Area);
+                return true;
+
+            case R.id.action_obstacle_control:
+                setControlMode(ControlMode.Obstacles);
+                return true;
+
             default:
                 return mDrawerToggle.onOptionsItemSelected(item);
         }
@@ -1103,6 +1115,23 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
+
+    public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
+        this.areaPoints = areaPoints;
+    }
+
+    public ArrayList<GeoPoint> getAreaPoints() {
+        return areaPoints;
+    }
+
+    public void setObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
+        this.obstaclePoints.add(obstaclePoints);
+    }
+
+    public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {
+        return obstaclePoints;
+    }
+
 
     public void addPointToRoute(Vector3 v){
         routePoints.addLast(v);
