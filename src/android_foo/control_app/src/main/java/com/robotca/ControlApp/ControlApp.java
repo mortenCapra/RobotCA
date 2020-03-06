@@ -976,7 +976,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         robotPointsChanged();
         if (fragment instanceof MapFragment){
-            ((MapFragment) fragment).removeFirstPointFromRoute();
+            ((MapFragment) fragment).removePointsFromRoute(waypoints.size());
         }
 
         return r;
