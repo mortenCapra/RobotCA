@@ -17,7 +17,7 @@ import org.ros.rosjava_geometry.Vector3;
  */
 public class RoutePlan extends RobotPlan {
 
-    private static final double MINIMUM_DISTANCE = 1.0;
+    private static final double MINIMUM_DISTANCE = 0.25;
     private final ControlApp controlApp;
 
     private static final String TAG = "SimpleWaypointPlan";

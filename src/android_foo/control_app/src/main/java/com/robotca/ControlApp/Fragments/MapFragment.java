@@ -569,6 +569,14 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
+    public void removeFirstPointFromRoute(){
+        wayPoints.remove(0);
+        route.setPoints(wayPoints);
+        mapView.getOverlays().remove(routingMarkers.get(0));
+        routingMarkers.remove(0);
+        mapView.invalidate();
+    }
+
     private void addArea(GeoPoint geoPoint, Polygon polygon, int pointCheck, ArrayList<GeoPoint> points) {
         if (polygon != null) {
             mapView.getOverlays().remove(polygon);
