@@ -6,9 +6,11 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.robotca.ControlApp.ControlApp;
+import com.robotca.ControlApp.Core.Messages.CapraOdometry;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.R;
 
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -19,6 +21,7 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +34,8 @@ import sensor_msgs.CompressedImage;
 import sensor_msgs.Imu;
 import sensor_msgs.LaserScan;
 import sensor_msgs.NavSatFix;
+
+import static org.ros.internal.transport.ConnectionHeaderFields.TOPIC;
 
 /**
  * Manages receiving data from, and sending commands to, a connected Robot.
@@ -379,7 +384,7 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * Refreshes all topics, recreating them if there topic names have been changed.
+     * Refreshes all topics, recreating them if their topic names have been changed.
      */
     public void refreshTopics() {
 

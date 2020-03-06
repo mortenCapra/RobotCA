@@ -423,6 +423,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         //  float b22= res[2];
         computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), initialPoint.getLongitude(), res);
         float b = res[2];
+        // to accomodate the right heading for capra robot
+        b = b;
         if(b < 90 && b > 0){
             x = -x;
         } else if(b < 0 && b > -90){

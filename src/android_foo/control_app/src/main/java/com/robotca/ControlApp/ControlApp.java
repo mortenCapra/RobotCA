@@ -982,10 +982,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public Vector3 pollDestination() {
 
         Vector3 r;
-
+        
         r = waypoints.pollFirst();
 
-        robotPointsChanged();
+      //  robotPointsChanged();
 
         return r;
     }
@@ -1143,6 +1143,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public void clearRoute(){
         controller.stop();
         routePoints.clear();
+        controller.runPlan( ControlMode.getRobotPlan(this, getControlMode()));
+
     }
 
     public void alterPointInRoute(Vector3 oldV, Vector3 newV){

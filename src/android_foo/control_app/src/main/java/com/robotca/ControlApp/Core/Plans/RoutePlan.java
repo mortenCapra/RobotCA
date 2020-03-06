@@ -70,6 +70,7 @@ public class RoutePlan extends RobotPlan {
 
                 // Check angle to target
                 dir = Utils.pointDirection(RobotController.getX(), RobotController.getY(), next.getX(), next.getY());
+                double h = Math.toDegrees(RobotController.getHeading());
                 dir = Utils.angleDifference(RobotController.getHeading(), dir);
 
                 controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
