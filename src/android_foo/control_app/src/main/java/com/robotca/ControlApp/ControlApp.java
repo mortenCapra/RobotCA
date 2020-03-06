@@ -150,6 +150,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     private LocalBroadcastManager localBroadcastManager;
 
+    //
     /**
      * Default Constructor.
      */
