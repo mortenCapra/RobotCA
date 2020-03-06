@@ -75,7 +75,7 @@ public class AreaPlan extends RobotPlan {
                     result = distances.get(i);
                 }
             }
-
+            double r = RobotController.getHeading();
             angleOf(areaPoints);
 
             double heading = headingToNavigateFrom();

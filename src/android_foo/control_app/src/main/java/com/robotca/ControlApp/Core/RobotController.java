@@ -27,8 +27,8 @@ import geometry_msgs.Point;
 import geometry_msgs.Pose;
 import geometry_msgs.Quaternion;
 import geometry_msgs.Twist;
-import nav_msgs.Odometry;
 import sensor_msgs.CompressedImage;
+import sensor_msgs.Imu;
 import sensor_msgs.LaserScan;
 import sensor_msgs.NavSatFix;
 
@@ -73,9 +73,9 @@ public class RobotController implements NodeMain, Savable {
     private final Object laserScanMutex = new Object();
 
     // Subscriber to Odometry data
-    private Subscriber<Odometry> odometrySubscriber;
+    private Subscriber<Imu> odometrySubscriber;
     // The most recent Odometry
-    private Odometry odometry;
+    private Imu odometry;
     // Lock for synchronizing accessing and receiving the current Odometry
     private final Object odometryMutex = new Object();
 
@@ -105,7 +105,7 @@ public class RobotController implements NodeMain, Savable {
     // Listener for LaserScans
     private final ArrayList<MessageListener<LaserScan>> laserScanListeners;
     // Listener for Odometry
-    private ArrayList<MessageListener<Odometry>> odometryListeners;
+    private ArrayList<MessageListener<Imu>> odometryListeners;
     // Listener for NavSatFix
     private ArrayList<MessageListener<NavSatFix>> navSatListeners;
 
@@ -159,7 +159,7 @@ public class RobotController implements NodeMain, Savable {
      * @param l The listener
      * @return True on success
      */
-    public boolean addOdometryListener(MessageListener<Odometry> l) {
+    public boolean addOdometryListener(MessageListener<Imu> l) {
         return odometryListeners.add(l);
     }
 
@@ -477,10 +477,10 @@ public class RobotController implements NodeMain, Savable {
                 odometrySubscriber.shutdown();
 
             // Start the Odometry subscriber
-            odometrySubscriber = connectedNode.newSubscriber(odometryTopic, Odometry._TYPE);
-            odometrySubscriber.addMessageListener(new MessageListener<Odometry>() {
+            odometrySubscriber = connectedNode.newSubscriber(odometryTopic, Imu._TYPE);
+            odometrySubscriber.addMessageListener(new MessageListener<Imu>() {
                 @Override
-                public void onNewMessage(Odometry odometry) {
+                public void onNewMessage(Imu odometry) {
                     setOdometry(odometry);
                 }
             });
@@ -647,7 +647,7 @@ public class RobotController implements NodeMain, Savable {
      * @return The most recently received Odometry.
      */
     @SuppressWarnings("unused")
-    public Odometry getOdometry() {
+    public Imu getOdometry() {
         synchronized (odometryMutex) {
             return odometry;
         }
@@ -657,26 +657,26 @@ public class RobotController implements NodeMain, Savable {
      * Sets the current Odometry.
      * @param odometry The Odometry
      */
-    protected void setOdometry(Odometry odometry) {
+    protected void setOdometry(Imu odometry) {
         synchronized (odometryMutex) {
             this.odometry = odometry;
 
             // Call the listener callbacks
-            for (MessageListener<Odometry> listener: odometryListeners) {
+            for (MessageListener<Imu> listener: odometryListeners) {
                 listener.onNewMessage(odometry);
             }
 
             // Record position TODO this should be moved to setPose() but that's not being called for some reason
             if (startPos == null) {
-                startPos = odometry.getPose().getPose().getPosition();
+                //startPos = odometry.getPose().getPose().getPosition();
             } else {
-                currentPos = odometry.getPose().getPose().getPosition();
+                //currentPos = odometry.getPose().getPose().getPosition();
             }
-            rotation = odometry.getPose().getPose().getOrientation();
+            rotation = odometry.getOrientation();
 
             // Record speed and turnrate
-            speed = odometry.getTwist().getTwist().getLinear().getX();
-            turnRate = odometry.getTwist().getTwist().getAngular().getZ();
+            speed = odometry.getLinearAcceleration().getX();
+            turnRate = odometry.getAngularVelocity().getZ();
         }
     }
 
