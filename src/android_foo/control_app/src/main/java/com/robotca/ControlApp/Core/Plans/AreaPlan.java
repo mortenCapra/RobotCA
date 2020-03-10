@@ -222,7 +222,15 @@ public class AreaPlan extends RobotPlan {
             heading = Math.PI + h;
         }
 
-        return Math.toDegrees(heading);
+        heading = Math.toDegrees(heading);
+
+        // If physical robot, comment this in
+        /*if (heading >= 270)
+            heading = 360 - heading;
+        else
+            heading = heading + 90;*/
+
+        return heading;
     }
 
     private void angleOf(@NonNull ArrayList<GeoPoint> geoPoints) {
