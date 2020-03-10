@@ -3,6 +3,8 @@ package com.robotca.ControlApp.Core.Plans;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
@@ -56,16 +58,22 @@ public class AreaPlan extends RobotPlan {
             }
 
             ArrayList<GeoPoint> areaPoints = controlApp.getAreaPoints();
+            ArrayList<ArrayList<GeoPoint>> allObstaclePoints = controlApp.getObstaclePoints();
             Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
 
-            while (!contains(areaPoints, location)) {
+            while (!robotInArea(areaPoints, location) || robotInObstacle(allObstaclePoints, location)) {
                 waitFor(1000L);
             }
 
-            calculateDistFromRobotToAreaLine(areaPoints, location);
+            //calculateDistFromRobotToAreaLine(areaPoints, location);
+            calculateDistFromRobotToLine(areaPoints, location);
+            angleOf(areaPoints);
 
             if (controlApp.getObstaclePoints() != null) {
-                calculateDistFromRobotToObstacleLine();
+                for (ArrayList<GeoPoint> obstaclePoints: allObstaclePoints) {
+                    calculateDistFromRobotToLine(obstaclePoints, location);
+                    angleOf(obstaclePoints);
+                }
             }
 
             result = distances.get(0);
@@ -75,8 +83,6 @@ public class AreaPlan extends RobotPlan {
                     result = distances.get(i);
                 }
             }
-
-            angleOf(areaPoints);
 
             double heading = headingToNavigateFrom();
 
@@ -128,12 +134,12 @@ public class AreaPlan extends RobotPlan {
                 waitFor(1000);
                 controller.publishVelocity(0, 0, 0);
             }
+            distances.clear();
+            angles.clear();
         }
     }
 
-    private void calculateDistFromRobotToAreaLine(ArrayList<GeoPoint> areaPoints, Location location) {
-        distances.clear();
-
+    private void calculateDistFromRobotToAreaLine(@NonNull ArrayList<GeoPoint> areaPoints, Location location) {
         ArrayList<Double> distBetweenAreaPoints = new ArrayList<>();
         ArrayList<Double> distBetweenAreaPointAndRobot = new ArrayList<>();
 
@@ -160,45 +166,51 @@ public class AreaPlan extends RobotPlan {
 
             distances.add(d);
         }
-
-        distBetweenAreaPoints.clear();
-        distBetweenAreaPointAndRobot.clear();
     }
 
-    private void calculateDistFromRobotToObstacleLine() {
-        ArrayList<Double> distBetweenObstaclePoints = new ArrayList<>();
-        ArrayList<Double> distBetweenObstaclePointAndRobot = new ArrayList<>();
+    /**
+     * Calculate distance from robot to all lines, inspiration from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+     * @param points points used to make a line
+     * @param location location of the robot
+     */
+    private void calculateDistFromRobotToLine(@NonNull ArrayList<GeoPoint> points, Location location) {
+        for (int i = 0; i < points.size() - 1; i++) {
+            double x = location.getLatitude();
+            double x1 = points.get(i).getLatitude();
+            double x2 = points.get(i+1).getLatitude();
+            double y = location.getLongitude();
+            double y1 = points.get(i).getLongitude();
+            double y2 = points.get(i+1).getLongitude();
 
-        ArrayList<ArrayList<GeoPoint>> obstaclePoints = controlApp.getObstaclePoints();
-        Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
+            double A = x - x1;
+            double B = y - y1;
+            double C = x2 - x1;
+            double D = y2 - y1;
 
-        for (int i = 0; i < obstaclePoints.size(); i++) {
-            for (int j = 0; j < obstaclePoints.get(i).size() - 1; j++) {
-                double startLon = obstaclePoints.get(i).get(j).getLongitude();
-                double startLat = obstaclePoints.get(i).get(j).getLatitude();
-                double endLon = obstaclePoints.get(i).get(j+1).getLongitude();
-                double endLat = obstaclePoints.get(i).get(j+1).getLatitude();
+            double dot = A * C + B * D;
+            double len_sq = C * C + D * D;
+            double param = -1;
 
-                double dPoints = MapFragment.computeDistanceToKilometers(startLat, startLon, endLat, endLon);
-                double dRobot = MapFragment.computeDistanceToKilometers(startLat, startLon, location.getLatitude(), location.getLongitude());
+            if (len_sq != 0)
+                param = dot / len_sq;
 
-                distBetweenObstaclePoints.add(dPoints);
-                distBetweenObstaclePointAndRobot.add(dRobot);
-                if (j == obstaclePoints.get(i).size() - 2) {
-                    distBetweenObstaclePointAndRobot.add(distBetweenObstaclePointAndRobot.get(0));
-                }
+            double xx, yy;
+
+            if (param < 0) {
+                xx = x1;
+                yy = y1;
+            } else if (param > 1) {
+                xx = x2;
+                yy = y2;
+            } else {
+                xx = x1 + param * C;
+                yy = y1 + param * D;
             }
 
-            for (int j = 0; j < obstaclePoints.get(i).size() - 1; j++) {
-                double perimeter = (distBetweenObstaclePoints.get(j) + distBetweenObstaclePointAndRobot.get(j) + distBetweenObstaclePointAndRobot.get(j+1)) / 2;
-                double area = Math.sqrt(perimeter * (perimeter - distBetweenObstaclePoints.get(j)) * (perimeter - distBetweenObstaclePointAndRobot.get(j)) * (perimeter - distBetweenObstaclePointAndRobot.get(j+1)));
-                double d = ((2 * area) / distBetweenObstaclePoints.get(j)) * 100000;
+            double dx = MapFragment.computeDistanceToKilometers(x, 0, xx, 0);
+            double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0);
 
-                distances.add(d);
-            }
-
-            distBetweenObstaclePoints.clear();
-            distBetweenObstaclePointAndRobot.clear();
+            distances.add((Math.sqrt(dx * dx + dy * dy) * 100000));
         }
     }
 
@@ -213,9 +225,7 @@ public class AreaPlan extends RobotPlan {
         return Math.toDegrees(heading);
     }
 
-    private void angleOf(ArrayList<GeoPoint> geoPoints) {
-        angles.clear();
-
+    private void angleOf(@NonNull ArrayList<GeoPoint> geoPoints) {
         for (int i = 0; i < geoPoints.size() - 1; i++) {
             final double deltaY = (geoPoints.get(i).getLongitude() - geoPoints.get(i+1).getLongitude());
             final double deltaX = (geoPoints.get(i).getLatitude() - geoPoints.get(i+1).getLatitude());
@@ -225,7 +235,7 @@ public class AreaPlan extends RobotPlan {
         }
     }
 
-    private void rotateRobot(RobotController controller) throws Exception {
+    private void rotateRobot(@NonNull RobotController controller) throws Exception {
         controller.publishVelocity(0, 0, 0);
         waitFor(1000);
         long delay = (long) (2000 * (1 + random.nextFloat()));
@@ -234,7 +244,7 @@ public class AreaPlan extends RobotPlan {
         controller.publishVelocity(0, 0, 0);
     }
 
-    private boolean contains(ArrayList<GeoPoint> areaPoints, Location location) {
+    private boolean robotInArea(ArrayList<GeoPoint> areaPoints, Location location) {
         int i, j;
         boolean result = false;
 
@@ -243,6 +253,23 @@ public class AreaPlan extends RobotPlan {
                     (location.getLatitude() < (areaPoints.get(j).getLatitude() - areaPoints.get(i).getLatitude()) * (location.getLongitude() - areaPoints.get(i).getLongitude())
                     / (areaPoints.get(j).getLongitude() - areaPoints.get(i).getLongitude()) + areaPoints.get(i).getLatitude())) {
                 result = !result;
+            }
+        }
+        return result;
+    }
+
+    private boolean robotInObstacle(@NonNull ArrayList<ArrayList<GeoPoint>> obstaclePoints, Location location) {
+        int i, j, k;
+        boolean result = false;
+
+        for (i = 0; i < obstaclePoints.size(); i++) {
+            for (j = 0, k = obstaclePoints.get(i).size() - 1; j < obstaclePoints.get(i).size(); k = j++) {
+                if ((obstaclePoints.get(i).get(j).getLongitude() > location.getLongitude()) != (obstaclePoints.get(i).get(k).getLongitude() > location.getLongitude()) &&
+                        (location.getLatitude() < (obstaclePoints.get(i).get(k).getLatitude() - obstaclePoints.get(i).get(j).getLatitude()) * (location.getLongitude() -
+                                obstaclePoints.get(i).get(j).getLongitude()) / (obstaclePoints.get(i).get(k).getLongitude() - obstaclePoints.get(i).get(j).getLongitude()) +
+                                obstaclePoints.get(i).get(j).getLatitude())) {
+                    result = !result;
+                }
             }
         }
         return result;
