@@ -53,14 +53,17 @@ public class AreaPlan extends RobotPlan {
 
             Log.d(TAG, "Begin loop");
 
+            // Wait for enough area points
             while (controlApp.getAreaPoints() == null || controlApp.getAreaPoints().size() < 5) {
                 waitFor(1000L);
             }
 
+            // Get area and obstacle points, and location of robot
             ArrayList<GeoPoint> areaPoints = controlApp.getAreaPoints();
             ArrayList<ArrayList<GeoPoint>> allObstaclePoints = controlApp.getObstaclePoints();
             Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
 
+            // If robot is outside area or inside obstacle, stop robot.
             while (!robotInArea(areaPoints, location) || robotInObstacle(allObstaclePoints, location)) {
                 waitFor(1000L);
             }
@@ -86,10 +89,11 @@ public class AreaPlan extends RobotPlan {
 
             double heading = headingToNavigateFrom();
 
+            // If robot gets close to a line, rotate. Otherwise continue same direction
             if (result < 150) {
-
                 int indexOf = distances.indexOf(result);
 
+                // Get angles at which robot should be between, above or under.
                 double maxAngle = angles.get(indexOf);
                 double minAngle;
                 if (maxAngle < 180)
@@ -103,6 +107,7 @@ public class AreaPlan extends RobotPlan {
                     minAngle = tempAngle;
                 }
 
+                // Check heading of robot, and rotate to drive opposite
                 if (heading <= 90d) {
                     while (!(heading > minAngle && heading < maxAngle)) {
                         rotateRobot(controller);
@@ -139,6 +144,11 @@ public class AreaPlan extends RobotPlan {
         }
     }
 
+    /**
+     * Calculate distance from robot to area lines.
+     * @param areaPoints used to make area
+     * @param location of the robot
+     */
     private void calculateDistFromRobotToAreaLine(@NonNull ArrayList<GeoPoint> areaPoints, Location location) {
         ArrayList<Double> distBetweenAreaPoints = new ArrayList<>();
         ArrayList<Double> distBetweenAreaPointAndRobot = new ArrayList<>();
@@ -170,8 +180,8 @@ public class AreaPlan extends RobotPlan {
 
     /**
      * Calculate distance from robot to all lines, inspiration from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-     * @param points points used to make a line
-     * @param location location of the robot
+     * @param points used to make a line
+     * @param location of the robot
      */
     private void calculateDistFromRobotToLine(@NonNull ArrayList<GeoPoint> points, Location location) {
         for (int i = 0; i < points.size() - 1; i++) {
@@ -182,6 +192,7 @@ public class AreaPlan extends RobotPlan {
             double y1 = points.get(i).getLongitude();
             double y2 = points.get(i+1).getLongitude();
 
+            // Vectors
             double A = x - x1;
             double B = y - y1;
             double C = x2 - x1;
@@ -196,10 +207,13 @@ public class AreaPlan extends RobotPlan {
 
             double xx, yy;
 
-            if (param < 0) {
+            // If lower or equal 0, closest to first point.
+            // If above 0 and under 1, closest to line segment.
+            // If higher or equal 1, closest to last point.
+            if (param <= 0) {
                 xx = x1;
                 yy = y1;
-            } else if (param > 1) {
+            } else if (param >= 1) {
                 xx = x2;
                 yy = y2;
             } else {
@@ -207,13 +221,19 @@ public class AreaPlan extends RobotPlan {
                 yy = y1 + param * D;
             }
 
-            double dx = MapFragment.computeDistanceToKilometers(x, 0, xx, 0);
-            double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0);
+            // Calculate distance from robot to xx and yy. Distance is in cm.
+            double dx = MapFragment.computeDistanceToKilometers(x, 0, xx, 0) * 100000;
+            double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0) * 100000;
 
-            distances.add((Math.sqrt(dx * dx + dy * dy) * 100000));
+            // Calculate length of vector and add to ArrayList
+            distances.add((Math.sqrt(dx * dx + dy * dy)));
         }
     }
 
+    /**
+     * Get heading of robot and turn it to degrees
+     * @return heading in degrees
+     */
     private double headingToNavigateFrom() {
         double heading = RobotController.getHeading();
 
@@ -233,6 +253,10 @@ public class AreaPlan extends RobotPlan {
         return heading;
     }
 
+    /**
+     * Get angle of line two points are forming
+     * @param geoPoints to get angle from
+     */
     private void angleOf(@NonNull ArrayList<GeoPoint> geoPoints) {
         for (int i = 0; i < geoPoints.size() - 1; i++) {
             final double deltaY = (geoPoints.get(i).getLongitude() - geoPoints.get(i+1).getLongitude());
@@ -252,6 +276,12 @@ public class AreaPlan extends RobotPlan {
         controller.publishVelocity(0, 0, 0);
     }
 
+    /**
+     * Check if robot is inside the marked area
+     * @param areaPoints used to mark area
+     * @param location of robot
+     * @return true or false depending on if robot is inside or outside
+     */
     private boolean robotInArea(ArrayList<GeoPoint> areaPoints, Location location) {
         int i, j;
         boolean result = false;
@@ -266,6 +296,12 @@ public class AreaPlan extends RobotPlan {
         return result;
     }
 
+    /**
+     * Check if robot is inside the marked obstacle
+     * @param obstaclePoints used to mark obstacles
+     * @param location of robot
+     * @return true or false depending on if robot is inside or outside
+     */
     private boolean robotInObstacle(@NonNull ArrayList<ArrayList<GeoPoint>> obstaclePoints, Location location) {
         int i, j, k;
         boolean result = false;
