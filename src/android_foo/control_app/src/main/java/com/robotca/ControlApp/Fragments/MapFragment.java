@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
@@ -281,6 +283,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
+        mapView.invalidate();
+
+        final DisplayMetrics dm = getActivity().getResources().getDisplayMetrics();
+
+        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
+        scaleBarOverlay.setEnableAdjustLength(true);
+        scaleBarOverlay.setAlignBottom(true);
+        scaleBarOverlay.setAlignRight(true);
+        mapView.getOverlays().add(scaleBarOverlay);
         mapView.invalidate();
 
         return view;
