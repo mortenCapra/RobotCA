@@ -418,7 +418,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    private Vector3 createVectorFromGeoPoint(GeoPoint geoPoint) {
+    public Vector3 createVectorFromGeoPoint(GeoPoint geoPoint) {
         float[] res = new float[3];
         computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), geoPoint.getLongitude(), res);
         float x = res[0];

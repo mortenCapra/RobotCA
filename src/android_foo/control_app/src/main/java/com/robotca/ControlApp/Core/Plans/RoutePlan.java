@@ -20,7 +20,7 @@ import org.ros.rosjava_geometry.Vector3;
  */
 public class RoutePlan extends RobotPlan {
 
-    private static final double MINIMUM_DISTANCE = 0.25;
+    private static final double MINIMUM_DISTANCE = 1.00;
     private final ControlApp controlApp;
 
     private static final String TAG = "RoutePlan";
@@ -76,8 +76,11 @@ public class RoutePlan extends RobotPlan {
                 float[] res = new float[3];
                 MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
+                double h = Utils.pointDirection(RobotController.getX(), RobotController.getY(), controlApp.getMap().createVectorFromGeoPoint(next).getX(), controlApp.getMap().createVectorFromGeoPoint(next).getY());
+                double p = -Math.toRadians(res[2]);
+                double q = RobotController.getHeading();
                 // Check angle to target
-                dir = Utils.angleDifference(RobotController.getHeading(), Math.toRadians(res[2]));
+                dir = Utils.angleDifference(RobotController.getHeading(), p);
 
                 controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
 
@@ -96,7 +99,7 @@ public class RoutePlan extends RobotPlan {
                 MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
                 // Check angle to target
-                dir = Utils.angleDifference(RobotController.getHeading(), Math.toRadians(res[2])) / 2.0;
+                dir = Utils.angleDifference(RobotController.getHeading(), -Math.toRadians(res[2])) / 2.0;
 
                 // Slow down
                 controller.publishVelocity(spd * ((double)i / N) * Math.cos(dir), 0.0, spd * ((double)i / N) * Math.sin(dir));
