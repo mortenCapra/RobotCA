@@ -6,13 +6,16 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Utils;
+import com.robotca.ControlApp.Fragments.MapFragment;
 
+import org.osmdroid.util.GeoPoint;
 import org.ros.rosjava_geometry.Vector3;
 
 /**
  * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
  *
  * Created by Nathaniel Stone on 3/4/16.
+ * Altered by Christian Munklinde Leth-Espensen 13/03/2020
  *
  */
 public class RoutePlan extends RobotPlan {
@@ -20,7 +23,7 @@ public class RoutePlan extends RobotPlan {
     private static final double MINIMUM_DISTANCE = 0.25;
     private final ControlApp controlApp;
 
-    private static final String TAG = "SimpleWaypointPlan";
+    private static final String TAG = "RoutePlan";
 
     private static final double MAX_SPEED = 1.00;
 
@@ -46,7 +49,7 @@ public class RoutePlan extends RobotPlan {
 
         Log.d(TAG, "Started");
 
-        Vector3 next;
+        GeoPoint next;
         double dir, dist, spd;
 
         while (!isInterrupted()) {
@@ -54,11 +57,11 @@ public class RoutePlan extends RobotPlan {
             Log.d(TAG, "begin loop");
 
             // Wait for the next point to become available
-            while (controlApp.getDestination() == null)
+            while (controlApp.getNextPointInRoute() == null)
                 waitFor(1000L);
 
-            next = controlApp.getDestination();
-            Log.d(TAG, "Found next point: (" + next.getX() + ", " + next.getY() + ")");
+            next = controlApp.getNextPointInRoute();
+            Log.d(TAG, "Found next point: (" + next.getLatitude() + ", " + next.getLongitude() + ")");
 
             spd = 0.0;
 
@@ -68,24 +71,32 @@ public class RoutePlan extends RobotPlan {
                 if (spd > MAX_SPEED)
                     spd = MAX_SPEED;
 
+                GeoPoint point = RobotController.getCurrentGPSLocation();
+
+                float[] res = new float[3];
+                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+
                 // Check angle to target
-                dir = Utils.pointDirection(RobotController.getX(), RobotController.getY(), next.getX(), next.getY());
-                dir = Utils.angleDifference(RobotController.getHeading(), dir);
+                dir = Utils.angleDifference(RobotController.getHeading(), res[2]);
 
                 controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
 
                 // Check distance to target
-                dist = Utils.distance(RobotController.getX(), RobotController.getY(), next.getX(), next.getY());
+                dist = res[0];
 
-            } while (!isInterrupted() && dist > MINIMUM_DISTANCE && next.equals(controlApp.getDestination()));
+            } while (!isInterrupted() && dist > MINIMUM_DISTANCE && next.equals(controlApp.getNextPointInRoute()));
 
             // Stop
             final int N = 15;
             for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
 
+                GeoPoint point = RobotController.getCurrentGPSLocation();
+
+                float[] res = new float[3];
+                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+
                 // Check angle to target
-                dir = Utils.pointDirection(RobotController.getX(), RobotController.getY(), next.getX(), next.getY());
-                dir = Utils.angleDifference(RobotController.getHeading(), dir) / 2.0;
+                dir = Utils.angleDifference(RobotController.getHeading(), res[2]) / 2.0;
 
                 // Slow down
                 controller.publishVelocity(spd * ((double)i / N) * Math.cos(dir), 0.0, spd * ((double)i / N) * Math.sin(dir));
@@ -93,8 +104,8 @@ public class RoutePlan extends RobotPlan {
             }
 
             // Remove the way point
-            if (!isInterrupted() && next.equals(controlApp.getDestination()))
-                controlApp.pollDestination();
+            if (!isInterrupted() && next.equals(controlApp.getNextPointInRoute()))
+                controlApp.pollNextPointInRoute();
         }
     }
 }

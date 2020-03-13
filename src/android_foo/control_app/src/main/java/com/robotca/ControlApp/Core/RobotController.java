@@ -9,6 +9,7 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.R;
 
+import org.osmdroid.util.GeoPoint;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -118,6 +119,8 @@ public class RobotController implements NodeMain, Savable {
     private static Point startPos;
     // The Robot's last recorded position
     private static Point currentPos;
+    // The Robot's last recorded GPSLocation
+    private static GeoPoint currentGPSLocation;
     // The Robot's last recorded orientation
     private static Quaternion rotation;
     // The Robot's last recorded speed
@@ -636,6 +639,8 @@ public class RobotController implements NodeMain, Savable {
         synchronized (navSatFixMutex) {
             this.navSatFix = navSatFix;
 
+            currentGPSLocation = new GeoPoint(navSatFix.getLatitude(), navSatFix.getLongitude(), navSatFix.getAltitude());
+
             // Call the listener callbacks
             for (MessageListener<NavSatFix> listener: navSatListeners) {
                 listener.onNewMessage(navSatFix);
@@ -666,12 +671,12 @@ public class RobotController implements NodeMain, Savable {
                 listener.onNewMessage(odometry);
             }
 
-            // Record position TODO this should be moved to setPose() but that's not being called for some reason
             if (startPos == null) {
                 startPos = odometry.getPose().getPose().getPosition();
             } else {
-                currentPos = odometry.getPose().getPose().getPosition();
+                currentPos = odometry.getPose().getPose().getPosition();;
             }
+
             rotation = odometry.getPose().getPose().getOrientation();
 
             // Record speed and turnrate
@@ -730,8 +735,9 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * @return The Robot's last reported x position
+     * @return The Robot's last reported x position via Odometry
      */
+
     public static double getX() {
         if (currentPos == null)
             return 0.0;
@@ -740,13 +746,22 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * @return The Robot's last reported y position
+     * @return The Robot's last reported y position via Odometry
      */
+
     public static double getY() {
         if (currentPos == null)
             return 0.0;
         else
             return currentPos.getY() - startPos.getY();
+    }
+
+    /**
+     *
+     * @return the Robot's last reported GPS location
+     */
+    public static GeoPoint getCurrentGPSLocation(){
+        return currentGPSLocation;
     }
 
     /**

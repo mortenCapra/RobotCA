@@ -397,7 +397,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     routingMarkers.add(newMarker);
                     handleRouteMarker(newMarker);
                     addRoute(geoPoint);
-                    ((ControlApp)getActivity()).addPointToRoute(createVectorFromGeoPoint(geoPoint));
+                    ((ControlApp)getActivity()).addPointToRoute(geoPoint);
                     break;
 
                 case "obstacle":
@@ -534,7 +534,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-            Vector3 oldV;
+            GeoPoint oldP;
             @Override
             public void onMarkerDrag(Marker marker) {
 
@@ -545,13 +545,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
                 route.setPoints(wayPoints);
                 mapView.invalidate();
-                ((ControlApp) getActivity()).alterPointInRoute(oldV, createVectorFromGeoPoint(marker.getPosition()));
+                ((ControlApp) getActivity()).alterPointInRoute(oldP, marker.getPosition());
             }
 
             @Override
             public void onMarkerDragStart(Marker marker) {
                 wayPoints.remove(marker.getPosition());
-                oldV = createVectorFromGeoPoint(marker.getPosition());
+                oldP = marker.getPosition();
             }
         });
     }
@@ -738,7 +738,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
     @SuppressWarnings("unused")
-    private static void computeDistanceAndBearing(double lat1, double lon1,
+    public static void computeDistanceAndBearing(double lat1, double lon1,
                                                   double lat2, double lon2, float[] results) {
         // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
         // using the "Inverse Formula" (section 4)
