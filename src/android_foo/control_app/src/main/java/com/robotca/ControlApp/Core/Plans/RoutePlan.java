@@ -76,9 +76,11 @@ public class RoutePlan extends RobotPlan {
                 float[] res = new float[3];
                 MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
-                double h = Utils.pointDirection(RobotController.getX(), RobotController.getY(), controlApp.getMap().createVectorFromGeoPoint(next).getX(), controlApp.getMap().createVectorFromGeoPoint(next).getY());
-                double p = -Math.toRadians(res[2]);
-                double q = RobotController.getHeading();
+              //  double w = Utils.pointDirection(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude());
+              //  double h = Utils.pointDirection(RobotController.getX(), RobotController.getY(), controlApp.getMap().createVectorFromGeoPoint(next).getX(), controlApp.getMap().createVectorFromGeoPoint(next).getY());
+                //For some reason it works perfectly with - Radian - 2/3 PI
+                double p = -Math.toRadians(res[2]) - Math.PI * 0.666;
+              //  double q = RobotController.getHeading();
                 // Check angle to target
                 dir = Utils.angleDifference(RobotController.getHeading(), p);
 
