@@ -290,6 +290,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
             mapView.invalidate();
         }
+        removePointsFromRoute(((ControlApp) getActivity()).getRoutePoints().size());
         controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
@@ -418,7 +419,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    public Vector3 createVectorFromGeoPoint(GeoPoint geoPoint) {
+    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint, GeoPoint initialPoint) {
         float[] res = new float[3];
         computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), geoPoint.getLongitude(), res);
         float x = res[0];

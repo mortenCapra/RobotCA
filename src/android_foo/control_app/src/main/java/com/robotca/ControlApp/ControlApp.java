@@ -1107,7 +1107,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     }
 
     public void clearRoute(){
-        controller.stop();
         routePoints.clear();
     }
 
@@ -1117,8 +1116,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public GeoPoint pollNextPointInRoute(){
         GeoPoint p;
-
         p = routePoints.pollFirst();
+        if (fragment == getMap()) {
+            getMap().removePointsFromRoute(routePoints.size());
+        }
 
         return p;
     }
@@ -1127,6 +1128,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         int i = routePoints.indexOf(oldP);
         routePoints.remove(oldP);
         routePoints.add(i, newP);
+    }
+
+    public LinkedList<GeoPoint> getRoutePoints(){
+        return routePoints;
     }
 
     public MapFragment getMap(){

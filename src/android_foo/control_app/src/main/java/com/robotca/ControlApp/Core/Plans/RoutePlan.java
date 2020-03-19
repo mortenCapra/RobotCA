@@ -11,6 +11,10 @@ import com.robotca.ControlApp.Fragments.MapFragment;
 import org.osmdroid.util.GeoPoint;
 import org.ros.rosjava_geometry.Vector3;
 
+import java.util.Vector;
+
+import sensor_msgs.LaserScan;
+
 /**
  * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
  *
@@ -20,12 +24,24 @@ import org.ros.rosjava_geometry.Vector3;
  */
 public class RoutePlan extends RobotPlan {
 
-    private static final double MINIMUM_DISTANCE = 1.00;
+    private static final double MINIMUM_DISTANCE = 0.5;
     private final ControlApp controlApp;
 
     private static final String TAG = "RoutePlan";
 
     private static final double MAX_SPEED = 1.00;
+
+
+    private final static double GAMMA = 2;
+    private final static double KAPPA = 0.4;
+
+
+    private Vector3 currentPosition;
+    private double currentHeading;
+    private Vector3 goalPosition;
+    private Vector3 lastPosition;
+    private double angularVelocity;
+    private double linearVelocity;
 
     /**
      * Creates a RoutePlan for the specified ControlApp.
@@ -64,7 +80,7 @@ public class RoutePlan extends RobotPlan {
             Log.d(TAG, "Found next point: (" + next.getLatitude() + ", " + next.getLongitude() + ")");
 
             spd = 0.0;
-
+            int counter = 0;
             do {
                 // Increment speed
                 spd += MAX_SPEED / 15.0;
@@ -76,19 +92,29 @@ public class RoutePlan extends RobotPlan {
                 float[] res = new float[3];
                 MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
-              //  double w = Utils.pointDirection(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude());
-              //  double h = Utils.pointDirection(RobotController.getX(), RobotController.getY(), controlApp.getMap().createVectorFromGeoPoint(next).getX(), controlApp.getMap().createVectorFromGeoPoint(next).getY());
-                //For some reason it works perfectly with - Radian - 2/3 PI
-                double p = -Math.toRadians(res[2]) - Math.PI * 0.666;
-              //  double q = RobotController.getHeading();
+                //For some reason it works perfectly with -bearing
+                double bearing = Math.toRadians(res[2]);
+                double heading = RobotController.getHeading();
                 // Check angle to target
-                dir = Utils.angleDifference(RobotController.getHeading(), p);
-
-                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
-
-                // Check distance to target
+                dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
 
+                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd* Math.sin(dir));
+
+
+/*
+                //initialize route with correct angle
+                if (counter == 0){
+                    while(!(dir < 0.2 && dir > -0.2)) {
+                        controller.publishVelocity(0.0, 0.0, dir);
+                        double tempHeading = RobotController.getHeading();
+                        dir = Utils.angleDifference(tempHeading, -bearing);
+                    }
+                }
+
+ */
+                counter = counter + 1;
+                // Check distance to target
             } while (!isInterrupted() && dist > MINIMUM_DISTANCE && next.equals(controlApp.getNextPointInRoute()));
 
             // Stop
@@ -113,4 +139,93 @@ public class RoutePlan extends RobotPlan {
                 controlApp.pollNextPointInRoute();
         }
     }
+
+    //another shot at making the routing precise - possibly extendable for obstacle avoidance
+    protected void start2(RobotController controller) throws Exception {
+        GeoPoint initialPoint = RobotController.getCurrentGPSLocation();
+
+        while (!isInterrupted()) {
+            LaserScan scan = controller.getLaserScan();
+
+            while (controlApp.getNextPointInRoute() == null) {
+                controller.publishVelocity(0, 0, 0);
+                waitFor(1000L);
+            }
+
+
+            currentPosition = MapFragment.createVectorFromGeoPoint(RobotController.getCurrentGPSLocation(), initialPoint);
+            currentHeading = RobotController.getHeading();
+            goalPosition = MapFragment.createVectorFromGeoPoint(controlApp.getNextPointInRoute(), initialPoint);
+
+            if (goalPosition != null) {
+                Vector3 netforce = calculateForces();
+                applyForce(controller, netforce);
+
+                double dist = Utils.distance(RobotController.getX(), RobotController.getY(),
+                        goalPosition.getX(), goalPosition.getY());
+
+                if (dist < MINIMUM_DISTANCE)
+                    controlApp.pollNextPointInRoute();
+            } else {
+                controller.publishVelocity(0, 0, 0);
+            }
+
+            lastPosition = currentPosition;
+            waitFor(100L);
+        }
+    }
+
+    private Vector3 calculateForces() {
+        Vector3 netForce = new Vector3(0, 0, 0);
+        Vector3 attractiveForce = goalPosition.subtract(currentPosition);
+        attractiveForce = attractiveForce.scale(GAMMA * attractiveForce.getMagnitude()); // f_a = gamma * ||x_g - x_r||^2 = |x_g - x_r|| * gamma * |||x_g - x_r||
+        netForce = netForce.add(attractiveForce);
+        return netForce;
+    }
+
+    private void applyForce(RobotController controller, Vector3 netForce) throws InterruptedException {
+        double forceAngle = 0;
+        if (netForce.getY() != 0 || netForce.getX() != 0)
+            forceAngle = Math.atan2(netForce.getY(), netForce.getX());
+
+        if (forceAngle < 0) {
+            forceAngle += 2 * Math.PI;
+        }
+
+        if (currentHeading < 0) {
+            currentHeading += 2 * Math.PI;
+        }
+
+
+        Log.d("ControlApp", String.format("Force Angle: %f", Math.toDegrees(forceAngle)));
+        Log.d("ControlApp", String.format("Heading:     %f", Math.toDegrees(currentHeading)));
+
+        //compute angular vel
+        double angle1 = forceAngle - currentHeading;
+        double angle2 = 2 * Math.PI - Math.abs(angle1);
+        double angle;
+
+        if (Math.abs(angle1) > Math.abs(angle2)) {
+            angle = -angle2;
+        } else {
+            angle = angle1;
+        }
+
+        Log.d("ControlApp", String.format("Turn Angle:  %f", angle));
+
+        angularVelocity = -KAPPA * angle;
+
+        //compute linear vel
+        double linVel = (netForce.getMagnitude() * Math.cos(angle1));
+        if (linVel < 0) {
+            linearVelocity = 0;
+        } else
+            linearVelocity = linVel;
+
+        if (linearVelocity > MAX_SPEED)
+            linearVelocity = MAX_SPEED;
+
+        controller.publishVelocity(this.linearVelocity, 0, angularVelocity);
+    }
+
 }
