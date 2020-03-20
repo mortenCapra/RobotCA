@@ -770,10 +770,20 @@ public class RobotController implements NodeMain, Savable {
      * @return The Robot's last reported heading in radians
      */
     public static double getHeading() {
-        if (rotation == null)
-            return 0.0;
-        else
-            return Utils.getHeading(org.ros.rosjava_geometry.Quaternion.fromQuaternionMessage(rotation));
+        double heading;
+        if (rotation == null) {
+            heading = 0.0;
+        } else {
+            heading = Utils.getHeading(org.ros.rosjava_geometry.Quaternion.fromQuaternionMessage(rotation));
+        }
+
+        //if physical robot
+        if (heading > 3*Math.PI/2) {
+            heading = 2*Math.PI -heading + Math.PI/2;
+        } else{
+            heading = heading + Math.PI/2;
+        }
+        return heading;
     }
 
     /**

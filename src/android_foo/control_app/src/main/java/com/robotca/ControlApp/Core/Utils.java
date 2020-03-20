@@ -49,7 +49,6 @@ public class Utils {
         rotatedAxis = rotatedAxis.normalize();
 
         return (double) (float)Math.atan2(rotatedAxis.getY(), rotatedAxis.getX());
-        //return (double) (float)Math.atan2(rotatedAxis.getY(), rotatedAxis.getX());
     }
 
     /**
