@@ -135,15 +135,14 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.getOverlays().add(secondMyLocationOverlay);
         mapView.getOverlays().add(0, mapEventsOverlay);
 
-        myLocationOverlay.enableFollowLocation();
-
+        mapView.getController().setCenter(myLocationOverlay.getMyLocation());
+        mapView.getController().animateTo(myLocationOverlay.getMyLocation());
         // Set up the Center button
         robotRecenterButton.setFocusable(false);
         robotRecenterButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 // Center or recenter on Android with a long press
-                mapView.postInvalidate();
                 myLocationOverlay.disableFollowLocation();
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on you", Toast.LENGTH_SHORT).show();
@@ -161,6 +160,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on the Robot", Toast.LENGTH_SHORT).show();
                 myLocationOverlay.enableFollowLocation();
+                mapView.getController().setCenter(myLocationOverlay.getMyLocation());
+                mapView.getController().animateTo(myLocationOverlay.getMyLocation());
                 mapView.invalidate();
             }
         });
@@ -285,14 +286,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.setMinZoomLevel(4.0);
         mapView.invalidate();
 
-        final DisplayMetrics dm = getActivity().getResources().getDisplayMetrics();
-
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setEnableAdjustLength(true);
         scaleBarOverlay.setAlignBottom(true);
         scaleBarOverlay.setAlignRight(true);
         mapView.getOverlays().add(scaleBarOverlay);
-        mapView.invalidate();
 
         return view;
     }
@@ -651,7 +649,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
             obstaclePoints = points;
-            //((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
         }
     }
 
