@@ -9,16 +9,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="merge of routing + heading calculation in robotcontroller">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotStorage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/JoystickView.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/JoystickView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="merge of introduction of Imu as a configurable">
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Messages/CapraOdometry.java" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -455,6 +447,7 @@
     <MESSAGE value="Fix of crash upon two route changes" />
     <MESSAGE value="Routing on robot, which correct topic. Not working correctly" />
     <MESSAGE value="merge of routing + heading calculation in robotcontroller" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge of routing + heading calculation in robotcontroller" />
+    <MESSAGE value="merge of introduction of Imu as a configurable" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge of introduction of Imu as a configurable" />
   </component>
 </project>
