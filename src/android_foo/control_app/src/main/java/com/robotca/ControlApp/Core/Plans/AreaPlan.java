@@ -21,8 +21,11 @@ public class AreaPlan extends RobotPlan {
 
     private final Random random;
     private ControlApp controlApp;
-    private ArrayList<Double> distances;
-    private ArrayList<Double> angles;
+    private ArrayList<Double> areaDistances;
+    private ArrayList<Double> obstacleDistances;
+    private ArrayList<Double> areaAngles;
+    private ArrayList<Double> obstacleAngles;
+    private String distanceStrategy;
 
     /**
      * Creates an AreaPlan with the specified area.
@@ -30,8 +33,10 @@ public class AreaPlan extends RobotPlan {
     public AreaPlan(ControlApp controlApp) {
         this.controlApp = controlApp;
         random = new Random();
-        distances = new ArrayList<>();
-        angles = new ArrayList<>();
+        areaDistances = new ArrayList<>();
+        obstacleDistances = new ArrayList<>();
+        areaAngles = new ArrayList<>();
+        obstacleAngles = new ArrayList<>();
     }
 
     /**
@@ -47,7 +52,7 @@ public class AreaPlan extends RobotPlan {
 
         Log.d(TAG, "Started");
 
-        double result;
+        double areaResult, obstacleResult = 300;
 
         while (!isInterrupted()) {
 
@@ -69,35 +74,49 @@ public class AreaPlan extends RobotPlan {
             }
 
             //calculateDistFromRobotToAreaLine(areaPoints, location);
+            distanceStrategy = "area";
             calculateDistFromRobotToLine(areaPoints, location);
             angleOf(areaPoints);
 
-            if (controlApp.getObstaclePoints() != null) {
+            if (controlApp.getObstaclePoints().get(0).size() != 0) {
+                distanceStrategy = "obstacle";
                 for (ArrayList<GeoPoint> obstaclePoints: allObstaclePoints) {
                     calculateDistFromRobotToLine(obstaclePoints, location);
                     angleOf(obstaclePoints);
                 }
             }
 
-            result = distances.get(0);
+            areaResult = areaDistances.get(0);
 
-            for (int i = 0; i < distances.size(); i++) {
-                if (result > distances.get(i)) {
-                    result = distances.get(i);
+            for (int i = 0; i < areaDistances.size(); i++) {
+                if (areaResult > areaDistances.get(i)) {
+                    areaResult = areaDistances.get(i);
+                }
+            }
+
+            if (controlApp.getObstaclePoints().get(0).size() != 0) {
+                obstacleResult = obstacleDistances.get(0);
+
+                for (int i = 0; i < obstacleDistances.size(); i++) {
+                    if (obstacleResult > obstacleDistances.get(i)) {
+                        obstacleResult = obstacleDistances.get(i);
+                    }
                 }
             }
 
             double heading = headingToNavigateFrom();
 
             // If robot gets close to a line, rotate. Otherwise continue same direction
-            if (result < 150) {
-                int indexOf = distances.indexOf(result);
+            if (areaResult < 150) {
+                int indexOf = areaDistances.indexOf(areaResult);
+
+                double maxAngle, minAngle;
 
                 // Get angles at which robot should be between, above or under.
-                double maxAngle = angles.get(indexOf);
-                double minAngle;
+                maxAngle = areaAngles.get(indexOf);
+
                 if (maxAngle < 180)
-                    minAngle = maxAngle - 180d + 360d;
+                    minAngle = maxAngle + 180d;
                 else
                     minAngle = maxAngle - 180d;
 
@@ -108,17 +127,17 @@ public class AreaPlan extends RobotPlan {
                 }
 
                 // Check heading of robot, and rotate to drive opposite
-                if (heading <= 90d) {
+                if (heading <= 90) {
                     while (!(heading > minAngle && heading < maxAngle)) {
                         rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
-                } else if (heading > 90d && heading <= 180d) {
+                } else if (heading > 90 && heading <= 180d) {
                     while (!(heading < minAngle || heading > maxAngle)) {
                         rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
-                } else if (heading > 180d && heading < 270d) {
+                } else if (heading > 180 && heading < 270d) {
                     while (!(heading < minAngle || heading > maxAngle)) {
                         rotateRobot(controller);
                         heading = headingToNavigateFrom();
@@ -129,18 +148,59 @@ public class AreaPlan extends RobotPlan {
                         heading = headingToNavigateFrom();
                     }
                 }
-                controller.publishVelocity(.75, 0, 0);
+                controller.publishVelocity(0.5, 0, 0);
                 // For debugging
-                waitFor(2000);
+                waitFor(3000);
+                controller.publishVelocity(0, 0, 0);
+            } else if (obstacleResult < 150) {
+                int number = 0;
+                int indexOf = obstacleDistances.indexOf(obstacleResult);
+                double maxAngle, minAngle;
+                if (obstacleAngles.get(indexOf) > 355d) {
+                    number = 1;
+                    maxAngle = 5 + obstacleAngles.get(indexOf) - 360;
+                    minAngle = obstacleAngles.get(indexOf) - 5;
+                } else if (obstacleAngles.get(indexOf) < 5d) {
+                    number = 2;
+                    maxAngle = 5 + obstacleAngles.get(indexOf);
+                    minAngle = 360 + obstacleAngles.get(indexOf) - 5;
+                } else {
+                    maxAngle = obstacleAngles.get(indexOf) + 5;
+                    minAngle = obstacleAngles.get(indexOf) - 5;
+                }
+
+                if (number == 1) {
+                    while (!(heading < maxAngle || heading > minAngle)) {
+                        controller.publishVelocity(0, 0, 0.5);
+                        heading = headingToNavigateFrom();
+                    }
+                } else if (number == 2) {
+                    while (!(heading > maxAngle || heading < minAngle)) {
+                        controller.publishVelocity(0, 0, 0.5);
+                        heading = headingToNavigateFrom();
+                    }
+                } else {
+                    while (!(heading < maxAngle && heading > minAngle)) {
+                        controller.publishVelocity(0, 0, 0.5);
+                        heading = headingToNavigateFrom();
+                    }
+                }
+                controller.publishVelocity(0, 0, 0);
+                waitFor(1000);
+                controller.publishVelocity(0.5, 0, 0);
+                // For debugging
+                waitFor(3000);
                 controller.publishVelocity(0, 0, 0);
             } else {
-                controller.publishVelocity(.75, 0, 0);
+                controller.publishVelocity(0.5, 0, 0);
                 // For debugging
                 waitFor(1000);
                 controller.publishVelocity(0, 0, 0);
             }
-            distances.clear();
-            angles.clear();
+            areaDistances.clear();
+            obstacleDistances.clear();
+            areaAngles.clear();
+            obstacleAngles.clear();
         }
     }
 
@@ -174,7 +234,7 @@ public class AreaPlan extends RobotPlan {
             double area = Math.sqrt(perimeter * (perimeter - distBetweenAreaPoints.get(i)) * (perimeter - distBetweenAreaPointAndRobot.get(i)) * (perimeter - distBetweenAreaPointAndRobot.get(i+1)));
             double d = ((2 * area) / distBetweenAreaPoints.get(i)) * 100000;
 
-            distances.add(d);
+            areaDistances.add(d);
         }
     }
 
@@ -226,7 +286,11 @@ public class AreaPlan extends RobotPlan {
             double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0) * 100000;
 
             // Calculate length of vector and add to ArrayList
-            distances.add((Math.sqrt(dx * dx + dy * dy)));
+            if (distanceStrategy.equals("area")) {
+                areaDistances.add((Math.sqrt(dx * dx + dy * dy)));
+            } else if (distanceStrategy.equals("obstacle")) {
+                obstacleDistances.add(Math.sqrt(dx * dx + dy * dy));
+            }
         }
     }
 
@@ -245,10 +309,10 @@ public class AreaPlan extends RobotPlan {
         heading = Math.toDegrees(heading);
 
         // If physical robot, comment this in
-        /*if (heading >= 270)
-            heading = 360 - heading;
-        else
-            heading = heading + 90;*/
+//        if (heading >= 270)
+//            heading = 360 - heading + 90;
+//        else
+//            heading = heading + 90;
 
         return heading;
     }
@@ -261,9 +325,13 @@ public class AreaPlan extends RobotPlan {
         for (int i = 0; i < geoPoints.size() - 1; i++) {
             final double deltaY = (geoPoints.get(i).getLongitude() - geoPoints.get(i+1).getLongitude());
             final double deltaX = (geoPoints.get(i).getLatitude() - geoPoints.get(i+1).getLatitude());
-            final double result = Math.toDegrees(Math.atan2(deltaY, deltaX));
+            final double result = (int) Math.toDegrees(Math.atan2(deltaY, deltaX));
 
-            angles.add((result < 0) ? (360d + result) : result);
+            if (distanceStrategy.equals("area")) {
+                areaAngles.add((result < 0) ? (360 + result) : result);
+            } else if (distanceStrategy.equals("obstacle")) {
+                obstacleAngles.add((result < 0) ? (360 + result) : result);
+            }
         }
     }
 
@@ -271,7 +339,7 @@ public class AreaPlan extends RobotPlan {
         controller.publishVelocity(0, 0, 0);
         waitFor(1000);
         long delay = (long) (2000 * (1 + random.nextFloat()));
-        controller.publishVelocity(0, 0, .75);
+        controller.publishVelocity(0, 0, 0.5);
         waitFor(delay);
         controller.publishVelocity(0, 0, 0);
     }
