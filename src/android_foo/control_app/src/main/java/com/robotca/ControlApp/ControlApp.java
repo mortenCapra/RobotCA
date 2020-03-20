@@ -44,7 +44,6 @@ import com.robotca.ControlApp.Core.DrawerItem;
 import com.robotca.ControlApp.Core.IWaypointProvider;
 import com.robotca.ControlApp.Core.NavDrawerAdapter;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
-import com.robotca.ControlApp.Core.Plans.RoutePlan;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.RobotInfo;
 import com.robotca.ControlApp.Core.RobotStorage;
@@ -112,6 +111,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // Stuff for managing the current fragment
     private Fragment fragment = null;
+    private MapFragment map = null;
     FragmentManager fragmentManager;
     int fragmentsCreatedCounter = 0;
 
@@ -128,11 +128,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // Log tag String
     private static final String TAG = "ControlApp";
     // List of routePoints
-    private final LinkedList<Vector3> routePoints;
-    // List of wayPoints set in robotFragment
-    private final LinkedList<Vector3> robotPoints;
+    private final LinkedList<GeoPoint> routePoints;
     // List of waypoints
-    private LinkedList<Vector3> waypoints;
+    private final LinkedList<Vector3> waypoints;
     // Specifies how close waypoints need to be to be considered touching
     private static final double MINIMUM_WAYPOINT_DISTANCE = 1.0;
 
@@ -151,6 +149,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     private LocalBroadcastManager localBroadcastManager;
 
+    //
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
 
@@ -160,7 +159,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public ControlApp() {
         super(NOTIFICATION_TICKER, NOTIFICATION_TITLE, ROBOT_INFO.getUri());
 
-        robotPoints = new LinkedList<>();
         waypoints = new LinkedList<>();
         routePoints = new LinkedList<>();
 
@@ -296,7 +294,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             if (list != null) {
                 waypoints.clear();
                 waypoints.addAll(list);
-                robotPointsChanged();
+                wayPointsChanged();
             }
 
             setControlMode(ControlMode.values()[savedInstanceState.getInt(CONTROL_MODE_BUNDLE_ID)]);
@@ -318,7 +316,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         super.onResume();
 
         // Refresh the Clear Waypoints button
-        robotPointsChanged();
+        wayPointsChanged();
     }
 
     @Override
@@ -588,6 +586,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case 4:
                 fragment = new MapFragment();
+                map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
@@ -666,7 +665,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 try {
                     Thread.sleep(100L);
                 } catch (InterruptedException ignore) {}
-                robotPointsChanged();
+                wayPointsChanged();
                 return null;
             }
         }.execute();
@@ -824,13 +823,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         invalidateOptionsMenu();
 
         if (controlMode == ControlMode.Waypoint) {
-            waypoints = robotPoints;
             Toast.makeText(this, "Tap twice to place or delete a waypoint. " +
                     "Tap and hold a waypoint to move it.", Toast.LENGTH_LONG).show();
         }
 
         if (controlMode == ControlMode.Routing){
-            waypoints = routePoints;
             Toast.makeText(this, "Look at and change route in map", Toast.LENGTH_LONG).show();
         }
     }
@@ -841,10 +838,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      * @param location The point
      */
     public void setDestination(Vector3 location) {
-        synchronized (robotPoints) {
-            robotPoints.addFirst(location);
+        synchronized (waypoints) {
+            waypoints.addFirst(location);
         }
-        robotPointsChanged();
+        wayPointsChanged();
     }
 
     /**
@@ -852,11 +849,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      *
      * @param point The point
      */
-    public void addRobotPoint(Vector3 point) {
-        synchronized (robotPoints) {
-            robotPoints.addLast(point);
+    public void addWayPoint(Vector3 point) {
+        synchronized (waypoints) {
+            waypoints.addLast(point);
         }
-        robotPointsChanged();
+        wayPointsChanged();
     }
 
     /**
@@ -865,15 +862,15 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      * @param point The position
      * @return The index of the Waypoint in the Waypoint list or -1 if no Waypoint was found at the point
      */
-    public int findRobotpointAt(Vector3 point, float scale) {
+    public int findwaypointAt(Vector3 point, float scale) {
         // First find the nearest point
         double minDist = Double.MAX_VALUE, dist;
         Vector3 pt, near = null;
         int idx = -1;
 
-        for (int i = 0; i < robotPoints.size(); ++i) {
+        for (int i = 0; i < waypoints.size(); ++i) {
 
-            pt = robotPoints.get(i);
+            pt = waypoints.get(i);
             dist = Utils.distanceSquared(point.getX(), point.getY(), pt.getX(), pt.getY());
 
             if (dist < minDist) {
@@ -901,8 +898,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         double minDist = Double.MAX_VALUE, dist;
         Vector3 near = null;
 
-        synchronized (robotPoints) {
-            for (Vector3 pt : robotPoints) {
+        synchronized (waypoints) {
+            for (Vector3 pt : waypoints) {
                 dist = Utils.distanceSquared(point.getX(), point.getY(), pt.getX(), pt.getY());
 
                 if (dist < minDist) {
@@ -923,10 +920,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    synchronized (robotPoints) {
-                        robotPoints.remove(remove);
+                    synchronized (waypoints) {
+                        waypoints.remove(remove);
                     }
-                    robotPointsChanged();
+                    wayPointsChanged();
 
                     dialog.dismiss();
                 }
@@ -947,8 +944,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             int j = -1;
 
             // See if the waypoint is on an existing line segment and if so insert it
-            for (int i = 0; i < robotPoints.size() - 1; ++i) {
-                dist = Utils.distanceToLine(point.getX(), point.getY(), robotPoints.get(i), robotPoints.get(i + 1));
+            for (int i = 0; i < waypoints.size() - 1; ++i) {
+                dist = Utils.distanceToLine(point.getX(), point.getY(), waypoints.get(i), waypoints.get(i + 1));
 
                 if (dist < minDist) {
                     minDist = dist;
@@ -958,12 +955,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             // Insert the waypoint if it is between two other waypoints
             if (minDist * scale < MINIMUM_WAYPOINT_DISTANCE) {
-                synchronized (robotPoints) {
-                    robotPoints.add(j + 1, point);
+                synchronized (waypoints) {
+                    waypoints.add(j + 1, point);
                 }
-                robotPointsChanged();
+                wayPointsChanged();
             } else {
-                addRobotPoint(point);
+                addWayPoint(point);
             }
         }
     }
@@ -982,10 +979,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public Vector3 pollDestination() {
 
         Vector3 r;
-        
+
         r = waypoints.pollFirst();
 
-      //  robotPointsChanged();
+        wayPointsChanged();
 
         return r;
     }
@@ -993,24 +990,24 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     /**
      * @return The list of waypoints.
      */
-    public LinkedList<Vector3> getRobotPoints() {
-        return robotPoints;
+    public LinkedList<Vector3> getWayPoints() {
+        return waypoints;
     }
 
     /**
      * Clears all waypoints.
      */
-    public void clearRobotpoints() {
-        synchronized (robotPoints) {
-            robotPoints.clear();
+    public void clearWaypoints() {
+        synchronized (waypoints) {
+            waypoints.clear();
         }
-        robotPointsChanged();
+        wayPointsChanged();
     }
 
     /*
      * Called when the waypoints have been edited.
      */
-    private void robotPointsChanged() {
+    private void wayPointsChanged() {
         // Enable/Disable the clear waypoints button
         final View view;
 
@@ -1019,7 +1016,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    view.setEnabled(!robotPoints.isEmpty());
+                    view.setEnabled(!waypoints.isEmpty());
                 }
             });
         }
@@ -1115,7 +1112,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
-
     public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
         this.areaPoints = areaPoints;
     }
@@ -1132,25 +1128,39 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return obstaclePoints;
     }
 
-
-    public void addPointToRoute(Vector3 v){
+    public void addPointToRoute(GeoPoint v){
         routePoints.addLast(v);
-        if (getControlMode()== ControlMode.Routing){
-            waypoints = routePoints;
-        }
     }
 
     public void clearRoute(){
-        controller.stop();
         routePoints.clear();
-        controller.runPlan( ControlMode.getRobotPlan(this, getControlMode()));
-
     }
 
-    public void alterPointInRoute(Vector3 oldV, Vector3 newV){
-        int i = routePoints.indexOf(oldV);
-        routePoints.remove(oldV);
-        routePoints.add(i, newV);
-        waypoints = routePoints;
+    public GeoPoint getNextPointInRoute(){
+        return routePoints.peekFirst();
+    }
+
+    public GeoPoint pollNextPointInRoute(){
+        GeoPoint p;
+        p = routePoints.pollFirst();
+        if (fragment == getMap()) {
+            getMap().removePointsFromRoute(routePoints.size());
+        }
+
+        return p;
+    }
+
+    public void alterPointInRoute(GeoPoint oldP, GeoPoint newP){
+        int i = routePoints.indexOf(oldP);
+        routePoints.remove(oldP);
+        routePoints.add(i, newP);
+    }
+
+    public LinkedList<GeoPoint> getRoutePoints(){
+        return routePoints;
+    }
+
+    public MapFragment getMap(){
+        return map;
     }
 }

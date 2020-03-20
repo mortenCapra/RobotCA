@@ -283,6 +283,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
             mapView.invalidate();
         }
+        removePointsFromRoute(((ControlApp) getActivity()).getRoutePoints().size());
         controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
@@ -392,7 +393,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     routingMarkers.add(newMarker);
                     handleRouteMarker(newMarker);
                     addRoute(geoPoint);
-                    ((ControlApp)getActivity()).addPointToRoute(createVectorFromGeoPoint(geoPoint));
+                    ((ControlApp)getActivity()).addPointToRoute(geoPoint);
                     break;
 
                 case "obstacle":
@@ -413,7 +414,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    private Vector3 createVectorFromGeoPoint(GeoPoint geoPoint) {
+    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint, GeoPoint initialPoint) {
         float[] res = new float[3];
         computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), geoPoint.getLongitude(), res);
         float x = res[0];
@@ -531,7 +532,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
-            Vector3 oldV;
+            GeoPoint oldP;
             @Override
             public void onMarkerDrag(Marker marker) {
 
@@ -542,13 +543,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
                 route.setPoints(wayPoints);
                 mapView.invalidate();
-                ((ControlApp) getActivity()).alterPointInRoute(oldV, createVectorFromGeoPoint(marker.getPosition()));
+                ((ControlApp) getActivity()).alterPointInRoute(oldP, marker.getPosition());
             }
 
             @Override
             public void onMarkerDragStart(Marker marker) {
                 wayPoints.remove(marker.getPosition());
-                oldV = createVectorFromGeoPoint(marker.getPosition());
+                oldP = marker.getPosition();
             }
         });
     }
@@ -562,6 +563,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             wayPoints.add(0, myLocationOverlay.getMyLocation());
             route.setPoints(wayPoints);
             mapView.getOverlays().add(1, route);
+            mapView.invalidate();
+        }
+    }
+
+    public void removePointsFromRoute(int pointsInRoute){
+        int pointsPassed = wayPoints.size() - pointsInRoute;
+        for(int i = 0; i < pointsPassed - 1; i++) {
+            wayPoints.remove(0);
+            route.setPoints(wayPoints);
+            mapView.getOverlays().remove(routingMarkers.get(0));
+            routingMarkers.remove(0);
             mapView.invalidate();
         }
     }
@@ -728,7 +740,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
     @SuppressWarnings("unused")
-    private static void computeDistanceAndBearing(double lat1, double lon1,
+    public static void computeDistanceAndBearing(double lat1, double lon1,
                                                   double lat2, double lon2, float[] results) {
         // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
         // using the "Inverse Formula" (section 4)
