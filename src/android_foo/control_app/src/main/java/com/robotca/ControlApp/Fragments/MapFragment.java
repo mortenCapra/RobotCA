@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.ros.rosjava_geometry.Vector3;
 
@@ -135,6 +137,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.getOverlays().add(secondMyLocationOverlay);
         mapView.getOverlays().add(0, mapEventsOverlay);
 
+        mapView.getController().setCenter(myLocationOverlay.getMyLocation());
+        mapView.getController().animateTo(myLocationOverlay.getMyLocation());
         myLocationOverlay.enableFollowLocation();
         initialPoint = myLocationOverlay.getMyLocation();
 
@@ -145,7 +149,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             @Override
             public boolean onLongClick(View v) {
                 // Center or recenter on Android with a long press
-                mapView.postInvalidate();
                 myLocationOverlay.disableFollowLocation();
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on you", Toast.LENGTH_SHORT).show();
@@ -163,6 +166,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 mapView.postInvalidate();
                 Toast.makeText(mapView.getContext(), "Centered on the Robot", Toast.LENGTH_SHORT).show();
                 myLocationOverlay.enableFollowLocation();
+                mapView.getController().setCenter(myLocationOverlay.getMyLocation());
+                mapView.getController().animateTo(myLocationOverlay.getMyLocation());
                 mapView.invalidate();
             }
         });
@@ -288,6 +293,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         controlMode();
         mapView.setMinZoomLevel(4.0);
         mapView.invalidate();
+
+        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
+        scaleBarOverlay.setEnableAdjustLength(true);
+        scaleBarOverlay.setAlignBottom(true);
+        scaleBarOverlay.setAlignRight(true);
+        mapView.getOverlays().add(scaleBarOverlay);
 
         return view;
     }
@@ -683,7 +694,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
             obstaclePoints = points;
-            //((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
         }
     }
 

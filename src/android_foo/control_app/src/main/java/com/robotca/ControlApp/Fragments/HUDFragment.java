@@ -23,8 +23,6 @@ import com.robotca.ControlApp.R;
 import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 
-import java.lang.reflect.WildcardType;
-
 import nav_msgs.Odometry;
 import sensor_msgs.Imu;
 
@@ -281,8 +279,6 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
         return r;
     }
-
-
 
     /*
      * Thread for periodically checking state info.

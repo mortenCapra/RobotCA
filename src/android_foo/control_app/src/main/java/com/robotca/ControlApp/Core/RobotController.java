@@ -518,7 +518,7 @@ public class RobotController implements NodeMain, Savable {
             });
         }
 
-        // Refresh the Odometry Subscriber
+        // Refresh the Imu Subscriber
         if (imuSubscriber == null
                 || !imuTopic.equals(imuSubscriber.getTopicName().toString())) {
 
