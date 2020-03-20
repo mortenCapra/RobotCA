@@ -10,8 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Routing on robot, which correct topic. Not working correctly">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,7 +25,7 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="R52MA18LPJV" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="R52MA18LLCD" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -39,6 +41,51 @@
   <component name="FavoritesManager">
     <favorites_list name="android_foo" />
   </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="295" lean-forward="true" selection-start-line="295" selection-end-line="295" />
+              <folding>
+                <element signature="e#1292#1293#0" expanded="true" />
+                <element signature="e#1331#1332#0" expanded="true" />
+                <element signature="method#calculateDistFromRobotToAreaLine#0;class#AreaPlan#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/JoystickView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6345">
+              <caret line="475" selection-start-line="475" selection-end-line="475" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2055">
+              <caret line="160" selection-start-line="160" selection-end-line="160" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="448">
+              <caret line="827" lean-forward="true" selection-start-line="827" selection-end-line="827" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -52,16 +99,91 @@
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
+    <option name="UPDATE_TYPE" value="MERGE" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$/../.." value="feature/routing" />
       </map>
     </option>
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
-    <option name="UPDATE_TYPE" value="MERGE" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/JoystickView.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" />
+        <option value="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="768" />
+    <option name="y" value="122" />
+    <option name="width" value="893" />
+    <option name="height" value="432" />
   </component>
   <component name="ProjectId" id="1YNe7WW2BIyYIeAYYLe4B6CJPea" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Core" type="462c0819:PsiDirectoryNode" />
+              <item name="Plans" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="control_app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="ControlApp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Fragments" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android_foo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
   <component name="PropertiesComponent">
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_5_API_23" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="192.168.1.2:5555" />
@@ -207,6 +329,8 @@
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="DEBUGGER_TYPE" value="Auto" />
@@ -404,14 +528,63 @@
     <option name="localTasksCounter" value="14" />
     <servers />
   </component>
+  <component name="ToolWindowManager">
+    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Capture Tool" />
+      <window_info content_ui="combo" id="Project" visible="true" weight="0.19922523" />
+      <window_info id="Structure" side_tool="true" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="Resources Explorer" />
+      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Run" />
+      <window_info anchor="bottom" id="Logcat" />
+      <window_info anchor="bottom" id="TODO" />
+      <window_info active="true" anchor="bottom" id="Debug" visible="true" weight="0.32937366" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Build" weight="0.32937366" />
+      <window_info anchor="bottom" id="Android Profiler" />
+      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Gradle" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Palette&#9;" />
+    </layout>
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
             <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
               <option name="COLUMN_ORDER" />
             </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
           </value>
         </entry>
       </map>
@@ -442,5 +615,47 @@
     <MESSAGE value="Fix of crash upon two route changes" />
     <MESSAGE value="Routing on robot, which correct topic. Not working correctly" />
     <option name="LAST_COMMIT_MESSAGE" value="Routing on robot, which correct topic. Not working correctly" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/LocationProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/JoystickView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6345">
+          <caret line="475" selection-start-line="475" selection-end-line="475" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2055">
+          <caret line="160" selection-start-line="160" selection-end-line="160" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="827" lean-forward="true" selection-start-line="827" selection-end-line="827" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="295" lean-forward="true" selection-start-line="295" selection-end-line="295" />
+          <folding>
+            <element signature="e#1292#1293#0" expanded="true" />
+            <element signature="e#1331#1332#0" expanded="true" />
+            <element signature="method#calculateDistFromRobotToAreaLine#0;class#AreaPlan#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>
