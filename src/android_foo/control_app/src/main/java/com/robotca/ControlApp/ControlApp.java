@@ -111,6 +111,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // Stuff for managing the current fragment
     private Fragment fragment = null;
+    private MapFragment map = null;
     FragmentManager fragmentManager;
     int fragmentsCreatedCounter = 0;
 
@@ -126,8 +127,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // Log tag String
     private static final String TAG = "ControlApp";
+    // List of routePoints
+    private final LinkedList<GeoPoint> routePoints;
     // List of waypoints
-
     private final LinkedList<Vector3> waypoints;
     // Specifies how close waypoints need to be to be considered touching
     private static final double MINIMUM_WAYPOINT_DISTANCE = 1.0;
@@ -147,6 +149,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     private LocalBroadcastManager localBroadcastManager;
 
+    //
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
 
@@ -157,6 +160,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         super(NOTIFICATION_TICKER, NOTIFICATION_TITLE, ROBOT_INFO.getUri());
 
         waypoints = new LinkedList<>();
+        routePoints = new LinkedList<>();
 
         // Create the laserScanMap
         // laserScanMap = new LaserScanMap();
@@ -290,7 +294,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             if (list != null) {
                 waypoints.clear();
                 waypoints.addAll(list);
-                waypointsChanged();
+                wayPointsChanged();
             }
 
             setControlMode(ControlMode.values()[savedInstanceState.getInt(CONTROL_MODE_BUNDLE_ID)]);
@@ -312,7 +316,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         super.onResume();
 
         // Refresh the Clear Waypoints button
-        waypointsChanged();
+        wayPointsChanged();
     }
 
     @Override
@@ -582,6 +586,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case 4:
                 fragment = new MapFragment();
+                map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
@@ -660,7 +665,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 try {
                     Thread.sleep(100L);
                 } catch (InterruptedException ignore) {}
-                waypointsChanged();
+                wayPointsChanged();
                 return null;
             }
         }.execute();
@@ -696,8 +701,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 setControlMode(ControlMode.Tilt);
                 return true;
 
-            case R.id.action_simple_waypoint_control:
-                setControlMode(ControlMode.SimpleWaypoint);
+            case R.id.action_routing_control:
+                setControlMode(ControlMode.Routing);
                 return true;
 
             case R.id.action_waypoint_control:
@@ -706,10 +711,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case R.id.action_random_walk_control:
                 setControlMode(ControlMode.RandomWalk);
-                return true;
-
-            case R.id.action_route_control:
-                setControlMode(ControlMode.Routing);
                 return true;
 
             case R.id.action_area_control:
@@ -821,9 +822,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         invalidateOptionsMenu();
 
-        if (controlMode == ControlMode.SimpleWaypoint || controlMode == ControlMode.Waypoint) {
+        if (controlMode == ControlMode.Waypoint) {
             Toast.makeText(this, "Tap twice to place or delete a waypoint. " +
                     "Tap and hold a waypoint to move it.", Toast.LENGTH_LONG).show();
+        }
+
+        if (controlMode == ControlMode.Routing){
+            Toast.makeText(this, "Look at and change route in map", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -836,7 +841,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         synchronized (waypoints) {
             waypoints.addFirst(location);
         }
-        waypointsChanged();
+        wayPointsChanged();
     }
 
     /**
@@ -844,11 +849,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      *
      * @param point The point
      */
-    public void addWaypoint(Vector3 point) {
+    public void addWayPoint(Vector3 point) {
         synchronized (waypoints) {
             waypoints.addLast(point);
         }
-        waypointsChanged();
+        wayPointsChanged();
     }
 
     /**
@@ -857,7 +862,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      * @param point The position
      * @return The index of the Waypoint in the Waypoint list or -1 if no Waypoint was found at the point
      */
-    public int findWaypointAt(Vector3 point, float scale) {
+    public int findwaypointAt(Vector3 point, float scale) {
         // First find the nearest point
         double minDist = Double.MAX_VALUE, dist;
         Vector3 pt, near = null;
@@ -887,7 +892,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
      * @param point The point
      * @param scale The camera scale
      */
-    public void addWaypointWithCheck(Vector3 point, float scale) {
+    public void addRobotPointWithCheck(Vector3 point, float scale) {
 
         // First find the nearest point
         double minDist = Double.MAX_VALUE, dist;
@@ -918,7 +923,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     synchronized (waypoints) {
                         waypoints.remove(remove);
                     }
-                    waypointsChanged();
+                    wayPointsChanged();
 
                     dialog.dismiss();
                 }
@@ -953,9 +958,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 synchronized (waypoints) {
                     waypoints.add(j + 1, point);
                 }
-                waypointsChanged();
+                wayPointsChanged();
             } else {
-                addWaypoint(point);
+                addWayPoint(point);
             }
         }
     }
@@ -975,10 +980,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         Vector3 r;
 
-        synchronized (waypoints) {
-            r = waypoints.pollFirst();
-        }
-        waypointsChanged();
+        r = waypoints.pollFirst();
+
+        wayPointsChanged();
 
         return r;
     }
@@ -986,7 +990,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     /**
      * @return The list of waypoints.
      */
-    public LinkedList<Vector3> getWaypoints() {
+    public LinkedList<Vector3> getWayPoints() {
         return waypoints;
     }
 
@@ -997,13 +1001,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         synchronized (waypoints) {
             waypoints.clear();
         }
-        waypointsChanged();
+        wayPointsChanged();
     }
 
     /*
      * Called when the waypoints have been edited.
      */
-    private void waypointsChanged() {
+    private void wayPointsChanged() {
         // Enable/Disable the clear waypoints button
         final View view;
 
@@ -1108,7 +1112,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
-
     public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
         this.areaPoints = areaPoints;
     }
@@ -1123,5 +1126,41 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {
         return obstaclePoints;
+    }
+
+    public void addPointToRoute(GeoPoint v){
+        routePoints.addLast(v);
+    }
+
+    public void clearRoute(){
+        routePoints.clear();
+    }
+
+    public GeoPoint getNextPointInRoute(){
+        return routePoints.peekFirst();
+    }
+
+    public GeoPoint pollNextPointInRoute(){
+        GeoPoint p;
+        p = routePoints.pollFirst();
+        if (fragment == getMap()) {
+            getMap().removePointsFromRoute(routePoints.size());
+        }
+
+        return p;
+    }
+
+    public void alterPointInRoute(GeoPoint oldP, GeoPoint newP){
+        int i = routePoints.indexOf(oldP);
+        routePoints.remove(oldP);
+        routePoints.add(i, newP);
+    }
+
+    public LinkedList<GeoPoint> getRoutePoints(){
+        return routePoints;
+    }
+
+    public MapFragment getMap(){
+        return map;
     }
 }

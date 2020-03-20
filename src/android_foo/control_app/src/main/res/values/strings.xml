@@ -153,7 +153,6 @@
     <string name="use_tilt_sensor_string">Use Tilt</string>
     <string name="joystick_control">Joystick Control</string>
     <string name="motion_control">Tilt Control</string>
-    <string name="simple_waypoint_control">Simple Waypoint Control</string>
     <string name="waypoint_control">Waypoint Control</string>
     <string name="random_walk">Random Walk</string>
     <string name="route_control">Route Control</string>
@@ -164,7 +163,6 @@
     <string-array name="motion_plans">
         <item>Joystick</item>
         <item>Tilt</item>
-        <item>Simple Waypoint</item>
         <item>Waypoint</item>
         <item>Random Walk</item>
         <item>Routing</item>

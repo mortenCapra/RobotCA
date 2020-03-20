@@ -23,11 +23,11 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
+import com.robotca.ControlApp.Core.RobotController;
+import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
-//import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
-//import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -39,6 +39,7 @@ import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +55,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
+    GeoPoint initialPoint;
 
     Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton;
 
@@ -137,6 +139,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         mapView.getController().setCenter(myLocationOverlay.getMyLocation());
         mapView.getController().animateTo(myLocationOverlay.getMyLocation());
+        myLocationOverlay.enableFollowLocation();
+        initialPoint = myLocationOverlay.getMyLocation();
+
+
         // Set up the Center button
         robotRecenterButton.setFocusable(false);
         robotRecenterButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -210,6 +216,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         if(savedInstanceState != null) {
 
+            initialPoint = savedInstanceState.getParcelable("initialPoint");
             mapView.getController().setZoom(savedInstanceState.getDouble("zoomLevel"));
             GeoPoint center = new GeoPoint(savedInstanceState.getDouble("mapLocationLat"), savedInstanceState.getDouble("mapLocationLong"));
             myLocationOverlay.disableFollowLocation();
@@ -281,6 +288,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
             mapView.invalidate();
         }
+        removePointsFromRoute(((ControlApp) getActivity()).getRoutePoints().size());
         controlMode = ((ControlApp) getActivity()).getControlMode();
         controlMode();
         mapView.setMinZoomLevel(4.0);
@@ -340,6 +348,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         wayPoints.clear();
         route = null;
         mapView.invalidate();
+        ((ControlApp) getActivity()).clearRoute();
     }
 
     private void clearArea() {
@@ -393,10 +402,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 case "routing":
                     wayPoints.add(geoPoint);
                     routingMarkers.add(newMarker);
-
-
                     handleRouteMarker(newMarker);
                     addRoute(geoPoint);
+                    ((ControlApp)getActivity()).addPointToRoute(geoPoint);
                     break;
 
                 case "obstacle":
@@ -415,6 +423,29 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
 
         return true;
+    }
+
+    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint, GeoPoint initialPoint) {
+        float[] res = new float[3];
+        computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), geoPoint.getLongitude(), res);
+        float x = res[0];
+        //  float b12 = res[2];
+        computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), geoPoint.getLatitude(), initialPoint.getLongitude(), res);
+        float y = res[0];
+        //  float b22= res[2];
+        computeDistanceAndBearing(geoPoint.getLatitude(), geoPoint.getLongitude(), initialPoint.getLatitude(), initialPoint.getLongitude(), res);
+        float b = res[2];
+        // to accomodate the right heading for capra robot
+        b = b;
+        if(b < 90 && b > 0){
+            x = -x;
+        } else if(b < 0 && b > -90){
+            y = -y;
+            x = -x;
+        } else if( b < -90){
+            y = -y;
+        }
+        return new Vector3(x,y,0.0);
     }
 
     private Marker initializeMarker(GeoPoint geoPoint) {
@@ -512,6 +543,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            GeoPoint oldP;
             @Override
             public void onMarkerDrag(Marker marker) {
 
@@ -522,11 +554,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
                 route.setPoints(wayPoints);
                 mapView.invalidate();
+                ((ControlApp) getActivity()).alterPointInRoute(oldP, marker.getPosition());
             }
 
             @Override
             public void onMarkerDragStart(Marker marker) {
                 wayPoints.remove(marker.getPosition());
+                oldP = marker.getPosition();
             }
         });
     }
@@ -540,6 +574,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             wayPoints.add(0, myLocationOverlay.getMyLocation());
             route.setPoints(wayPoints);
             mapView.getOverlays().add(1, route);
+            mapView.invalidate();
+        }
+    }
+
+    public void removePointsFromRoute(int pointsInRoute){
+        int pointsPassed = wayPoints.size() - pointsInRoute;
+        for(int i = 0; i < pointsPassed - 1; i++) {
+            wayPoints.remove(0);
+            route.setPoints(wayPoints);
+            mapView.getOverlays().remove(routingMarkers.get(0));
+            routingMarkers.remove(0);
             mapView.invalidate();
         }
     }
@@ -679,7 +724,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             obstaclePoints = points;
         }
-
         if (results.indexOf(minValue) > results.indexOf(secondMinValue)) {
             return results.indexOf(secondMinValue);
         }
@@ -706,7 +750,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
     @SuppressWarnings("unused")
-    private static void computeDistanceAndBearing(double lat1, double lon1,
+    public static void computeDistanceAndBearing(double lat1, double lon1,
                                                   double lat2, double lon2, float[] results) {
         // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
         // using the "Inverse Formula" (section 4)
@@ -839,6 +883,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable("initialPoint", initialPoint);
         outState.putParcelableArrayList("areaPoints", areaPoints);
         outState.putParcelableArrayList("wayPoints", wayPoints);
         outState.putParcelableArrayList("obstaclePoints", obstaclePoints);

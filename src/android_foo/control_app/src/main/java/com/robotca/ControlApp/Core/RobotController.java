@@ -9,6 +9,8 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.R;
 
+import org.apache.commons.lang3.reflect.TypeUtils;
+import org.osmdroid.util.GeoPoint;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -32,6 +34,8 @@ import sensor_msgs.CompressedImage;
 import sensor_msgs.Imu;
 import sensor_msgs.LaserScan;
 import sensor_msgs.NavSatFix;
+
+import static org.ros.internal.transport.ConnectionHeaderFields.TOPIC;
 
 /**
  * Manages receiving data from, and sending commands to, a connected Robot.
@@ -122,6 +126,8 @@ public class RobotController implements NodeMain, Savable {
     private static Point startPos;
     // The Robot's last recorded position
     private static Point currentPos;
+    // The Robot's last recorded GPSLocation
+    private static GeoPoint currentGPSLocation;
     // The Robot's last recorded orientation
     private static Quaternion rotation;
     // The Robot's last recorded speed
@@ -386,7 +392,7 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * Refreshes all topics, recreating them if there topic names have been changed.
+     * Refreshes all topics, recreating them if their topic names have been changed.
      */
     public void refreshTopics() {
 
@@ -650,6 +656,8 @@ public class RobotController implements NodeMain, Savable {
         synchronized (navSatFixMutex) {
             this.navSatFix = navSatFix;
 
+            currentGPSLocation = new GeoPoint(navSatFix.getLatitude(), navSatFix.getLongitude(), navSatFix.getAltitude());
+
             // Call the listener callbacks
             for (MessageListener<NavSatFix> listener: navSatListeners) {
                 listener.onNewMessage(navSatFix);
@@ -771,7 +779,7 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * @return The Robot's last reported x position
+     * @return The Robot's last reported x position via Odometry
      */
     public static double getX() {
         if (currentPos == null)
@@ -781,7 +789,7 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
-     * @return The Robot's last reported y position
+     * @return The Robot's last reported y position via Odometry
      */
     public static double getY() {
         if (currentPos == null)
@@ -791,13 +799,31 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
+     *
+     * @return the Robot's last reported GPS location
+     */
+    public static GeoPoint getCurrentGPSLocation(){
+        return currentGPSLocation;
+    }
+
+    /**
      * @return The Robot's last reported heading in radians
      */
     public static double getHeading() {
-        if (rotation == null)
-            return 0.0;
-        else
-            return Utils.getHeading(org.ros.rosjava_geometry.Quaternion.fromQuaternionMessage(rotation));
+        double heading;
+        if (rotation == null) {
+            heading = 0.0;
+        } else {
+            heading = Utils.getHeading(org.ros.rosjava_geometry.Quaternion.fromQuaternionMessage(rotation));
+        }
+
+        // If physical robot
+//        if (heading > 3*Math.PI/2) {
+//            heading = 2*Math.PI -heading + Math.PI/2;
+//        } else{
+//            heading = heading + Math.PI/2;
+//        }
+        return heading;
     }
 
     /**

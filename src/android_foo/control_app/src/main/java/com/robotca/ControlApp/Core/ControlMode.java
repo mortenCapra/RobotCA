@@ -6,7 +6,7 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.AreaPlan;
 import com.robotca.ControlApp.Core.Plans.RandomWalkPlan;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
-import com.robotca.ControlApp.Core.Plans.SimpleWaypointPlan;
+import com.robotca.ControlApp.Core.Plans.RoutePlan;
 import com.robotca.ControlApp.Core.Plans.WaypointPlan;
 
 import org.osmdroid.util.GeoPoint;
@@ -20,7 +20,6 @@ import org.osmdroid.views.overlay.Polygon;
 public enum ControlMode {
     Joystick (true), // Joystick control
     Tilt (true), // Tilt sensor control
-    SimpleWaypoint (false), // SimpleWaypoint control
     Waypoint (false), // Potential field waypoint control
     RandomWalk (false), // Random walk
     Routing (false),
@@ -51,7 +50,7 @@ public enum ControlMode {
 
         switch (controlMode) {
 
-            case SimpleWaypoint: plan = new SimpleWaypointPlan(controlApp); break;
+            case Routing: plan = new RoutePlan(controlApp); break;
             case Waypoint: plan = new WaypointPlan(controlApp); break;
             case RandomWalk: plan = new RandomWalkPlan(
                     Float.parseFloat(PreferenceManager
