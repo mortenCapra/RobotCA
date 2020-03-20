@@ -97,7 +97,7 @@ public class RoutePlan extends RobotPlan {
                 // Check angle to target - bearing is negative to accomodate the standard of angles in ros
                 dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
-
+                //
                 /*
                 //initialize route with correct angle
                 if (counter == 0){
