@@ -664,28 +664,28 @@ public class RobotController implements NodeMain, Savable {
 
     /**
      * Sets the current Odometry.
-     * @param odometry The Odometry
+     * @param imu The Odometry
      */
-    protected void setOdometry(Imu odometry) {
+    protected void setOdometry(Imu imu) {
         synchronized (odometryMutex) {
-            this.odometry = odometry;
+            this.odometry = imu;
 
             // Call the listener callbacks
             for (MessageListener<Imu> listener: odometryListeners) {
-                listener.onNewMessage(odometry);
+                listener.onNewMessage(imu);
             }
 
             // Record position TODO this should be moved to setPose() but that's not being called for some reason
             if (startPos == null) {
-                //startPos = odometry.getPose().getPose().getPosition();
+                //startPos = imu.getPose().getPose().getPosition();
             } else {
-                //currentPos = odometry.getPose().getPose().getPosition();
+                //currentPos = imu.getPose().getPose().getPosition();
             }
-            rotation = odometry.getOrientation();
+            rotation = imu.getOrientation();
 
             // Record speed and turnrate
-            speed = odometry.getLinearAcceleration().getX();
-            turnRate = odometry.getAngularVelocity().getZ();
+            speed = imu.getLinearAcceleration().getX();
+            turnRate = imu.getAngularVelocity().getZ();
         }
     }
 

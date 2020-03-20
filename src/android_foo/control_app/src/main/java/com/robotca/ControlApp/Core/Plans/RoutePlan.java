@@ -91,13 +91,11 @@ public class RoutePlan extends RobotPlan {
                 float[] res = new float[3];
                 MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
-                //For some reason it works perfectly with -bearing
                 double bearing = Math.toRadians(res[2]);
                 double heading = RobotController.getHeading();
                 // Check angle to target - bearing is negative to accomodate the standard of angles in ros
                 dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
-                //
                 /*
                 //initialize route with correct angle
                 if (counter == 0){
