@@ -819,7 +819,7 @@ public class RobotController implements NodeMain, Savable {
 
         // If physical robot
 //        if (heading > 3*Math.PI/2) {
-//            heading = 2*Math.PI -heading + Math.PI/2;
+//            heading = 2*Math.PI - heading + Math.PI/2;
 //        } else{
 //            heading = heading + Math.PI/2;
 //        }
