@@ -95,14 +95,11 @@ public class RoutePlan extends RobotPlan {
                 //For some reason it works perfectly with -bearing
                 double bearing = Math.toRadians(res[2]);
                 double heading = RobotController.getHeading();
-                // Check angle to target
+                // Check angle to target - bearing is negative to accomodate the standard of angles in ros
                 dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
 
-                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd* Math.sin(dir));
-
-
-/*
+                /*
                 //initialize route with correct angle
                 if (counter == 0){
                     while(!(dir < 0.2 && dir > -0.2)) {
@@ -111,12 +108,13 @@ public class RoutePlan extends RobotPlan {
                         dir = Utils.angleDifference(tempHeading, -bearing);
                     }
                 }
+                */
 
- */
+                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd* Math.sin(dir));
+
                 counter = counter + 1;
                 // Check distance to target
             } while (!isInterrupted() && dist > MINIMUM_DISTANCE && next.equals(controlApp.getNextPointInRoute()));
-
             // Stop
             final int N = 15;
             for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {

@@ -9,11 +9,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Delete passed part of route">
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Routing with GPS optimization">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -394,7 +393,14 @@
       <option name="project" value="LOCAL" />
       <updated>1583498616469</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Routing with GPS optimization">
+      <created>1584635357764</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1584635357764</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -433,6 +439,7 @@
     <MESSAGE value="Check controlmode in oncreateView in mapfragment" />
     <MESSAGE value="routing kinda working on gazebo" />
     <MESSAGE value="Delete passed part of route" />
-    <option name="LAST_COMMIT_MESSAGE" value="Delete passed part of route" />
+    <MESSAGE value="Routing with GPS optimization" />
+    <option name="LAST_COMMIT_MESSAGE" value="Routing with GPS optimization" />
   </component>
 </project>
