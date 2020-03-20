@@ -36,7 +36,7 @@ import sensor_msgs.Imu;
 // Simulation
 public class HUDFragment extends SimpleFragment implements MessageListener<Odometry>{
 // Physical Robot
-/*public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{*/
+//public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
 
     @SuppressWarnings("unused")
     private static final String TAG = "HUDFragment";
@@ -158,12 +158,12 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Odome
         updateUI(message.getTwist().getTwist().getLinear().getX(),
                 message.getTwist().getTwist().getAngular().getZ());
     }
-    /*@Override
-    public void onNewMessage(Imu message) {
-
-        updateUI(message.getLinearAcceleration().getX(),
-                message.getAngularVelocity().getZ());
-    }*/
+//    @Override
+//    public void onNewMessage(Imu message) {
+//
+//        updateUI(message.getLinearAcceleration().getX(),
+//                message.getAngularVelocity().getZ());
+//    }
 
     /**
      * Toggles the appearance of the emergency stop button.

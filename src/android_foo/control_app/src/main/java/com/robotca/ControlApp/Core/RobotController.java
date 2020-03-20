@@ -75,10 +75,10 @@ public class RobotController implements NodeMain, Savable {
 
     // Subscriber to Odometry data
     private Subscriber<Odometry> odometrySubscriber;
-    /*private Subscriber<Imu> odometrySubscriber;*/
+//    private Subscriber<Imu> odometrySubscriber;
     // The most recent Odometry
     private Odometry odometry;
-    /*private Imu odometry;*/
+//    private Imu odometry;
     // Lock for synchronizing accessing and receiving the current Odometry
     private final Object odometryMutex = new Object();
 
@@ -109,7 +109,7 @@ public class RobotController implements NodeMain, Savable {
     private final ArrayList<MessageListener<LaserScan>> laserScanListeners;
     // Listener for Odometry
     private ArrayList<MessageListener<Odometry>> odometryListeners;
-    /*private ArrayList<MessageListener<Imu>> odometryListeners;*/
+//    private ArrayList<MessageListener<Imu>> odometryListeners;
     // Listener for NavSatFix
     private ArrayList<MessageListener<NavSatFix>> navSatListeners;
 
@@ -166,9 +166,9 @@ public class RobotController implements NodeMain, Savable {
     public boolean addOdometryListener(MessageListener<Odometry> l) {
         return odometryListeners.add(l);
     }
-    /*public boolean addOdometryListener(MessageListener<Imu> l) {
-        return odometryListeners.add(l);
-    }*/
+//    public boolean addOdometryListener(MessageListener<Imu> l) {
+//        return odometryListeners.add(l);
+//    }
 
     /**
      * Adds a NavSatFix listener.
@@ -491,13 +491,13 @@ public class RobotController implements NodeMain, Savable {
                     setOdometry(odometry);
                 }
             });
-            /*odometrySubscriber = connectedNode.newSubscriber(odometryTopic, Imu._TYPE);
-            odometrySubscriber.addMessageListener(new MessageListener<Imu>() {
-                @Override
-                public void onNewMessage(Imu odometry) {
-                    setOdometry(odometry);
-                }
-            });*/
+//            odometrySubscriber = connectedNode.newSubscriber(odometryTopic, Imu._TYPE);
+//            odometrySubscriber.addMessageListener(new MessageListener<Imu>() {
+//                @Override
+//                public void onNewMessage(Imu odometry) {
+//                    setOdometry(odometry);
+//                }
+//            });
         }
 
         // Refresh the Pose Subscriber
@@ -666,11 +666,11 @@ public class RobotController implements NodeMain, Savable {
             return odometry;
         }
     }
-    /*public Imu getOdometry() {
-        synchronized (odometryMutex) {
-            return odometry;
-        }
-    }*/
+//    public Imu getOdometry() {
+//        synchronized (odometryMutex) {
+//            return odometry;
+//        }
+//    }
 
     /**
      * Sets the current Odometry.
@@ -698,28 +698,28 @@ public class RobotController implements NodeMain, Savable {
             turnRate = odometry.getTwist().getTwist().getAngular().getZ();
         }
     }
-    /*protected void setOdometry(Imu odometry) {
-        synchronized (odometryMutex) {
-            this.odometry = odometry;
-
-            // Call the listener callbacks
-            for (MessageListener<Imu> listener: odometryListeners) {
-                listener.onNewMessage(odometry);
-            }
-
-            // Record position TODO this should be moved to setPose() but that's not being called for some reason
-            if (startPos == null) {
-                //startPos = odometry.getPosition();
-            } else {
-                //currentPos = odometry.getPosition();
-            }
-            rotation = odometry.getOrientation();
-
-            // Record speed and turnrate
-            speed = odometry.getLinearAcceleration().getX();
-            turnRate = odometry.getAngularVelocity().getZ();
-        }
-    }*/
+//    protected void setOdometry(Imu odometry) {
+//        synchronized (odometryMutex) {
+//            this.odometry = odometry;
+//
+//            // Call the listener callbacks
+//            for (MessageListener<Imu> listener: odometryListeners) {
+//                listener.onNewMessage(odometry);
+//            }
+//
+//            // Record position TODO this should be moved to setPose() but that's not being called for some reason
+//            if (startPos == null) {
+//                //startPos = odometry.getPosition();
+//            } else {
+//                //currentPos = odometry.getPosition();
+//            }
+//            rotation = odometry.getOrientation();
+//
+//            // Record speed and turnrate
+//            speed = odometry.getLinearAcceleration().getX();
+//            turnRate = odometry.getAngularVelocity().getZ();
+//        }
+//    }
 
     /**
      * @return The most recently received Pose.

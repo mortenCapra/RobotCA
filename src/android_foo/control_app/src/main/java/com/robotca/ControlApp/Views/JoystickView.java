@@ -65,7 +65,7 @@ import java.util.TimerTask;
 public class JoystickView extends RelativeLayout implements AnimationListener,
         MessageListener<nav_msgs.Odometry>/*, NodeMain */{
 //public class JoystickView extends RelativeLayout implements AnimationListener,
-//            MessageListener<sensor_msgs.Imu>/*, NodeMain*/{
+//        MessageListener<sensor_msgs.Imu>/*, NodeMain*/{
 
     /**
      * TAG Debug Log tag.
@@ -475,32 +475,32 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
         }
     }
 
-    /*@Override
-    public void onNewMessage(final sensor_msgs.Imu message) {
-
-        double heading;
-        // For some reason the values of z and y seem to be interchanged. If they
-        // are not swapped then heading is always incorrect.
-        double w = message.getOrientation().getW();
-        double x = message.getOrientation().getX();
-        double y = message.getOrientation().getZ();
-        double z = message.getOrientation().getY();
-        heading = Math.atan2(2 * y * w - 2 * x * z, x * x - y * y - z * z + w * w) * 180 / Math.PI;
-        // Negating the orientation to make the math for rotation in
-        // turn-in-place mode easy. Since the actual heading is irrelevant it does
-        // no harm.
-        currentOrientation = (float) -heading;
-        // Only update the orientation images if the turn-in-place mode is active.
-        if (turnInPlaceMode) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    updateTurnInPlaceRotation();
-                }
-            });
-            postInvalidate();
-        }
-    }*/
+//    @Override
+//    public void onNewMessage(final sensor_msgs.Imu message) {
+//
+//        double heading;
+//        // For some reason the values of z and y seem to be interchanged. If they
+//        // are not swapped then heading is always incorrect.
+//        double w = message.getOrientation().getW();
+//        double x = message.getOrientation().getX();
+//        double y = message.getOrientation().getZ();
+//        double z = message.getOrientation().getY();
+//        heading = Math.atan2(2 * y * w - 2 * x * z, x * x - y * y - z * z + w * w) * 180 / Math.PI;
+//        // Negating the orientation to make the math for rotation in
+//        // turn-in-place mode easy. Since the actual heading is irrelevant it does
+//        // no harm.
+//        currentOrientation = (float) -heading;
+//        // Only update the orientation images if the turn-in-place mode is active.
+//        if (turnInPlaceMode) {
+//            post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    updateTurnInPlaceRotation();
+//                }
+//            });
+//            postInvalidate();
+//        }
+//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
