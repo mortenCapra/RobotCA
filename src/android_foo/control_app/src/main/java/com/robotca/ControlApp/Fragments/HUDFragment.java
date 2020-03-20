@@ -20,8 +20,12 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
 
+import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 
+import java.lang.reflect.WildcardType;
+
+import nav_msgs.Odometry;
 import sensor_msgs.Imu;
 
 /**
@@ -32,7 +36,7 @@ import sensor_msgs.Imu;
  *
  * @author Nathaniel Stone
  */
-public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
+public class HUDFragment extends SimpleFragment implements MessageListener<Message> {
 
     @SuppressWarnings("unused")
     private static final String TAG = "HUDFragment";
@@ -149,10 +153,15 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
      * @param message The Odometry message
      */
     @Override
-    public void onNewMessage(Imu message) {
+    public void onNewMessage(Message message) {
 
-        updateUI(message.getLinearAcceleration().getX(),
-                message.getAngularVelocity().getZ());
+        if (message instanceof Imu) {
+            updateUI(((Imu) message).getLinearAcceleration().getX(),
+                    ((Imu) message).getAngularVelocity().getZ());
+        } else if (message instanceof Odometry) {
+            updateUI(((Odometry) message).getTwist().getTwist().getLinear().getX(),
+                    ((Odometry) message).getTwist().getTwist().getAngular().getZ());
+        }
     }
 
     /**
@@ -272,6 +281,8 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
 
         return r;
     }
+
+
 
     /*
      * Thread for periodically checking state info.

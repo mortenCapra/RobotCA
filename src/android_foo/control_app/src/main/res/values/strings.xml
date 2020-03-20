@@ -10,6 +10,7 @@
     <string name="laser_scan_topic">/scan</string>
     <string name="odometry_topic">/odometry/filtered</string>
     <string name="pose_topic">/pose</string>
+    <string name="imu_topic">/ubloxTest/navheading</string>
     <string name="navsat_topic">/navsat/fix</string>
 
     <!-- Preference titles -->
@@ -20,6 +21,7 @@
     <string name="topic_pref_title">Topics</string>
     <string name="warning_enable_pref_title">Enable Warning System</string>
     <string name="pose_pref_title">Pose Topic</string>
+    <string name="Imu_pref_title">Imu Topic</string>
     <string name="odometry_pref_title">Odometry Topic</string>
     <string name="laser_scan_detail_pref_title">Laser Scan Detail</string>
     <string name="random_walk_range_minimum_pref_title">Random Walk Range Minimum</string>
@@ -35,6 +37,7 @@
     <string name="prefs_navsat_topic_edittext_key">prefs_navsat_topic_edittext</string>
     <string name="prefs_odometry_topic_edittext_key">prefs_odometry_topic_edittext</string>
     <string name="prefs_pose_topic_edittext_key">prefs_pose_topic_edittext</string>
+    <string name="prefs_imu_topic_edittext_key">prefs_imu_topic_edittext</string>
     <string name="prefs_warning_checkbox_key">prefs_warning_checkbox</string>
     <string name="prefs_warning_mindist_key">prefs_warning_mindist</string>
     <string name="prefs_warning_system_key">prefs_warning_system</string>
@@ -140,6 +143,8 @@
     <string name="navsat_topic_prompt">Nav Sat Topic:</string>
     <string name="odometry_topic_prompt">Odometry Topic:</string>
     <string name="pose_topic_prompt">Pose Topic:</string>
+    <string name="Imu_topic_prompt">Imu Topic:</string>
+
 
     <!-- Custom icon content descriptions -->
     <string name="wifi_strength_content_description">Shows WIFI signal strength</string>
