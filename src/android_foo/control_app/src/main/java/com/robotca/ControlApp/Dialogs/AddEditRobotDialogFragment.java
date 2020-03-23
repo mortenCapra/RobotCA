@@ -47,6 +47,8 @@ public class AddEditRobotDialogFragment extends DialogFragment {
     private EditText mNavSatTopicEditTextView;
     private EditText mOdometryTopicEditTextView;
     private EditText mPoseTopicEditTextView;
+    private EditText mImuTopicEditTextView;
+
     private CheckBox mReverseLaserScanCheckBox;
     private CheckBox mInvertXAxisCheckBox;
     private CheckBox mInvertYAxisCheckBox;
@@ -98,6 +100,7 @@ public class AddEditRobotDialogFragment extends DialogFragment {
         mNavSatTopicEditTextView = (EditText) v.findViewById(R.id.navsat_topic_edit_view);
         mOdometryTopicEditTextView = (EditText) v.findViewById(R.id.odometry_topic_edit_view);
         mPoseTopicEditTextView = (EditText) v.findViewById(R.id.pose_topic_edit_view);
+        mImuTopicEditTextView = (EditText) v.findViewById(R.id.Imu_topic_edit_view);
         mReverseLaserScanCheckBox = (CheckBox) v.findViewById(R.id.reverse_laser_scan_check_box);
         mInvertXAxisCheckBox = (CheckBox) v.findViewById(R.id.invert_x_axis_check_box);
         mInvertYAxisCheckBox = (CheckBox) v.findViewById(R.id.invert_y_axis_check_box);
@@ -123,6 +126,7 @@ public class AddEditRobotDialogFragment extends DialogFragment {
         mNavSatTopicEditTextView.setText(mInfo.getNavSatTopic());
         mOdometryTopicEditTextView.setText(mInfo.getOdometryTopic());
         mPoseTopicEditTextView.setText(mInfo.getPoseTopic());
+        mImuTopicEditTextView.setText(mInfo.getImuTopic());
         mReverseLaserScanCheckBox.setChecked(mInfo.isReverseLaserScan());
         mInvertXAxisCheckBox.setChecked(mInfo.isInvertX());
         mInvertYAxisCheckBox.setChecked(mInfo.isInvertY());
@@ -142,6 +146,7 @@ public class AddEditRobotDialogFragment extends DialogFragment {
                         String navsatTopic = mNavSatTopicEditTextView.getText().toString().trim();
                         String odometryTopic = mOdometryTopicEditTextView.getText().toString().trim();
                         String poseTopic = mPoseTopicEditTextView.getText().toString().trim();
+                        String imuTopic = mImuTopicEditTextView.getText().toString().trim();
                         boolean reverseLaserScan = mReverseLaserScanCheckBox.isChecked();
                         boolean invertX = mInvertXAxisCheckBox.isChecked();
                         boolean invertY = mInvertYAxisCheckBox.isChecked();
@@ -155,7 +160,7 @@ public class AddEditRobotDialogFragment extends DialogFragment {
                         } else if (!name.equals("")) {
                             mListener.onAddEditDialogPositiveClick(new RobotInfo(mInfo.getId(), name,
                                     masterUri, joystickTopic, laserScanTopic, cameraTopic, navsatTopic,
-                                    odometryTopic, poseTopic, reverseLaserScan, invertX, invertY, invertAngVel), mPosition);
+                                    odometryTopic, poseTopic, imuTopic, reverseLaserScan, invertX, invertY, invertAngVel), mPosition);
                             dialog.dismiss();
                         } else {
                             Toast.makeText(getActivity(), "Robot name required", Toast.LENGTH_SHORT).show();

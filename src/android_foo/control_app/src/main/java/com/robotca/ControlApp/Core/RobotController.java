@@ -11,6 +11,7 @@ import com.robotca.ControlApp.R;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.osmdroid.util.GeoPoint;
+import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -79,12 +80,17 @@ public class RobotController implements NodeMain, Savable {
 
     // Subscriber to Odometry data
     private Subscriber<Odometry> odometrySubscriber;
-//    private Subscriber<Imu> odometrySubscriber;
     // The most recent Odometry
     private Odometry odometry;
-//    private Imu odometry;
     // Lock for synchronizing accessing and receiving the current Odometry
     private final Object odometryMutex = new Object();
+
+    // Subscriber to Imu data
+    private Subscriber<Imu> imuSubscriber;
+    // The most recent Odometry
+    private Imu imu;
+    // Lock for synchronizing accessing and receiving the current Odometry
+    private final Object imuMutex = new Object();
 
     // Subscriber to Pose data
     private Subscriber<Pose> poseSubscriber;
@@ -112,10 +118,12 @@ public class RobotController implements NodeMain, Savable {
     // Listener for LaserScans
     private final ArrayList<MessageListener<LaserScan>> laserScanListeners;
     // Listener for Odometry
-    private ArrayList<MessageListener<Odometry>> odometryListeners;
-//    private ArrayList<MessageListener<Imu>> odometryListeners;
+    private ArrayList<MessageListener<Message>> odometryListeners;
     // Listener for NavSatFix
     private ArrayList<MessageListener<NavSatFix>> navSatListeners;
+    // Listener for Imu
+    private ArrayList<MessageListener<Message>> imuListeners;
+
 
     /**
      * LocationProvider subscribers can register to to receive location updates.
@@ -153,6 +161,7 @@ public class RobotController implements NodeMain, Savable {
         this.laserScanListeners = new ArrayList<>();
         this.odometryListeners = new ArrayList<>();
         this.navSatListeners = new ArrayList<>();
+        this.imuListeners = new ArrayList<>();
 
         this.LOCATION_PROVIDER = new LocationProvider();
         this.addNavSatFixListener(this.LOCATION_PROVIDER);
@@ -169,12 +178,18 @@ public class RobotController implements NodeMain, Savable {
      * @param l The listener
      * @return True on success
      */
-    public boolean addOdometryListener(MessageListener<Odometry> l) {
+    public boolean addOdometryListener(MessageListener<Message> l) {
         return odometryListeners.add(l);
     }
-//    public boolean addOdometryListener(MessageListener<Imu> l) {
-//        return odometryListeners.add(l);
-//    }
+
+    /**
+     * Adds an imu listener.
+     * @param l The listener
+     * @return True on success
+     */
+    public boolean addimuListener(MessageListener<Message> l) {
+        return imuListeners.add(l);
+    }
 
     /**
      * Adds a NavSatFix listener.
@@ -417,6 +432,10 @@ public class RobotController implements NodeMain, Savable {
                 .getString(context.getString(R.string.prefs_pose_topic_edittext_key),
                         context.getString(R.string.pose_topic));
 
+        String imuTopic = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.prefs_imu_topic_edittext_key),
+                        context.getString(R.string.imu_topic));
+
         String imageTopic = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.prefs_camera_topic_edittext_key),
                         context.getString(R.string.camera_topic));
@@ -497,13 +516,23 @@ public class RobotController implements NodeMain, Savable {
                     setOdometry(odometry);
                 }
             });
-//            odometrySubscriber = connectedNode.newSubscriber(odometryTopic, Imu._TYPE);
-//            odometrySubscriber.addMessageListener(new MessageListener<Imu>() {
-//                @Override
-//                public void onNewMessage(Imu odometry) {
-//                    setOdometry(odometry);
-//                }
-//            });
+        }
+
+        // Refresh the Imu Subscriber
+        if (imuSubscriber == null
+                || !imuTopic.equals(imuSubscriber.getTopicName().toString())) {
+
+            if (imuSubscriber != null)
+                imuSubscriber.shutdown();
+
+            // Start the Odometry subscriber
+            imuSubscriber = connectedNode.newSubscriber(imuTopic, Imu._TYPE);
+            imuSubscriber.addMessageListener(new MessageListener<Imu>() {
+                @Override
+                public void onNewMessage(Imu imu) {
+                    setImu(imu);
+                }
+            });
         }
 
         // Refresh the Pose Subscriber
@@ -569,6 +598,10 @@ public class RobotController implements NodeMain, Savable {
 
         if(poseSubscriber != null){
             poseSubscriber.shutdown();
+        }
+
+        if(imuSubscriber != null){
+            imuSubscriber.shutdown();
         }
     }
 
@@ -674,11 +707,6 @@ public class RobotController implements NodeMain, Savable {
             return odometry;
         }
     }
-//    public Imu getOdometry() {
-//        synchronized (odometryMutex) {
-//            return odometry;
-//        }
-//    }
 
     /**
      * Sets the current Odometry.
@@ -689,7 +717,7 @@ public class RobotController implements NodeMain, Savable {
             this.odometry = odometry;
 
             // Call the listener callbacks
-            for (MessageListener<Odometry> listener: odometryListeners) {
+            for (MessageListener<Message> listener: odometryListeners) {
                 listener.onNewMessage(odometry);
             }
 
@@ -706,28 +734,37 @@ public class RobotController implements NodeMain, Savable {
             turnRate = odometry.getTwist().getTwist().getAngular().getZ();
         }
     }
-//    protected void setOdometry(Imu odometry) {
-//        synchronized (odometryMutex) {
-//            this.odometry = odometry;
-//
-//            // Call the listener callbacks
-//            for (MessageListener<Imu> listener: odometryListeners) {
-//                listener.onNewMessage(odometry);
-//            }
-//
-//            // Record position TODO this should be moved to setPose() but that's not being called for some reason
-//            if (startPos == null) {
-//                //startPos = odometry.getPosition();
-//            } else {
-//                //currentPos = odometry.getPosition();
-//            }
-//            rotation = odometry.getOrientation();
-//
-//            // Record speed and turnrate
-//            speed = odometry.getLinearAcceleration().getX();
-//            turnRate = odometry.getAngularVelocity().getZ();
-//        }
-//    }
+
+    /**
+     * @return The most recently received Odometry.
+     */
+    @SuppressWarnings("unused")
+    public Imu getImu() {
+        synchronized (imuMutex) {
+            return imu;
+        }
+    }
+
+    /**
+     * Sets the current Imu.
+     * @param imu The Imu
+     */
+    protected void setImu(Imu imu) {
+        synchronized (imuMutex) {
+            this.imu = imu;
+
+            // Call the listener callbacks
+            for (MessageListener<Message> listener: imuListeners) {
+                listener.onNewMessage(imu);
+            }
+
+            rotation = imu.getOrientation();
+
+            // Record speed and turnrate
+            speed = imu.getLinearAcceleration().getX();
+            turnRate = imu.getAngularVelocity().getZ();
+        }
+    }
 
     /**
      * @return The most recently received Pose.
@@ -817,12 +854,14 @@ public class RobotController implements NodeMain, Savable {
             heading = Utils.getHeading(org.ros.rosjava_geometry.Quaternion.fromQuaternionMessage(rotation));
         }
 
-        // If physical robot
-//        if (heading > 3*Math.PI/2) {
-//            heading = 2*Math.PI - heading + Math.PI/2;
-//        } else{
-//            heading = heading + Math.PI/2;
-//        }
+        //if physical robot
+        /*
+        if (heading > 3*Math.PI/2) {
+            heading = 2*Math.PI -heading + Math.PI/2;
+        } else{
+            heading = heading + Math.PI/2;
+        }
+         */
         return heading;
     }
 

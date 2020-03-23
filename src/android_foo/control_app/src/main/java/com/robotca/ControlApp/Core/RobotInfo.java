@@ -36,6 +36,8 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
     public static final String ODOMETRY_TOPIC_KEY = "ODOMETRY_TOPIC_KEY";
     /** Bundle key for pose topic */
     public static final String POSE_TOPIC_KEY = "POSE_TOPIC_KEY";
+    /** Bundle key for Imu topic */
+    public static final String IMU_TOPIC_KEY = "IMU_TOPIC_KEY";
     /** Bundle key for reverse laser scan */
     public static final String REVERSE_LASER_SCAN_KEY = "REVERSE_LASER_SCAN_KEY";
     /** Bundle key for invert x-axis */
@@ -61,6 +63,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
     private String navsatTopic;
     private String odometryTopic;
     private String poseTopic;
+    private String imuTopic;
     private boolean reverseLaserScan;
     private boolean invertX;
     private boolean invertY;
@@ -82,6 +85,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         navsatTopic = "/navsat/fix";
         odometryTopic = "/odometry/filtered";
         poseTopic = "/pose";
+        imuTopic = "/ubloxTest/navheading";
         reverseLaserScan = false;
         invertX = false;
         invertY = false;
@@ -104,7 +108,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
      */
     public RobotInfo(UUID id, String name, String masterUriString, String joystickTopic,
                      String laserTopic, String cameraTopic,String navsatTopic,
-                     String odometryTopic, String poseTopic, boolean reverseLaserScan,
+                     String odometryTopic, String poseTopic,String imuTopic , boolean reverseLaserScan,
                      boolean invertX, boolean invertY, boolean invertAngularVelocity) {
         this.id = id;
         this.name = name;
@@ -115,6 +119,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         this.navsatTopic = navsatTopic;
         this.odometryTopic = odometryTopic;
         this.poseTopic = poseTopic;
+        this.imuTopic = imuTopic;
         this.reverseLaserScan = reverseLaserScan;
         this.invertX = invertX;
         this.invertY = invertY;
@@ -145,6 +150,21 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
      */
     public void setPoseTopic(String poseTopic) {
         this.poseTopic = poseTopic;
+    }
+
+    /**
+     * @return The imuTopic name of this RobotInfo
+     */
+    public String getImuTopic() {
+        return imuTopic;
+    }
+
+    /**
+     * Sets the imuTopic for this RobotInfo.
+     * @param imuTopic The new PoseTopic
+     */
+    public void setImuTopic(String imuTopic) {
+        this.imuTopic = imuTopic;
     }
     
      /**
@@ -388,6 +408,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         navsatTopic = bundle.getString(NAVSAT_TOPIC_KEY, "/navsat/fix");
         odometryTopic = bundle.getString(ODOMETRY_TOPIC_KEY, "/odometry/filtered");
         poseTopic = bundle.getString(POSE_TOPIC_KEY, "/pose");
+        imuTopic = bundle.getString(IMU_TOPIC_KEY, "/ubloxTest/navheading");
         reverseLaserScan = bundle.getBoolean(REVERSE_LASER_SCAN_KEY, false);
         invertX = bundle.getBoolean(INVERT_X_KEY, false);
         invertY = bundle.getBoolean(INVERT_Y_KEY, false);
@@ -401,6 +422,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         navsatTopic = prefs.getString(RobotStorage.getPreferenceKey(NAVSAT_TOPIC_KEY), "/navsat/fix");
         odometryTopic = prefs.getString(RobotStorage.getPreferenceKey(ODOMETRY_TOPIC_KEY), "/odometry/filtered");
         poseTopic = prefs.getString(RobotStorage.getPreferenceKey(POSE_TOPIC_KEY), "/pose");
+        imuTopic = prefs.getString(RobotStorage.getPreferenceKey(IMU_TOPIC_KEY), "/ubloxTest/navheading");
         reverseLaserScan = prefs.getBoolean(RobotStorage.getPreferenceKey(REVERSE_LASER_SCAN_KEY), false);
         invertX = prefs.getBoolean(RobotStorage.getPreferenceKey(INVERT_X_KEY), false);
         invertY = prefs.getBoolean(RobotStorage.getPreferenceKey(INVERT_Y_KEY), false);
@@ -418,6 +440,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         bundle.putString(NAVSAT_TOPIC_KEY, navsatTopic);
         bundle.putString(ODOMETRY_TOPIC_KEY, odometryTopic);
         bundle.putString(POSE_TOPIC_KEY, poseTopic);
+        bundle.putString(IMU_TOPIC_KEY, imuTopic);
         bundle.putBoolean(REVERSE_LASER_SCAN_KEY, reverseLaserScan);
         bundle.putBoolean(INVERT_X_KEY, invertX);
         bundle.putBoolean(INVERT_Y_KEY, invertY);
@@ -431,6 +454,7 @@ public class RobotInfo implements Comparable<RobotInfo>, Savable {
         prefs.putString(RobotStorage.getPreferenceKey(NAVSAT_TOPIC_KEY), navsatTopic);
         prefs.putString(RobotStorage.getPreferenceKey(ODOMETRY_TOPIC_KEY), odometryTopic);
         prefs.putString(RobotStorage.getPreferenceKey(POSE_TOPIC_KEY), poseTopic);
+        prefs.putString(RobotStorage.getPreferenceKey(IMU_TOPIC_KEY), imuTopic);
         prefs.putBoolean(RobotStorage.getPreferenceKey(REVERSE_LASER_SCAN_KEY), reverseLaserScan);
         prefs.putBoolean(RobotStorage.getPreferenceKey(INVERT_X_KEY), invertX);
         prefs.putBoolean(RobotStorage.getPreferenceKey(INVERT_Y_KEY), invertY);

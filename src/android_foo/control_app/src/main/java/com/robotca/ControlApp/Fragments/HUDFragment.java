@@ -20,6 +20,7 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
 
+import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 
 import nav_msgs.Odometry;
@@ -33,10 +34,7 @@ import sensor_msgs.Imu;
  *
  * @author Nathaniel Stone
  */
-// Simulation
-public class HUDFragment extends SimpleFragment implements MessageListener<Odometry>{
-// Physical Robot
-//public class HUDFragment extends SimpleFragment implements MessageListener<Imu>{
+public class HUDFragment extends SimpleFragment implements MessageListener<Message> {
 
     @SuppressWarnings("unused")
     private static final String TAG = "HUDFragment";
@@ -153,17 +151,16 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Odome
      * @param message The Odometry message
      */
     @Override
-    public void onNewMessage(Odometry message) {
+    public void onNewMessage(Message message) {
 
-        updateUI(message.getTwist().getTwist().getLinear().getX(),
-                message.getTwist().getTwist().getAngular().getZ());
+        if (message instanceof Imu) {
+            updateUI(((Imu) message).getLinearAcceleration().getX(),
+                    ((Imu) message).getAngularVelocity().getZ());
+        } else if (message instanceof Odometry) {
+            updateUI(((Odometry) message).getTwist().getTwist().getLinear().getX(),
+                    ((Odometry) message).getTwist().getTwist().getAngular().getZ());
+        }
     }
-//    @Override
-//    public void onNewMessage(Imu message) {
-//
-//        updateUI(message.getLinearAcceleration().getX(),
-//                message.getAngularVelocity().getZ());
-//    }
 
     /**
      * Toggles the appearance of the emergency stop button.

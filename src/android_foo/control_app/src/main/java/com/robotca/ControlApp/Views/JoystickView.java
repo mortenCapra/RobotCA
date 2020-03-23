@@ -47,10 +47,14 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.R;
 
+import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import nav_msgs.Odometry;
+import sensor_msgs.Imu;
 
 /**
  * VirtualJoystickView creates a virtual joystick view that publishes velocity
@@ -63,9 +67,7 @@ import java.util.TimerTask;
  *         Nathaniel Stone
  */
 public class JoystickView extends RelativeLayout implements AnimationListener,
-        MessageListener<nav_msgs.Odometry>/*, NodeMain */{
-//public class JoystickView extends RelativeLayout implements AnimationListener,
-//        MessageListener<sensor_msgs.Imu>/*, NodeMain*/{
+        MessageListener<Message>/*, NodeMain*/ {
 
     /**
      * TAG Debug Log tag.
@@ -449,15 +451,29 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
     }
 
     @Override
-    public void onNewMessage(final nav_msgs.Odometry message) {
+    public void onNewMessage(final Message m) {
 
-        double heading;
         // For some reason the values of z and y seem to be interchanged. If they
         // are not swapped then heading is always incorrect.
-        double w = message.getPose().getPose().getOrientation().getW();
-        double x = message.getPose().getPose().getOrientation().getX();
-        double y = message.getPose().getPose().getOrientation().getZ();
-        double z = message.getPose().getPose().getOrientation().getY();
+        double w = 0.0;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        double heading;
+        if (m instanceof Odometry){
+            Odometry message = (Odometry) m;
+            w = message.getPose().getPose().getOrientation().getW();
+            x = message.getPose().getPose().getOrientation().getX();
+            y = message.getPose().getPose().getOrientation().getZ();
+            z = message.getPose().getPose().getOrientation().getY();
+        }
+        if (m instanceof Imu) {
+            Imu message = (Imu) m;
+            w = message.getOrientation().getW();
+            x = message.getOrientation().getX();
+            y = message.getOrientation().getZ();
+            z = message.getOrientation().getY();
+        }
         heading = Math.atan2(2 * y * w - 2 * x * z, x * x - y * y - z * z + w * w) * 180 / Math.PI;
         // Negating the orientation to make the math for rotation in
         // turn-in-place mode easy. Since the actual heading is irrelevant it does
@@ -474,33 +490,6 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
             postInvalidate();
         }
     }
-
-//    @Override
-//    public void onNewMessage(final sensor_msgs.Imu message) {
-//
-//        double heading;
-//        // For some reason the values of z and y seem to be interchanged. If they
-//        // are not swapped then heading is always incorrect.
-//        double w = message.getOrientation().getW();
-//        double x = message.getOrientation().getX();
-//        double y = message.getOrientation().getZ();
-//        double z = message.getOrientation().getY();
-//        heading = Math.atan2(2 * y * w - 2 * x * z, x * x - y * y - z * z + w * w) * 180 / Math.PI;
-//        // Negating the orientation to make the math for rotation in
-//        // turn-in-place mode easy. Since the actual heading is irrelevant it does
-//        // no harm.
-//        currentOrientation = (float) -heading;
-//        // Only update the orientation images if the turn-in-place mode is active.
-//        if (turnInPlaceMode) {
-//            post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    updateTurnInPlaceRotation();
-//                }
-//            });
-//            postInvalidate();
-//        }
-//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
