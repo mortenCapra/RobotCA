@@ -153,7 +153,16 @@ public class AreaPlan extends RobotPlan {
                 waitFor(3000);
                 controller.publishVelocity(0, 0, 0);
             } else if (obstacleResult < 150) {
-                int number = 0;
+                int indexOf = obstacleDistances.indexOf(obstacleResult);
+                double bearing = obstacleAngles.get(indexOf);
+
+                while (Math.abs(bearing - heading) > 10) {
+                    controller.publishVelocity(0, 0, 0.5);
+                    waitFor(500);
+                    controller.publishVelocity(0, 0, 0);
+                    heading = headingToNavigateFrom();
+                }
+                /*int number = 0;
                 int indexOf = obstacleDistances.indexOf(obstacleResult);
                 double maxAngle, minAngle;
                 if (obstacleAngles.get(indexOf) > 355d) {
@@ -184,7 +193,7 @@ public class AreaPlan extends RobotPlan {
                         controller.publishVelocity(0, 0, 0.5);
                         heading = headingToNavigateFrom();
                     }
-                }
+                }*/
                 controller.publishVelocity(0, 0, 0);
                 waitFor(1000);
                 controller.publishVelocity(0.5, 0, 0);
