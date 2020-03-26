@@ -394,8 +394,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             // Add the HUDFragment to the RobotController's odometry listener
             controller.addOdometryListener(hudFragment);
+            controller.addimuListener(hudFragment);
             // Add the JoystickView to the RobotController's odometry listener
             controller.addOdometryListener(joystickFragment.getJoystickView());
+            controller.addimuListener(joystickFragment.getJoystickView());
             // Create and add a WarningSystem
             controller.addLaserScanListener(warningSystem = new WarningSystem(this));
 
