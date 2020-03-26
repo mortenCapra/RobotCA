@@ -525,7 +525,7 @@ public class RobotController implements NodeMain, Savable {
             if (imuSubscriber != null)
                 imuSubscriber.shutdown();
 
-            // Start the Odometry subscriber
+            // Start the Imu subscriber
             imuSubscriber = connectedNode.newSubscriber(imuTopic, Imu._TYPE);
             imuSubscriber.addMessageListener(new MessageListener<Imu>() {
                 @Override

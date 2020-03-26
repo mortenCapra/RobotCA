@@ -55,6 +55,13 @@
             android:summary="@string/pose_pref_summary"
             android:title="@string/pose_pref_title" />
 
+        <com.robotca.ControlApp.Views.BetterEditTextPreference
+            android:defaultValue="@string/imu_topic"
+            android:key="@string/prefs_imu_topic_edittext_key"
+            android:singleLine="true"
+            android:summary="@string/imu_pref_summary"
+            android:title="@string/Imu_pref_title" />
+
     </PreferenceScreen>
 
     <!--<Preference-->
