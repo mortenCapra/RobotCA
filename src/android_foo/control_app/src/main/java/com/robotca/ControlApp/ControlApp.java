@@ -1168,4 +1168,176 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return map;
     }
 
+    public boolean checkRoute(int routeIndex, int obstacleIndex) {
+        for(int i = routeIndex; i < routePoints.size(); i++) {
+            for (int j = obstacleIndex; j < obstaclePoints.size(); j++) {
+                ArrayList<GeoPoint> obstacle = obstaclePoints.get(j);
+                if (IsPointContainedInObstacle(obstacle, routePoints.get(i))) {
+                    routePoints.remove(i);
+                    return checkRoute(i-1, j);
+                }
+                routePoints = checkObstacle(obstacle, routePoints, i);
+            }
+        }
+        return true;
+    }
+
+    private LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i) {
+        if (i == 0){
+            return routePoints;
+        }
+        GeoPoint start = routePoints.get(i-1);
+        GeoPoint goal = routePoints.get(i);
+        ArrayList<GeoPoint> obstacleIntersections = new ArrayList<>();
+        for (int k = 0; k < obstacle.size(); k++){
+            GeoPoint p2 = obstacle.get(k);
+            GeoPoint q2;
+            if (k == obstacle.size()-1){
+                q2 = obstacle.get(0);
+            } else{
+                q2 = obstacle.get(k+1);
+            }
+            if (doIntersect(start, goal, p2, q2)){
+                obstacleIntersections.add(p2);
+                obstacleIntersections.add(q2);
+            }
+        }
+        if (obstacleIntersections.isEmpty()){
+            return routePoints;
+        }
+        GeoPoint closestToStartPoint = null;
+        for (GeoPoint p: obstacleIntersections){
+            double distanceToStart = MapFragment.computeDistanceBetweenTwoPoints(start, p);
+            if (closestToStartPoint == null || distanceToStart < MapFragment.computeDistanceBetweenTwoPoints(start, closestToStartPoint)){
+                closestToStartPoint = p;
+            }
+        }
+        int indexOfClosestToStartpoint = obstacle.indexOf(closestToStartPoint);
+        GeoPoint neighbour1;
+        GeoPoint neighbour2;
+        if (indexOfClosestToStartpoint == 0){
+            neighbour1 = obstacle.get(obstacle.size()-1);
+        } else {
+            neighbour1 = obstacle.get(indexOfClosestToStartpoint-1);
+        }
+        if (indexOfClosestToStartpoint == obstacle.size()-1){
+            neighbour2 = obstacle.get(0);
+        } else{
+            neighbour2 = obstacle.get(indexOfClosestToStartpoint + 1);
+        }
+        LinkedList<GeoPoint> routeClosest = new LinkedList<>(routePoints);
+        LinkedList<GeoPoint> route1 = new LinkedList<>(routePoints);
+        LinkedList<GeoPoint> route2 = new LinkedList<>(routePoints);
+
+        routeClosest.add(i, closestToStartPoint);
+        route1.add(i, neighbour1);
+        route2.add(i, neighbour2);
+
+        LinkedList<GeoPoint> routeClosest2 = checkObstacle(obstacle, routeClosest, i);
+        LinkedList<GeoPoint> route12 = checkObstacle(obstacle, route1, i);
+        LinkedList<GeoPoint> route22 = checkObstacle(obstacle, route2, i);
+
+        double distanceToGoalClosest = MapFragment.computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
+        double distanceToGoalNeighbour1 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbour1);
+        double distanceToGoalNeighbour2 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbour2);
+
+        if (routeClosest2.size() < route12.size()){
+            if (routeClosest2.size() < route22.size()){
+                return routeClosest2;
+            } else if(route22.size() < routeClosest2.size()){
+                return route22;
+            } else if(distanceToGoalClosest < distanceToGoalNeighbour2){
+                return routeClosest2;
+            } else{
+                return route22;
+            }
+        } else if (route12.size() < routeClosest2.size()){
+            if(route12.size() < route22.size()){
+                return route12;
+            } else if(route22.size() < route12.size()){
+                return route22;
+            } else if(distanceToGoalNeighbour1 < distanceToGoalNeighbour2){
+                return route12;
+            } else{
+                return route22;
+            }
+        } else if(routeClosest2.size() < route22.size()){
+            if (distanceToGoalClosest < distanceToGoalNeighbour1){
+                return routeClosest2;
+            } else {
+                return route12;
+            }
+        } else if(route22.size() < routeClosest2.size()){
+            return route22;
+        } else{
+            if (distanceToGoalClosest < distanceToGoalNeighbour1 && distanceToGoalClosest < distanceToGoalNeighbour2){
+                return routeClosest;
+            } else if (distanceToGoalNeighbour1 < distanceToGoalNeighbour2){
+                return route12;
+            } else{
+                return route22;
+            }
+        }
+    }
+
+
+    private boolean IsPointContainedInObstacle(ArrayList<GeoPoint> obstacle ,GeoPoint location) {
+        int j, k;
+        boolean result = false;
+        for (j = 0, k = obstacle.size() - 1; j < obstacle.size(); k = j++) {
+            if ((obstacle.get(j).getLongitude() > location.getLongitude()) != (obstacle.get(k).getLongitude() > location.getLongitude()) &&
+                    (location.getLatitude() < (obstacle.get(k).getLatitude() - obstacle.get(j).getLatitude()) * (location.getLongitude() -
+                            obstacle.get(j).getLongitude()) / (obstacle.get(k).getLongitude() - obstacle.get(j).getLongitude()) +
+                            obstacle.get(j).getLatitude())) {
+                result = !result;
+            }
+        }
+        return result;
+    }
+
+    private boolean doIntersect(GeoPoint p1, GeoPoint q1, GeoPoint p2, GeoPoint q2){
+        // Find the four orientations needed for general and
+        // special cases
+        int o1 = orientation(p1, q1, p2);
+        int o2 = orientation(p1, q1, q2);
+        int o3 = orientation(p2, q2, p1);
+        int o4 = orientation(p2, q2, q1);
+
+        // General case
+        if (o1 != o2 && o3 != o4)
+            return true;
+
+        // Special Cases
+        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+        // p1, q1 and q2 are colinear and q2 lies on segment p1q1
+        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+        return false; // Doesn't fall in any of the above cases
+    }
+
+    private int orientation(GeoPoint p, GeoPoint q, GeoPoint r){
+        double val = (q.getLongitude() - p.getLongitude()) * (r.getLatitude() - q.getLatitude()) -
+                (q.getLatitude() - p.getLatitude()) * (r.getLongitude() - q.getLongitude());
+
+        if (val == 0) return 0; // colinear
+
+        return (val > 0)? 1: 2; // clock or counterclock wise
+    }
+
+    private boolean onSegment(GeoPoint p, GeoPoint q, GeoPoint r){
+        if (q.getLatitude() <= Math.max(p.getLatitude(), r.getLatitude()) && q.getLatitude() >= Math.min(p.getLatitude(), r.getLatitude()) &&
+                q.getLongitude() <= Math.max(p.getLongitude(), r.getLongitude()) && q.getLongitude() >= Math.min(p.getLongitude(), r.getLongitude()))
+            return true;
+
+        return false;
+    }
+
 }
