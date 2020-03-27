@@ -61,12 +61,14 @@
     <string name="odometry_pref_summary">
         Topic that the application gets odometry data from.\nExpected message type: nav_msgs/Odometry\nValue: %s
     </string>
+    <string name="imu_pref_summary">
+        Topic that the application gets imu data from.\nExpected message type: sensor_msgs/Imu\nValue: %s
+    </string>
     <string name="navsat_pref_summary">
         Topic that the application gets GPS data from.\nExpected message type: navsat/fix\nValue: %s
     </string>
     <string name="pose_pref_summary">Topic where the application gets pose information.
-        \nExpected message type: geometry_msgs/Pose
-        \nValue: %s
+        \nExpected message type: geometry_msgs/Pose\nValue: %s
     </string>
     <string name="laser_scan_detail_pref_summary">Sets the detail level of the laser scan visualization.
         A higher number will draw more laser points\nValue: %s

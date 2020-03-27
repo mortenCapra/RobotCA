@@ -13,11 +13,13 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -128,7 +130,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // Log tag String
     private static final String TAG = "ControlApp";
     // List of routePoints
-    private final LinkedList<GeoPoint> routePoints;
+    private LinkedList<GeoPoint> routePoints;
     // List of waypoints
     private final LinkedList<Vector3> waypoints;
     // Specifies how close waypoints need to be to be considered touching
@@ -394,8 +396,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             // Add the HUDFragment to the RobotController's odometry listener
             controller.addOdometryListener(hudFragment);
+            controller.addimuListener(hudFragment);
             // Add the JoystickView to the RobotController's odometry listener
             controller.addOdometryListener(joystickFragment.getJoystickView());
+            controller.addimuListener(joystickFragment.getJoystickView());
             // Create and add a WarningSystem
             controller.addLaserScanListener(warningSystem = new WarningSystem(this));
 
@@ -1163,4 +1167,5 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public MapFragment getMap(){
         return map;
     }
+
 }
