@@ -11,6 +11,8 @@ import com.robotca.ControlApp.Fragments.MapFragment;
 import org.osmdroid.util.GeoPoint;
 import org.ros.rosjava_geometry.Vector3;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import sensor_msgs.LaserScan;
