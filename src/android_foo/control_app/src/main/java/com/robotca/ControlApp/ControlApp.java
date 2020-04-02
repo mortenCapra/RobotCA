@@ -1178,13 +1178,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
                     return checkRoute(i, j);
                 }
-                routePoints = checkObstacle(obstacle, routePoints, i);
+                routePoints = checkObstacle(obstacle, routePoints, i, 0);
             }
         }
         return true;
     }
 
-    private LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i) {
+    private LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i, int depth) {
         GeoPoint start;
         if (i == 0){
             start = RobotController.getCurrentGPSLocation();
@@ -1212,6 +1212,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         if (obstacleIntersections.isEmpty()){
             return routePoints;
+        } else if(depth > 10){
+            // To ensure the length is larger than the other ones
+            for(int s = 0; s < 12; s++){
+                routePoints.add(i, routePoints.get(i));
+            }
+            return routePoints;
         }
         GeoPoint closestToStartPoint = null;
         for (GeoPoint p: obstacleIntersections){
@@ -1225,29 +1231,21 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         GeoPoint neighbour2 = neighbours[1];
 
 
-        LinkedList<GeoPoint> routeClosest = new LinkedList<>();
-        LinkedList<GeoPoint> route1 = new LinkedList<>();
-        LinkedList<GeoPoint> route2 = new LinkedList<>();
-        for(GeoPoint p: routePoints){
-            routeClosest.add(p);
-            route1.add(p);
-            route2.add(p);
-        }
-
         GeoPoint p = calculatePointOutsideObstacle(closestToStartPoint, obstacle);
-        getMap().initializeMarker(p);
 
+        LinkedList<GeoPoint> routeClosest = new LinkedList<>(routePoints);
         routeClosest.add(i, calculatePointOutsideObstacle(closestToStartPoint, obstacle));
+        LinkedList<GeoPoint> routeClosest2 = checkObstacle(obstacle, routeClosest, i, depth + 1);
+
+        LinkedList<GeoPoint> route1 = new LinkedList<>(routePoints);
         route1.add(i, calculatePointOutsideObstacle(neighbour1, obstacle));
+        LinkedList<GeoPoint> route12 = checkObstacle(obstacle, route1, i, depth + 1);
+
+        LinkedList<GeoPoint> route2 = new LinkedList<>(routePoints);
         route2.add(i, calculatePointOutsideObstacle(neighbour2, obstacle));
-
-
-        LinkedList<GeoPoint> routeClosest2 = checkObstacle(obstacle, routeClosest, i);
-        LinkedList<GeoPoint> route12 = checkObstacle(obstacle, route1, i);
-        LinkedList<GeoPoint> route22 = checkObstacle(obstacle, route2, i);
+        LinkedList<GeoPoint> route22 = checkObstacle(obstacle, route2, i, depth + 1);
 
         return getBestRoute(goal, closestToStartPoint, routeClosest2, route12, route22, obstacle);
-        //return getBestRoute(goal, closestToStartPoint, routeClosest, route1, route2, obstacle);
     }
 
     private LinkedList<GeoPoint> getBestRoute(GeoPoint goal, GeoPoint closestToStartPoint, LinkedList<GeoPoint> routeClosest2, LinkedList<GeoPoint> route12, LinkedList<GeoPoint> route22, ArrayList<GeoPoint> obstacle) {
