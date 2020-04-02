@@ -64,8 +64,6 @@ public class RoutePlan extends RobotPlan {
     @Override
     protected void start(RobotController controller) throws Exception {
 
-        controlApp.checkRoute(0, 0);
-
         Log.d(TAG, "Started");
 
         GeoPoint next;

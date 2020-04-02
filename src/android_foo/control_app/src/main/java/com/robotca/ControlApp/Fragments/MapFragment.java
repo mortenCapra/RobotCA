@@ -82,6 +82,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     int areaPointCheck = 0;
     int obstaclePointCheck = 0;
 
+    ControlApp controlApp;
     ControlMode controlMode = ControlMode.Joystick;
 
     private LocalBroadcastManager localBroadcastManager;
@@ -293,6 +294,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         controlMode();
         mapView.setMinZoomLevel(4.0);
         mapView.invalidate();
+        controlApp = (ControlApp) getActivity();
 
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setEnableAdjustLength(true);
@@ -404,7 +406,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     routingMarkers.add(newMarker);
                     handleRouteMarker(newMarker);
                     addRoute(geoPoint);
-                    ((ControlApp)getActivity()).addPointToRoute(geoPoint);
+                    controlApp.addPointToRoute(geoPoint);
                     break;
 
                 case "obstacle":
@@ -553,7 +555,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
                 route.setPoints(wayPoints);
                 mapView.invalidate();
-                ((ControlApp) getActivity()).alterPointInRoute(oldP, marker.getPosition());
+                controlApp.alterPointInRoute(oldP, marker.getPosition());
+                controlApp.checkRoute(controlApp.getRoutePoints().indexOf(marker.getPosition()), 0);
             }
 
             @Override
@@ -680,7 +683,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
-                ((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
+                controlApp.setObstaclePoints(obstaclePoints);
+
             }
         }
 

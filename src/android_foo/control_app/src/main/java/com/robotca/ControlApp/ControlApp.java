@@ -129,6 +129,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private static final String TAG = "ControlApp";
     // List of routePoints
     private LinkedList<GeoPoint> routePoints;
+    private LinkedList<GeoPoint> routePointsCopy;
     // List of waypoints
     private final LinkedList<Vector3> waypoints;
     // Specifies how close waypoints need to be to be considered touching
@@ -161,6 +162,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         waypoints = new LinkedList<>();
         routePoints = new LinkedList<>();
+        routePointsCopy = new LinkedList<>();
 
         // Create the laserScanMap
         // laserScanMap = new LaserScanMap();
@@ -1124,6 +1126,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public void setObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
         this.obstaclePoints.add(obstaclePoints);
+        checkRoute(0, this.obstaclePoints.indexOf(obstaclePoints));
     }
 
     public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {
@@ -1132,6 +1135,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public void addPointToRoute(GeoPoint v){
         routePoints.addLast(v);
+        routePointsCopy.addLast(v);
+        checkRoute(routePoints.indexOf(v), 0);
     }
 
     public void clearRoute(){
@@ -1145,8 +1150,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public GeoPoint pollNextPointInRoute(){
         GeoPoint p;
         p = routePoints.pollFirst();
+        routePointsCopy.remove(p);
         if (fragment == getMap()) {
-            getMap().removePointsFromRoute(routePoints.size());
+            getMap().removePointsFromRoute(routePointsCopy.size());
         }
 
         return p;
@@ -1167,18 +1173,28 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     }
 
     public boolean checkRoute(int routeIndex, int obstacleIndex) {
-        if (obstaclePoints.isEmpty()){
-            return true;
-        }
         for(int i = routeIndex; i < routePoints.size(); i++) {
             for (int j = obstacleIndex; j < obstaclePoints.size(); j++) {
                 ArrayList<GeoPoint> obstacle = obstaclePoints.get(j);
+                if (isPointContainedInObstacle(obstacle, RobotController.getCurrentGPSLocation())){
+                    Toast.makeText(this, "Robot is inside an obstacle. Move Robot or obstacle to continue", Toast.LENGTH_LONG).show();
+                    stopRobot(true);
+                    hudFragment.toggleEmergencyStopUI(false);
+                    return false;
+                }
                 if (isPointContainedInObstacle(obstacle, routePoints.get(i))) {
                     routePoints.remove(i);
 
                     return checkRoute(i, j);
                 }
-                routePoints = checkObstacle(obstacle, routePoints, i, 0);
+                LinkedList<GeoPoint> res = checkObstacle(obstacle, routePoints, i, 0);
+                if (res == null){
+                    Toast.makeText(this, "This route is not possible", Toast.LENGTH_LONG).show();
+                    hudFragment.toggleEmergencyStopUI(false);
+                    stopRobot(true);
+                    return false;
+                }
+                routePoints = res;
             }
         }
         return true;
@@ -1214,7 +1230,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             return routePoints;
         } else if(depth > 10){
             // To ensure the length is larger than the other ones
-            for(int s = 0; s < 12; s++){
+            for(int s = 0; s < 13; s++){
                 routePoints.add(i, routePoints.get(i));
             }
             return routePoints;
@@ -1230,8 +1246,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         GeoPoint neighbour1 = neighbours[0];
         GeoPoint neighbour2 = neighbours[1];
 
-
-        GeoPoint p = calculatePointOutsideObstacle(closestToStartPoint, obstacle);
 
         LinkedList<GeoPoint> routeClosest = new LinkedList<>(routePoints);
         routeClosest.add(i, calculatePointOutsideObstacle(closestToStartPoint, obstacle));
@@ -1249,6 +1263,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     }
 
     private LinkedList<GeoPoint> getBestRoute(GeoPoint goal, GeoPoint closestToStartPoint, LinkedList<GeoPoint> routeClosest2, LinkedList<GeoPoint> route12, LinkedList<GeoPoint> route22, ArrayList<GeoPoint> obstacle) {
+        if(routeClosest2.size() - routePointsCopy.size() > 11 && route12.size() - routePointsCopy.size() > 11 && route22.size() - routePointsCopy.size() > 11){
+            return null;
+        }
+
         GeoPoint[] neighbours = getNeighboursInObstacle(closestToStartPoint, obstacle);
         double distanceToGoalClosest = MapFragment.computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
         double distanceToGoalNeighbour1 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[0]);
