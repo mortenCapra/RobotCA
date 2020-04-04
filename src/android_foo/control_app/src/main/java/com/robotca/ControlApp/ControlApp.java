@@ -40,6 +40,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.robotca.ControlApp.Core.ControlMode;
+import com.robotca.ControlApp.Core.Dijkstra.DistanceScorer;
+import com.robotca.ControlApp.Core.Dijkstra.GeoPointNode;
+import com.robotca.ControlApp.Core.Dijkstra.Graph;
+import com.robotca.ControlApp.Core.Dijkstra.RouteFinder;
 import com.robotca.ControlApp.Core.DrawerItem;
 import com.robotca.ControlApp.Core.IWaypointProvider;
 import com.robotca.ControlApp.Core.NavDrawerAdapter;
@@ -49,6 +53,7 @@ import com.robotca.ControlApp.Core.RobotInfo;
 import com.robotca.ControlApp.Core.RobotStorage;
 import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.Core.Utils;
+import com.robotca.ControlApp.Core.Utils2;
 import com.robotca.ControlApp.Core.WarningSystem;
 import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
@@ -67,9 +72,16 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.robotca.ControlApp.Core.Utils2.*;
 
 /**
  * Main Activity for the App. The RobotController manages the connection with the Robot while this
@@ -1141,6 +1153,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public void clearRoute(){
         routePoints.clear();
+        routePointsCopy.clear();
     }
 
     public GeoPoint getNextPointInRoute(){
@@ -1154,14 +1167,16 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         if (fragment == getMap()) {
             getMap().removePointsFromRoute(routePointsCopy.size());
         }
-
         return p;
     }
 
     public void alterPointInRoute(GeoPoint oldP, GeoPoint newP){
-        int i = routePoints.indexOf(oldP);
-        routePoints.remove(oldP);
-        routePoints.add(i, newP);
+        int j = routePointsCopy.indexOf(oldP);
+        routePointsCopy.remove(oldP);
+        routePointsCopy.add(j, newP);
+        routePoints = routePointsCopy;
+        checkRoute(0, 0);
+
     }
 
     public LinkedList<GeoPoint> getRoutePoints(){
@@ -1184,21 +1199,64 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 }
                 if (isPointContainedInObstacle(obstacle, routePoints.get(i))) {
                     routePoints.remove(i);
+                    routePointsCopy.remove(i);
 
                     return checkRoute(i, j);
                 }
-                LinkedList<GeoPoint> res = checkObstacle(obstacle, routePoints, i, 0);
+
+                LinkedList<GeoPoint> res = checkObstacle(obstacle, routePoints, i);
                 if (res == null){
                     Toast.makeText(this, "This route is not possible", Toast.LENGTH_LONG).show();
                     hudFragment.toggleEmergencyStopUI(false);
                     stopRobot(true);
                     return false;
+                } else{
+                    routePoints = res;
                 }
-                routePoints = res;
             }
         }
         return true;
     }
+    private LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i) {
+        GeoPoint start;
+        if (i == 0) {
+            start = RobotController.getCurrentGPSLocation();
+        } else {
+            start = routePoints.get(i - 1);
+        }
+        GeoPoint goal = routePoints.get(i);
+        if (doesLineSegmentIntersectWithObstacle(start, goal, obstacle)) {
+            Set<GeoPointNode> nodes = new HashSet<>();
+            nodes.add(new GeoPointNode("start", start));
+            nodes.add(new GeoPointNode("goal", goal));
+            Map<String, Set<String>> connections = new HashMap<>();
+            for (int s = 0; s < obstacle.size() - 1; s++) {
+                nodes.add(new GeoPointNode("" + s, calculatePointOutsideObstacle(obstacle.get(s), obstacle)));
+            }
+            for (GeoPointNode p : nodes) {
+                Set<String> ids = new HashSet<>();
+                for (GeoPointNode n : nodes) {
+                    if (p != n && !doesLineSegmentIntersectWithObstacle(p.getGeoPoint(), n.getGeoPoint(), obstacle)) {
+                        ids.add(n.getId());
+                    }
+                }
+                connections.put(p.getId(), ids);
+            }
+            Graph<GeoPointNode> graph = new Graph<>(nodes, connections);
+            RouteFinder<GeoPointNode> routeFinder = new RouteFinder<>(graph, new DistanceScorer(), new DistanceScorer());
+            List<GeoPointNode> route = routeFinder.findRoute(graph.getNode("start"), graph.getNode("goal"));
+            if (route == null){
+                return null;
+            } else {
+                for (int s = route.size()-1; s > -1; s--){
+                    routePoints.add(i, route.get(s).getGeoPoint());
+                }
+                return routePoints;
+            }
+        }
+        return routePoints;
+    }
+
 
     private LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i, int depth) {
         GeoPoint start;
@@ -1217,7 +1275,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             } else{
                 q2 = obstacle.get(k+1);
             }
-            if (doIntersect(start, goal, p2, q2)){
+            if (Utils2.doIntersect(start, goal, p2, q2)){
                 if (!obstacleIntersections.contains(p2)) {
                     obstacleIntersections.add(p2);
                 }
@@ -1228,10 +1286,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         if (obstacleIntersections.isEmpty()){
             return routePoints;
-        } else if(depth > 10){
-            // To ensure the length is larger than the other ones
-            for(int s = 0; s < 13; s++){
-                routePoints.add(i, routePoints.get(i));
+        } else if(depth >= 15){
+            for (int k = 0; k < depth + 2; k++){
+                routePoints.add(goal);
             }
             return routePoints;
         }
@@ -1242,32 +1299,36 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 closestToStartPoint = p;
             }
         }
-        GeoPoint[] neighbours = getNeighboursInObstacle(closestToStartPoint, obstacle);
+        GeoPoint[] neighbours = Utils2.getNeighboursInObstacle(closestToStartPoint, obstacle);
         GeoPoint neighbour1 = neighbours[0];
         GeoPoint neighbour2 = neighbours[1];
 
 
         LinkedList<GeoPoint> routeClosest = new LinkedList<>(routePoints);
-        routeClosest.add(i, calculatePointOutsideObstacle(closestToStartPoint, obstacle));
+        routeClosest.add(i, Utils2.calculatePointOutsideObstacle(closestToStartPoint, obstacle));
         LinkedList<GeoPoint> routeClosest2 = checkObstacle(obstacle, routeClosest, i, depth + 1);
 
         LinkedList<GeoPoint> route1 = new LinkedList<>(routePoints);
-        route1.add(i, calculatePointOutsideObstacle(neighbour1, obstacle));
+        route1.add(i, Utils2.calculatePointOutsideObstacle(neighbour1, obstacle));
         LinkedList<GeoPoint> route12 = checkObstacle(obstacle, route1, i, depth + 1);
 
         LinkedList<GeoPoint> route2 = new LinkedList<>(routePoints);
-        route2.add(i, calculatePointOutsideObstacle(neighbour2, obstacle));
+        route2.add(i, Utils2.calculatePointOutsideObstacle(neighbour2, obstacle));
         LinkedList<GeoPoint> route22 = checkObstacle(obstacle, route2, i, depth + 1);
 
-        return getBestRoute(goal, closestToStartPoint, routeClosest2, route12, route22, obstacle);
+        return getBestRoute(goal, closestToStartPoint, routeClosest2, route12, route22, obstacle, depth);
     }
 
-    private LinkedList<GeoPoint> getBestRoute(GeoPoint goal, GeoPoint closestToStartPoint, LinkedList<GeoPoint> routeClosest2, LinkedList<GeoPoint> route12, LinkedList<GeoPoint> route22, ArrayList<GeoPoint> obstacle) {
-        if(routeClosest2.size() - routePointsCopy.size() > 11 && route12.size() - routePointsCopy.size() > 11 && route22.size() - routePointsCopy.size() > 11){
-            return null;
+    private LinkedList<GeoPoint> getBestRoute(GeoPoint goal, GeoPoint closestToStartPoint, LinkedList<GeoPoint> routeClosest2, LinkedList<GeoPoint> route12, LinkedList<GeoPoint> route22, ArrayList<GeoPoint> obstacle, int depth) {
+        if(routeClosest2.size() - routePointsCopy.size() > 15 && route12.size() - routePointsCopy.size() > 15 && route22.size() - routePointsCopy.size() > 15){
+            if (depth == 0){
+                return null;
+            } else {
+                return routeClosest2;
+            }
         }
 
-        GeoPoint[] neighbours = getNeighboursInObstacle(closestToStartPoint, obstacle);
+        GeoPoint[] neighbours = Utils2.getNeighboursInObstacle(closestToStartPoint, obstacle);
         double distanceToGoalClosest = MapFragment.computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
         double distanceToGoalNeighbour1 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[0]);
         double distanceToGoalNeighbour2 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[1]);
@@ -1310,107 +1371,4 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             }
         }
     }
-
-
-    private boolean isPointContainedInObstacle(ArrayList<GeoPoint> obstacle , GeoPoint location) {
-        int j, k;
-        boolean result = false;
-        for (j = 0, k = obstacle.size() - 1; j < obstacle.size(); k = j++) {
-            if ((obstacle.get(j).getLongitude() > location.getLongitude()) != (obstacle.get(k).getLongitude() > location.getLongitude()) &&
-                    (location.getLatitude() < (obstacle.get(k).getLatitude() - obstacle.get(j).getLatitude()) * (location.getLongitude() -
-                            obstacle.get(j).getLongitude()) / (obstacle.get(k).getLongitude() - obstacle.get(j).getLongitude()) +
-                            obstacle.get(j).getLatitude())) {
-                result = !result;
-            }
-        }
-        return result;
-    }
-
-    private boolean doIntersect(GeoPoint p1, GeoPoint q1, GeoPoint p2, GeoPoint q2){
-        // Find the four orientations needed for general and
-        // special cases
-        int o1 = orientation(p1, q1, p2);
-        int o2 = orientation(p1, q1, q2);
-        int o3 = orientation(p2, q2, p1);
-        int o4 = orientation(p2, q2, q1);
-
-        // General case
-        if (o1 != o2 && o3 != o4)
-            return true;
-
-        // Special Cases
-        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
-
-        // p1, q1 and q2 are colinear and q2 lies on segment p1q1
-        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
-
-        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
-
-        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
-        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
-
-        return false; // Doesn't fall in any of the above cases
-    }
-
-    private int orientation(GeoPoint p, GeoPoint q, GeoPoint r){
-        double val = (q.getLongitude() - p.getLongitude()) * (r.getLatitude() - q.getLatitude()) -
-                (q.getLatitude() - p.getLatitude()) * (r.getLongitude() - q.getLongitude());
-
-        if (val == 0) return 0; // colinear
-
-        return (val > 0)? 1: 2; // clock or counterclock wise
-    }
-
-    private boolean onSegment(GeoPoint p, GeoPoint q, GeoPoint r){
-        if (q.getLatitude() <= Math.max(p.getLatitude(), r.getLatitude()) && q.getLatitude() >= Math.min(p.getLatitude(), r.getLatitude()) &&
-                q.getLongitude() <= Math.max(p.getLongitude(), r.getLongitude()) && q.getLongitude() >= Math.min(p.getLongitude(), r.getLongitude()))
-            return true;
-
-        return false;
-    }
-
-    //calculate positive bearing in radians
-    private double getPositiveBearing(double bearing){
-        double b = bearing;
-        if (bearing < 0){
-            b = 2 * Math.PI + bearing;
-        }
-        return b;
-    }
-
-    private GeoPoint calculatePointOutsideObstacle(GeoPoint point, ArrayList<GeoPoint> obstacle){
-        GeoPoint[] nn = getNeighboursInObstacle(point, obstacle);
-        GeoPoint n1 = nn[0];
-        GeoPoint n2 = nn[1];
-
-        double b1 = getPositiveBearing(Math.toRadians(MapFragment.computeBearingBetweenTwoPoints(point, n1)));
-        double b2 = getPositiveBearing(Math.toRadians(MapFragment.computeBearingBetweenTwoPoints(point, n2)));
-        double b3 = ((b1 + b2)/2 + Math.PI)%(2*Math.PI);
-
-        GeoPoint p = MapFragment.inverseHaversine(point, b3, 0.5);
-        if (isPointContainedInObstacle(obstacle, p)){
-            return MapFragment.inverseHaversine(point, (b3 + Math.PI)%(2*Math.PI), 0.5);
-        } else{
-            return p;
-        }
-    }
-
-    private GeoPoint[] getNeighboursInObstacle(GeoPoint point, ArrayList<GeoPoint> obstacle){
-        GeoPoint[] neighbours = new GeoPoint[2];
-        int indexOfPoint = obstacle.indexOf(point);
-        if (indexOfPoint == 0){
-            neighbours[0] = obstacle.get(obstacle.size()-2);
-        } else {
-            neighbours[0] = obstacle.get(indexOfPoint-1);
-        }
-        if (indexOfPoint == obstacle.size()-2){
-            neighbours[1] = obstacle.get(0);
-        } else{
-            neighbours[1] = obstacle.get(indexOfPoint + 1);
-        }
-        return neighbours;
-    }
-
 }

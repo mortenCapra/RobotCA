@@ -11,7 +11,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,6 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
-import com.robotca.ControlApp.Core.RobotController;
-import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
@@ -556,7 +553,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 route.setPoints(wayPoints);
                 mapView.invalidate();
                 controlApp.alterPointInRoute(oldP, marker.getPosition());
-                controlApp.checkRoute(controlApp.getRoutePoints().indexOf(marker.getPosition()), 0);
             }
 
             @Override
