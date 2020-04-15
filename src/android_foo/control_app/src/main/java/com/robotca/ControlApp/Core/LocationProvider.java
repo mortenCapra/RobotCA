@@ -30,8 +30,6 @@ public class LocationProvider implements IMyLocationProvider, MessageListener<Na
         consumers = new ArrayList<>();
 
         LOCATION = new Location("ROS");
-        LOCATION.setLatitude(49.9001022472);
-        LOCATION.setLongitude(8.899895028);
     }
 
     @Override
