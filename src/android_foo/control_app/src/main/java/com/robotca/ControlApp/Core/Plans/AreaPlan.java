@@ -26,6 +26,7 @@ public class AreaPlan extends RobotPlan {
     private ArrayList<Double> areaAngles;
     private ArrayList<Double> obstacleAngles;
     private String distanceStrategy;
+    private boolean areaFlag;
 
     /**
      * Creates an AreaPlan with the specified area.
@@ -37,6 +38,7 @@ public class AreaPlan extends RobotPlan {
         obstacleDistances = new ArrayList<>();
         areaAngles = new ArrayList<>();
         obstacleAngles = new ArrayList<>();
+        areaFlag = false;
     }
 
     /**
@@ -73,7 +75,6 @@ public class AreaPlan extends RobotPlan {
                 waitFor(1000L);
             }
 
-            //calculateDistFromRobotToAreaLine(areaPoints, location);
             distanceStrategy = "area";
             calculateDistFromRobotToLine(areaPoints, location);
             angleOf(areaPoints);
@@ -86,6 +87,7 @@ public class AreaPlan extends RobotPlan {
                 }
             }
 
+            // Get closest distance to area line
             areaResult = areaDistances.get(0);
 
             for (int i = 0; i < areaDistances.size(); i++) {
@@ -94,6 +96,7 @@ public class AreaPlan extends RobotPlan {
                 }
             }
 
+            // Get closest distance to obstacle line
             if (controlApp.getObstaclePoints().get(0).size() != 0) {
                 obstacleResult = obstacleDistances.get(0);
 
@@ -107,7 +110,9 @@ public class AreaPlan extends RobotPlan {
             double heading = headingToNavigateFrom();
 
             // If robot gets close to a line, rotate. Otherwise continue same direction
-            if (areaResult < 150) {
+            if (areaResult < 75) {
+                controller.publishVelocity(0, 0, 0);
+                waitFor(1000);
                 int indexOf = areaDistances.indexOf(areaResult);
 
                 double maxAngle, minAngle;
@@ -148,102 +153,52 @@ public class AreaPlan extends RobotPlan {
                         heading = headingToNavigateFrom();
                     }
                 }
-                controller.publishVelocity(0.5, 0, 0);
+
+                while(areaResult < 75 && !areaFlag) {
+                    areaDistances.clear();
+                    controller.publishVelocity(1, 0, 0);
+                    // For debugging
+                    /*waitFor(1000);
+                    controller.publishVelocity(0, 0, 0);*/
+                    calculateDistFromRobotToLine(areaPoints, location);
+                    areaResult = areaDistances.get(indexOf);
+                    areaDistances.remove(indexOf);
+                    for (double d: areaDistances) {
+                        if (d < 75) {
+                            areaFlag = true;
+                        }
+                    }
+                }
+
                 // For debugging
-                waitFor(3000);
-                controller.publishVelocity(0, 0, 0);
-            } else if (obstacleResult < 150) {
+                /*waitFor(3000);
+                controller.publishVelocity(0, 0, 0);*/
+            } else if (obstacleResult < 75) {
                 int indexOf = obstacleDistances.indexOf(obstacleResult);
                 double bearing = obstacleAngles.get(indexOf);
 
                 while (Math.abs(bearing - heading) > 10) {
-                    controller.publishVelocity(0, 0, 0.5);
-                    waitFor(500);
-                    controller.publishVelocity(0, 0, 0);
+                    controller.publishVelocity(0, 0, 2);
+                    // For debugging
+                    /*waitFor(500);
+                    controller.publishVelocity(0, 0, 0);*/
                     heading = headingToNavigateFrom();
                 }
-                /*int number = 0;
-                int indexOf = obstacleDistances.indexOf(obstacleResult);
-                double maxAngle, minAngle;
-                if (obstacleAngles.get(indexOf) > 355d) {
-                    number = 1;
-                    maxAngle = 5 + obstacleAngles.get(indexOf) - 360;
-                    minAngle = obstacleAngles.get(indexOf) - 5;
-                } else if (obstacleAngles.get(indexOf) < 5d) {
-                    number = 2;
-                    maxAngle = 5 + obstacleAngles.get(indexOf);
-                    minAngle = 360 + obstacleAngles.get(indexOf) - 5;
-                } else {
-                    maxAngle = obstacleAngles.get(indexOf) + 5;
-                    minAngle = obstacleAngles.get(indexOf) - 5;
-                }
-
-                if (number == 1) {
-                    while (!(heading < maxAngle || heading > minAngle)) {
-                        controller.publishVelocity(0, 0, 0.5);
-                        heading = headingToNavigateFrom();
-                    }
-                } else if (number == 2) {
-                    while (!(heading > maxAngle || heading < minAngle)) {
-                        controller.publishVelocity(0, 0, 0.5);
-                        heading = headingToNavigateFrom();
-                    }
-                } else {
-                    while (!(heading < maxAngle && heading > minAngle)) {
-                        controller.publishVelocity(0, 0, 0.5);
-                        heading = headingToNavigateFrom();
-                    }
-                }*/
-                controller.publishVelocity(0, 0, 0);
-                waitFor(1000);
-                controller.publishVelocity(0.5, 0, 0);
+                controller.publishVelocity(1, 0, 0);
                 // For debugging
-                waitFor(3000);
-                controller.publishVelocity(0, 0, 0);
+                /*waitFor(3000);
+                controller.publishVelocity(0, 0, 0);*/
             } else {
-                controller.publishVelocity(0.5, 0, 0);
+                controller.publishVelocity(1, 0, 0);
                 // For debugging
-                waitFor(1000);
-                controller.publishVelocity(0, 0, 0);
+                /*waitFor(1000);
+                controller.publishVelocity(0, 0, 0);*/
             }
             areaDistances.clear();
             obstacleDistances.clear();
             areaAngles.clear();
             obstacleAngles.clear();
-        }
-    }
-
-    /**
-     * Calculate distance from robot to area lines.
-     * @param areaPoints used to make area
-     * @param location of the robot
-     */
-    private void calculateDistFromRobotToAreaLine(@NonNull ArrayList<GeoPoint> areaPoints, Location location) {
-        ArrayList<Double> distBetweenAreaPoints = new ArrayList<>();
-        ArrayList<Double> distBetweenAreaPointAndRobot = new ArrayList<>();
-
-        for (int i = 0; i < areaPoints.size() - 1; i++) {
-            double startLon = areaPoints.get(i).getLongitude();
-            double startLat = areaPoints.get(i).getLatitude();
-            double endLon = areaPoints.get(i+1).getLongitude();
-            double endLat = areaPoints.get(i+1).getLatitude();
-
-            double dPoints = MapFragment.computeDistanceToKilometers(startLat, startLon, endLat, endLon);
-            double dRobot = MapFragment.computeDistanceToKilometers(startLat, startLon, location.getLatitude(), location.getLongitude());
-
-            distBetweenAreaPoints.add(dPoints);
-            distBetweenAreaPointAndRobot.add(dRobot);
-            if (i == areaPoints.size() - 2) {
-                distBetweenAreaPointAndRobot.add(distBetweenAreaPointAndRobot.get(0));
-            }
-        }
-
-        for (int i = 0; i < areaPoints.size() - 1; i++) {
-            double perimeter = (distBetweenAreaPoints.get(i) + distBetweenAreaPointAndRobot.get(i) + distBetweenAreaPointAndRobot.get(i+1)) / 2;
-            double area = Math.sqrt(perimeter * (perimeter - distBetweenAreaPoints.get(i)) * (perimeter - distBetweenAreaPointAndRobot.get(i)) * (perimeter - distBetweenAreaPointAndRobot.get(i+1)));
-            double d = ((2 * area) / distBetweenAreaPoints.get(i)) * 100000;
-
-            areaDistances.add(d);
+            areaFlag = false;
         }
     }
 
@@ -338,11 +293,14 @@ public class AreaPlan extends RobotPlan {
         }
     }
 
+    /**
+     * Rotate robot random amount
+     */
     private void rotateRobot(@NonNull RobotController controller) throws Exception {
         controller.publishVelocity(0, 0, 0);
         waitFor(1000);
         long delay = (long) (2000 * (1 + random.nextFloat()));
-        controller.publishVelocity(0, 0, 0.5);
+        controller.publishVelocity(0, 0, 2);
         waitFor(delay);
         controller.publishVelocity(0, 0, 0);
     }
