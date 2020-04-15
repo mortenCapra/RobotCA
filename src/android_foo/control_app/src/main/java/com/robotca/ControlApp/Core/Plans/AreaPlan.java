@@ -134,25 +134,30 @@ public class AreaPlan extends RobotPlan {
                 // Check heading of robot, and rotate to drive opposite
                 if (heading <= 90) {
                     while (!(heading > minAngle && heading < maxAngle)) {
-                        rotateRobot(controller);
+                        controller.publishVelocity(0, 0, 2);
+                        //rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
                 } else if (heading > 90 && heading <= 180d) {
                     while (!(heading < minAngle || heading > maxAngle)) {
-                        rotateRobot(controller);
+                        controller.publishVelocity(0, 0, 2);
+                        //rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
                 } else if (heading > 180 && heading < 270d) {
                     while (!(heading < minAngle || heading > maxAngle)) {
-                        rotateRobot(controller);
+                        controller.publishVelocity(0, 0, 2);
+                        //rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
                 } else if (heading > 270d) {
                     while (!(heading > minAngle && heading < maxAngle)) {
-                        rotateRobot(controller);
+                        controller.publishVelocity(0, 0, 2);
+                        //rotateRobot(controller);
                         heading = headingToNavigateFrom();
                     }
                 }
+                controller.publishVelocity(0, 0, 0);
 
                 while(areaResult < 75 && !areaFlag) {
                     areaDistances.clear();
@@ -169,7 +174,6 @@ public class AreaPlan extends RobotPlan {
                         }
                     }
                 }
-
                 // For debugging
                 /*waitFor(3000);
                 controller.publishVelocity(0, 0, 0);*/
