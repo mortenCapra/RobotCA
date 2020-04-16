@@ -1197,6 +1197,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     hudFragment.toggleEmergencyStopUI(false);
                     return false;
                 }
+
                 if (isPointContainedInObstacle(obstacle, routePoints.get(i))) {
                     routePoints.remove(i);
                     routePointsCopy.remove(i);
