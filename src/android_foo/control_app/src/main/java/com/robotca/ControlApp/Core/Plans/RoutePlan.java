@@ -68,7 +68,6 @@ public class RoutePlan extends RobotPlan {
 
         GeoPoint next;
         double dir, dist, spd;
-        controlApp.checkRoute(0, 0);
 
         while (!isInterrupted()) {
 
