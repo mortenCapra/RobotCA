@@ -11,7 +11,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,6 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
-import com.robotca.ControlApp.Core.RobotController;
-import com.robotca.ControlApp.Core.Savable;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
@@ -82,6 +79,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     int areaPointCheck = 0;
     int obstaclePointCheck = 0;
 
+    ControlApp controlApp;
     ControlMode controlMode = ControlMode.Joystick;
 
     private LocalBroadcastManager localBroadcastManager;
@@ -293,6 +291,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         controlMode();
         mapView.setMinZoomLevel(4.0);
         mapView.invalidate();
+        controlApp = (ControlApp) getActivity();
 
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setEnableAdjustLength(true);
@@ -404,7 +403,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     routingMarkers.add(newMarker);
                     handleRouteMarker(newMarker);
                     addRoute(geoPoint);
-                    ((ControlApp)getActivity()).addPointToRoute(geoPoint);
+                    controlApp.addPointToRoute(geoPoint);
                     break;
 
                 case "obstacle":
@@ -447,7 +446,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return new Vector3(x,y,0.0);
     }
 
-    private Marker initializeMarker(GeoPoint geoPoint) {
+    public Marker initializeMarker(GeoPoint geoPoint) {
         Marker newMarker = new Marker(mapView);
         newMarker.setPosition(geoPoint);
         newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -553,7 +552,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 wayPoints.add(routingMarkers.indexOf(marker) + 1, marker.getPosition());
                 route.setPoints(wayPoints);
                 mapView.invalidate();
-                ((ControlApp) getActivity()).alterPointInRoute(oldP, marker.getPosition());
+                controlApp.alterPointInRoute(oldP, marker.getPosition());
             }
 
             @Override
@@ -680,7 +679,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
-                ((ControlApp) getActivity()).setObstaclePoints(obstaclePoints);
+                controlApp.setObstaclePoints(obstaclePoints);
+
             }
         }
 
@@ -748,7 +748,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     // Function to compute distance between 2 points as well as the angle (bearing) between them
-    @SuppressWarnings("unused")
     public static void computeDistanceAndBearing(double lat1, double lon1,
                                                   double lat2, double lon2, float[] results) {
         // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
@@ -854,6 +853,32 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         float[] res = new float[3];
         computeDistanceAndBearing(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), res);
         return res[0];
+    }
+
+    public static double computeBearingBetweenTwoPoints(GeoPoint p1, GeoPoint p2){
+        float[] res = new float[3];
+        computeDistanceAndBearing(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), res);
+        return res[2];
+    }
+
+    public static GeoPoint inverseHaversine(GeoPoint coordinate, double bearing, double distance){
+        double lat1 = coordinate.getLatitude();
+        double lon1 = coordinate.getLongitude();
+        lat1 *= Math.PI / 180.0; // to radians
+        lon1 *= Math.PI / 180.0;
+        double a = 6378137.0; //Earth's radius in meters
+
+
+        double lat2 = Math.asin(Math.sin(lat1)*Math.cos(distance/a) +
+                Math.cos(lat1)*Math.sin(distance/a)*Math.cos(bearing));
+
+        double lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(distance/a)*Math.cos(lat1),
+                Math.cos(distance/a)-Math.sin(lat1)*Math.sin(lat2));
+
+        lat2 = Math.toDegrees(lat2);
+        lon2 = Math.toDegrees(lon2);
+
+        return new GeoPoint(lat2, lon2);
     }
 
     @Override
