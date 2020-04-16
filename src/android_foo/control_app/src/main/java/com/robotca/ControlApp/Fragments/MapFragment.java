@@ -334,7 +334,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         obstacle = null;
         mapView.invalidate();
         obstaclePointCheck = 0;
-        ((ControlApp) getActivity()).setObstaclePoints(null);
+        ((ControlApp) getActivity()).clearObstaclePoints();
     }
 
     private void clearRoute() {
@@ -679,7 +679,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
-                controlApp.setObstaclePoints(obstaclePoints);
+                controlApp.addObstaclePoints(obstaclePoints);
 
             }
         }
