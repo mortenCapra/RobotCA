@@ -1136,9 +1136,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return areaPoints;
     }
 
-    public void setObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
+    public void addObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
         this.obstaclePoints.add(obstaclePoints);
         checkRoute(0, this.obstaclePoints.indexOf(obstaclePoints));
+    }
+
+    public void clearObstaclePoints(){
+        obstaclePoints.clear();
     }
 
     public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {

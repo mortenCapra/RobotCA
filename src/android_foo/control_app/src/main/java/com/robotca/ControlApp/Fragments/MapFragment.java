@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -122,6 +125,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Location overlay using the robot's GPS
         myLocationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
+        Bitmap b = Bitmap.createScaledBitmap(bitmap, 60, 50, false);
+        myLocationOverlay.setPersonIcon(b);
+
         // Location overlay using Android's GPS
         secondMyLocationOverlay = new MyLocationNewOverlay(mapView);
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this);
@@ -334,7 +341,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         obstacle = null;
         mapView.invalidate();
         obstaclePointCheck = 0;
-        ((ControlApp) getActivity()).setObstaclePoints(null);
+        ((ControlApp) getActivity()).clearObstaclePoints();
     }
 
     private void clearRoute() {
@@ -679,7 +686,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
-                controlApp.setObstaclePoints(obstaclePoints);
+                controlApp.addObstaclePoints(obstaclePoints);
 
             }
         }
