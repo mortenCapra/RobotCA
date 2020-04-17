@@ -1,6 +1,7 @@
-package com.robotca.ControlApp.Core.Plans;
+package com.robotca.ControlApp.UnusedCode.Plans;
 
 import com.robotca.ControlApp.Core.ControlMode;
+import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.Core.RobotController;
 
 import java.util.Random;
@@ -31,8 +32,10 @@ public class RandomWalkPlan extends RobotPlan {
      */
     @Override
     public ControlMode getControlMode() {
-        return ControlMode.RandomWalk;
+        return null;
+       // return ControlMode.RandomWalk;
     }
+
 
     @Override
     public void start(final RobotController controller) throws Exception {

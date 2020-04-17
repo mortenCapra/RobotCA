@@ -1,28 +1,11 @@
-package com.robotca.ControlApp.Fragments;
-
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.robotca.ControlApp.ControlApp;
-import com.robotca.ControlApp.Core.RobotController;
-import com.robotca.ControlApp.R;
-
-import org.ros.android.BitmapFromCompressedImage;
-import org.ros.android.view.RosImageView;
-import org.ros.message.MessageListener;
-
-import sensor_msgs.CompressedImage;
+package com.robotca.ControlApp.UnusedCode.Fragments;
 
 /**
  * Fragment containing a CameraView and a LaserScanView.
  *
  * Created by Michael Brunson on 11/7/15.
  */
+/*
 public class OverviewFragment extends RosFragment {
 
     private View view;
@@ -92,5 +75,6 @@ public class OverviewFragment extends RosFragment {
         if (isInitialized()) {
             nodeMainExecutor.shutdownNodeMain(cameraView);
         }
+
     }
-}
+}*/

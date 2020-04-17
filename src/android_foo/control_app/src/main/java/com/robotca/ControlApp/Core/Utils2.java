@@ -3,10 +3,12 @@ package com.robotca.ControlApp.Core;
 import com.robotca.ControlApp.Fragments.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
+import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
 
 public class Utils2 {
+    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
     public static boolean isPointContainedInObstacle(ArrayList<GeoPoint> obstacle , GeoPoint location) {
         int j, k;
@@ -81,13 +83,13 @@ public class Utils2 {
         GeoPoint n1 = nn[0];
         GeoPoint n2 = nn[1];
 
-        double b1 = getPositiveBearing(Math.toRadians(MapFragment.computeBearingBetweenTwoPoints(point, n1)));
-        double b2 = getPositiveBearing(Math.toRadians(MapFragment.computeBearingBetweenTwoPoints(point, n2)));
+        double b1 = getPositiveBearing(Math.toRadians(computeBearingBetweenTwoPoints(point, n1)));
+        double b2 = getPositiveBearing(Math.toRadians(computeBearingBetweenTwoPoints(point, n2)));
         double b3 = ((b1 + b2)/2 + Math.PI)%(2*Math.PI);
 
-        GeoPoint p = MapFragment.inverseHaversine(point, b3, 0.5);
+        GeoPoint p = inverseHaversine(point, b3, 0.5);
         if (isPointContainedInObstacle(obstacle, p)){
-            return MapFragment.inverseHaversine(point, (b3 + Math.PI)%(2*Math.PI), 0.5);
+            return inverseHaversine(point, (b3 + Math.PI)%(2*Math.PI), 0.5);
         } else{
             return p;
         }
@@ -123,5 +125,178 @@ public class Utils2 {
             }
         }
         return false;
+    }
+
+    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint1, GeoPoint geoPoint2) {
+        float[] res = new float[3];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint1.getLongitude(), res);
+        float x = res[0];
+        //  float b12 = res[2];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint1.getLatitude(), geoPoint2.getLongitude(), res);
+        float y = res[0];
+        //  float b22= res[2];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint2.getLongitude(), res);
+        float b = res[2];
+        // to accomodate the right heading for capra robot
+        if(b < 90 && b > 0){
+            x = -x;
+        } else if(b < 0 && b > -90){
+            y = -y;
+            x = -x;
+        } else if( b < -90){
+            y = -y;
+        }
+        return new Vector3(x,y,0.0);
+    }
+
+    public static double computeDistanceToKilometers(double startLat, double startLon, double endLat, double endLon) {
+        double dLat = Math.toRadians((endLat - startLat));
+        double dLon = Math.toRadians((endLon - startLon));
+
+        startLat = Math.toRadians(startLat);
+        endLat = Math.toRadians(endLat);
+
+        double a = haversin(dLat) + Math.cos(startLat) * Math.cos(endLat) * haversin(dLon);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
+    }
+
+    public static double haversin(double val) {
+        return Math.pow(Math.sin(val / 2), 2);
+    }
+
+    // Function to compute distance between 2 points as well as the angle (bearing) between them
+    public static void computeDistanceAndBearing(double lat1, double lon1,
+                                                 double lat2, double lon2, float[] results) {
+        // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+        // using the "Inverse Formula" (section 4)
+
+        int MAXITERS = 20;
+        // Convert lat/long to radians
+        lat1 *= Math.PI / 180.0;
+        lat2 *= Math.PI / 180.0;
+        lon1 *= Math.PI / 180.0;
+        lon2 *= Math.PI / 180.0;
+
+        double a = 6378137.0; // WGS84 major axis
+        double b = 6356752.3142; // WGS84 semi-major axis
+        double f = (a - b) / a;
+        double aSqMinusBSqOverBSq = (a * a - b * b) / (b * b);
+
+        double L = lon2 - lon1;
+        double A = 0.0;
+        double U1 = Math.atan((1.0 - f) * Math.tan(lat1));
+        double U2 = Math.atan((1.0 - f) * Math.tan(lat2));
+
+        double cosU1 = Math.cos(U1);
+        double cosU2 = Math.cos(U2);
+        double sinU1 = Math.sin(U1);
+        double sinU2 = Math.sin(U2);
+        double cosU1cosU2 = cosU1 * cosU2;
+        double sinU1sinU2 = sinU1 * sinU2;
+
+        double sigma = 0.0;
+        double deltaSigma = 0.0;
+        double cosSqAlpha;
+        double cos2SM;
+        double cosSigma;
+        double sinSigma;
+        double cosLambda = 0.0;
+        double sinLambda = 0.0;
+
+        double lambda = L; // initial guess
+        for (int iter = 0; iter < MAXITERS; iter++) {
+            double lambdaOrig = lambda;
+            cosLambda = Math.cos(lambda);
+            sinLambda = Math.sin(lambda);
+            double t1 = cosU2 * sinLambda;
+            double t2 = cosU1 * sinU2 - sinU1 * cosU2 * cosLambda;
+            double sinSqSigma = t1 * t1 + t2 * t2; // (14)
+            sinSigma = Math.sqrt(sinSqSigma);
+            cosSigma = sinU1sinU2 + cosU1cosU2 * cosLambda; // (15)
+            sigma = Math.atan2(sinSigma, cosSigma); // (16)
+            double sinAlpha = (sinSigma == 0) ? 0.0 :
+                    cosU1cosU2 * sinLambda / sinSigma; // (17)
+            cosSqAlpha = 1.0 - sinAlpha * sinAlpha;
+            cos2SM = (cosSqAlpha == 0) ? 0.0 :
+                    cosSigma - 2.0 * sinU1sinU2 / cosSqAlpha; // (18)
+
+            double uSquared = cosSqAlpha * aSqMinusBSqOverBSq; // defn
+            A = 1 + (uSquared / 16384.0) * // (3)
+                    (4096.0 + uSquared *
+                            (-768 + uSquared * (320.0 - 175.0 * uSquared)));
+            double B = (uSquared / 1024.0) * // (4)
+                    (256.0 + uSquared *
+                            (-128.0 + uSquared * (74.0 - 47.0 * uSquared)));
+            double C = (f / 16.0) *
+                    cosSqAlpha *
+                    (4.0 + f * (4.0 - 3.0 * cosSqAlpha)); // (10)
+            double cos2SMSq = cos2SM * cos2SM;
+            deltaSigma = B * sinSigma * // (6)
+                    (cos2SM + (B / 4.0) *
+                            (cosSigma * (-1.0 + 2.0 * cos2SMSq) -
+                                    (B / 6.0) * cos2SM *
+                                            (-3.0 + 4.0 * sinSigma * sinSigma) *
+                                            (-3.0 + 4.0 * cos2SMSq)));
+
+            lambda = L +
+                    (1.0 - C) * f * sinAlpha *
+                            (sigma + C * sinSigma *
+                                    (cos2SM + C * cosSigma *
+                                            (-1.0 + 2.0 * cos2SM * cos2SM))); // (11)
+
+            double delta = (lambda - lambdaOrig) / lambda;
+            if (Math.abs(delta) < 1.0e-12) {
+                break;
+            }
+        }
+
+        float distance = (float) (b * A * (sigma - deltaSigma));
+        results[0] = distance;
+        if (results.length > 1) {
+            float initialBearing = (float) Math.atan2(cosU2 * sinLambda,
+                    cosU1 * sinU2 - sinU1 * cosU2 * cosLambda);
+            initialBearing *= 180.0 / Math.PI;
+            results[1] = initialBearing;
+            if (results.length > 2) {
+                float finalBearing = (float) Math.atan2(cosU1 * sinLambda,
+                        -sinU1 * cosU2 + cosU1 * sinU2 * cosLambda);
+                finalBearing *= 180.0 / Math.PI;
+                results[2] = finalBearing;
+            }
+        }
+    }
+
+    public static double computeDistanceBetweenTwoPoints(GeoPoint p1, GeoPoint p2){
+        float[] res = new float[3];
+        computeDistanceAndBearing(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), res);
+        return res[0];
+    }
+
+    public static double computeBearingBetweenTwoPoints(GeoPoint p1, GeoPoint p2){
+        float[] res = new float[3];
+        computeDistanceAndBearing(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude(), res);
+        return res[2];
+    }
+
+    public static GeoPoint inverseHaversine(GeoPoint coordinate, double bearing, double distance){
+        double lat1 = coordinate.getLatitude();
+        double lon1 = coordinate.getLongitude();
+        lat1 *= Math.PI / 180.0; // to radians
+        lon1 *= Math.PI / 180.0;
+        double a = 6378137.0; //Earth's radius in meters
+
+
+        double lat2 = Math.asin(Math.sin(lat1)*Math.cos(distance/a) +
+                Math.cos(lat1)*Math.sin(distance/a)*Math.cos(bearing));
+
+        double lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(distance/a)*Math.cos(lat1),
+                Math.cos(distance/a)-Math.sin(lat1)*Math.sin(lat2));
+
+        lat2 = Math.toDegrees(lat2);
+        lon2 = Math.toDegrees(lon2);
+
+        return new GeoPoint(lat2, lon2);
     }
 }

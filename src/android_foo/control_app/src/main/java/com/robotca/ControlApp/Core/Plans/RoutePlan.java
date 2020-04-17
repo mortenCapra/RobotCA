@@ -17,6 +17,8 @@ import java.util.Vector;
 
 import sensor_msgs.LaserScan;
 
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
+
 /**
  * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
  *
@@ -30,7 +32,7 @@ public class RoutePlan extends RobotPlan {
 
     private static final String TAG = "RoutePlan";
 
-    private static final double MAX_SPEED = 1.00;
+    private static final double MAX_SPEED = 0.75;
 
 
     private final static double GAMMA = 2;
@@ -91,14 +93,14 @@ public class RoutePlan extends RobotPlan {
                 GeoPoint point = RobotController.getCurrentGPSLocation();
 
                 float[] res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+                computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
                 double bearing = Math.toRadians(res[2]);
                 double heading = RobotController.getHeading();
                 // Check angle to target - bearing is negative to accomodate the standard of angles in ros
                 dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
-                /*
+
                 //initialize route with correct angle
                 if (counter == 0){
                     while(!(dir < 0.2 && dir > -0.2)) {
@@ -107,7 +109,7 @@ public class RoutePlan extends RobotPlan {
                         dir = Utils.angleDifference(tempHeading, -bearing);
                     }
                 }
-                */
+
 
                 controller.publishVelocity(spd * Math.cos(dir), 0.0, spd* Math.sin(dir));
 
@@ -121,7 +123,7 @@ public class RoutePlan extends RobotPlan {
                 GeoPoint point = RobotController.getCurrentGPSLocation();
 
                 float[] res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+                computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
                 // Check angle to target
                 dir = Utils.angleDifference(RobotController.getHeading(), -Math.toRadians(res[2])) / 2.0;

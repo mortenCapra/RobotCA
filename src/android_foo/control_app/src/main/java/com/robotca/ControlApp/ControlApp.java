@@ -59,9 +59,7 @@ import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
 import com.robotca.ControlApp.Fragments.HUDFragment;
 import com.robotca.ControlApp.Fragments.JoystickFragment;
-import com.robotca.ControlApp.Fragments.LaserScanFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
-import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
@@ -72,8 +70,6 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -584,10 +580,23 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 finish();
 
                 return;
-
+/*
             case 1:
                 fragment = new OverviewFragment();
                 fragmentsCreatedCounter = 0;
+                break;
+
+            case 2:
+                fragment = new LaserScanFragment();
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                break;
+
+ */
+
+            case 1:
+                fragment = new MapFragment();
+                map = (MapFragment) fragment;
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
             case 2:
@@ -596,17 +605,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 break;
 
             case 3:
-                fragment = new LaserScanFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 4:
-                fragment = new MapFragment();
-                map = (MapFragment) fragment;
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 5:
                 if (joystickFragment != null)
                     joystickFragment.hide();
                 if (hudFragment != null) {
@@ -624,7 +622,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
-            case 6:
+            case 4:
                 if (joystickFragment != null)
                     joystickFragment.hide();
                 if (hudFragment != null) {
@@ -719,14 +717,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case R.id.action_routing_control:
                 setControlMode(ControlMode.Routing);
-                return true;
-
-            case R.id.action_waypoint_control:
-                setControlMode(ControlMode.Waypoint);
-                return true;
-
-            case R.id.action_random_walk_control:
-                setControlMode(ControlMode.RandomWalk);
                 return true;
 
             case R.id.action_area_control:
@@ -838,10 +828,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         invalidateOptionsMenu();
 
-        if (controlMode == ControlMode.Waypoint) {
+       /* if (controlMode == ControlMode.Waypoint) {
             Toast.makeText(this, "Tap twice to place or delete a waypoint. " +
                     "Tap and hold a waypoint to move it.", Toast.LENGTH_LONG).show();
         }
+
+        */
 
         if (controlMode == ControlMode.Routing){
             Toast.makeText(this, "Look at and change route in map", Toast.LENGTH_LONG).show();
@@ -1128,6 +1120,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
+
     public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
         this.areaPoints = areaPoints;
     }
@@ -1299,8 +1292,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         GeoPoint closestToStartPoint = null;
         for (GeoPoint p: obstacleIntersections){
-            double distanceToStart = MapFragment.computeDistanceBetweenTwoPoints(start, p);
-            if (closestToStartPoint == null || distanceToStart < MapFragment.computeDistanceBetweenTwoPoints(start, closestToStartPoint)){
+            double distanceToStart = computeDistanceBetweenTwoPoints(start, p);
+            if (closestToStartPoint == null || distanceToStart < computeDistanceBetweenTwoPoints(start, closestToStartPoint)){
                 closestToStartPoint = p;
             }
         }
@@ -1334,9 +1327,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
 
         GeoPoint[] neighbours = Utils2.getNeighboursInObstacle(closestToStartPoint, obstacle);
-        double distanceToGoalClosest = MapFragment.computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
-        double distanceToGoalNeighbour1 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[0]);
-        double distanceToGoalNeighbour2 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[1]);
+        double distanceToGoalClosest = computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
+        double distanceToGoalNeighbour1 = computeDistanceBetweenTwoPoints(goal, neighbours[0]);
+        double distanceToGoalNeighbour2 = computeDistanceBetweenTwoPoints(goal, neighbours[1]);
 
         if (routeClosest2.size() < route12.size()){
             if (routeClosest2.size() < route22.size()){

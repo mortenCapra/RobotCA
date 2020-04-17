@@ -117,10 +117,11 @@
     <!-- Drawer item titles -->
     <string-array name="feature_titles">
         <item>Select Robot</item>
-        <item>Overview</item>
-        <item>Camera</item>
+       <!-- <item>Overview</item>
         <item>Robot</item>
+        -->
         <item>Map</item>
+        <item>Camera</item>
         <item>Preferences</item>
         <item>About</item>
     </string-array>
@@ -160,8 +161,6 @@
     <string name="use_tilt_sensor_string">Use Tilt</string>
     <string name="joystick_control">Joystick Control</string>
     <string name="motion_control">Tilt Control</string>
-    <string name="waypoint_control">Waypoint Control</string>
-    <string name="random_walk">Random Walk</string>
     <string name="route_control">Route Control</string>
     <string name="area_control">Area Control</string>
     <string name="obstacle_control">Obstacle Control</string>
@@ -170,8 +169,6 @@
     <string-array name="motion_plans">
         <item>Joystick</item>
         <item>Tilt</item>
-        <item>Waypoint</item>
-        <item>Random Walk</item>
         <item>Routing</item>
         <item>Area</item>
         <item>Obstacles</item>

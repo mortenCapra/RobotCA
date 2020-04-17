@@ -1,6 +1,6 @@
 package com.robotca.ControlApp.Core.Dijkstra;
 
-import com.robotca.ControlApp.Fragments.MapFragment;
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints;
 
 public class DistanceScorer implements Scorer<GeoPointNode> {
 
@@ -8,6 +8,6 @@ public class DistanceScorer implements Scorer<GeoPointNode> {
 
     @Override
     public double computeCost(GeoPointNode from, GeoPointNode to) {
-        return MapFragment.computeDistanceBetweenTwoPoints(from.getGeoPoint(), to.getGeoPoint());
+        return computeDistanceBetweenTwoPoints(from.getGeoPoint(), to.getGeoPoint());
     }
 }
