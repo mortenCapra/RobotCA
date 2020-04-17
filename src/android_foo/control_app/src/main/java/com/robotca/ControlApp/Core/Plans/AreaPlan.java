@@ -15,6 +15,8 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceToKilometers;
+
 public class AreaPlan extends RobotPlan {
 
     private static final String TAG = "AreaPlan";
@@ -219,8 +221,8 @@ public class AreaPlan extends RobotPlan {
             double endLon = areaPoints.get(i+1).getLongitude();
             double endLat = areaPoints.get(i+1).getLatitude();
 
-            double dPoints = MapFragment.computeDistanceToKilometers(startLat, startLon, endLat, endLon);
-            double dRobot = MapFragment.computeDistanceToKilometers(startLat, startLon, location.getLatitude(), location.getLongitude());
+            double dPoints = computeDistanceToKilometers(startLat, startLon, endLat, endLon);
+            double dRobot = computeDistanceToKilometers(startLat, startLon, location.getLatitude(), location.getLongitude());
 
             distBetweenAreaPoints.add(dPoints);
             distBetweenAreaPointAndRobot.add(dRobot);
@@ -282,8 +284,8 @@ public class AreaPlan extends RobotPlan {
             }
 
             // Calculate distance from robot to xx and yy. Distance is in cm.
-            double dx = MapFragment.computeDistanceToKilometers(x, 0, xx, 0) * 100000;
-            double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0) * 100000;
+            double dx = computeDistanceToKilometers(x, 0, xx, 0) * 100000;
+            double dy = computeDistanceToKilometers(y, 0, yy, 0) * 100000;
 
             // Calculate length of vector and add to ArrayList
             if (distanceStrategy.equals("area")) {

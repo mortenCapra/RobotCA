@@ -6,6 +6,7 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Utils;
+import com.robotca.ControlApp.Core.Utils2.*;
 import com.robotca.ControlApp.Fragments.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import sensor_msgs.LaserScan;
+
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
 
 /**
  * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
@@ -91,7 +94,7 @@ public class RoutePlan extends RobotPlan {
                 GeoPoint point = RobotController.getCurrentGPSLocation();
 
                 float[] res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+                computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
                 double bearing = Math.toRadians(res[2]);
                 double heading = RobotController.getHeading();
@@ -121,7 +124,7 @@ public class RoutePlan extends RobotPlan {
                 GeoPoint point = RobotController.getCurrentGPSLocation();
 
                 float[] res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
+                computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), next.getLatitude(), next.getLongitude(), res);
 
                 // Check angle to target
                 dir = Utils.angleDifference(RobotController.getHeading(), -Math.toRadians(res[2])) / 2.0;

@@ -1299,8 +1299,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         GeoPoint closestToStartPoint = null;
         for (GeoPoint p: obstacleIntersections){
-            double distanceToStart = MapFragment.computeDistanceBetweenTwoPoints(start, p);
-            if (closestToStartPoint == null || distanceToStart < MapFragment.computeDistanceBetweenTwoPoints(start, closestToStartPoint)){
+            double distanceToStart = computeDistanceBetweenTwoPoints(start, p);
+            if (closestToStartPoint == null || distanceToStart < computeDistanceBetweenTwoPoints(start, closestToStartPoint)){
                 closestToStartPoint = p;
             }
         }
@@ -1334,9 +1334,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
 
         GeoPoint[] neighbours = Utils2.getNeighboursInObstacle(closestToStartPoint, obstacle);
-        double distanceToGoalClosest = MapFragment.computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
-        double distanceToGoalNeighbour1 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[0]);
-        double distanceToGoalNeighbour2 = MapFragment.computeDistanceBetweenTwoPoints(goal, neighbours[1]);
+        double distanceToGoalClosest = computeDistanceBetweenTwoPoints(goal, closestToStartPoint);
+        double distanceToGoalNeighbour1 = computeDistanceBetweenTwoPoints(goal, neighbours[0]);
+        double distanceToGoalNeighbour2 = computeDistanceBetweenTwoPoints(goal, neighbours[1]);
 
         if (routeClosest2.size() < route12.size()){
             if (routeClosest2.size() < route22.size()){
