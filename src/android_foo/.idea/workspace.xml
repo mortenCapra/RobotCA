@@ -10,17 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="obstacle + routing works rather well. Some bugs with the robot being cought in enclosing obstacles, and if one moves a marker, after route has been checked and redirected, the route still goes to the wrong points">
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Plans/RandomWalkPlan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Dijkstra/DistanceScorer.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Dijkstra/DistanceScorer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/AreaPlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Utils2.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Utils2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/LaserScanView.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/LaserScanView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/menu/menu_control_app.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/menu/menu_control_app.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,7 +24,6 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="R52MA18LPJV" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />

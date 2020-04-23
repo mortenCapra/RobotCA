@@ -113,6 +113,7 @@
     <string name="routing">Routing</string>
     <string name="Area">Area</string>
     <string name="new_obstacle">New Obstacle</string>
+    <string name="marker_option">Marker Option</string>
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">

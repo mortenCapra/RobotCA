@@ -55,7 +55,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MapView mapView;
     GeoPoint initialPoint;
 
-    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton;
+    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton, markerOptionButton;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
@@ -110,6 +110,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         clearRouteButton = view.findViewById(R.id.clear_route_button);
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
+        markerOptionButton = view.findViewById(R.id.markerOption);
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -293,11 +294,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.invalidate();
         controlApp = (ControlApp) getActivity();
 
+        //if it only worked
+        /*
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setEnableAdjustLength(true);
         scaleBarOverlay.setAlignBottom(true);
         scaleBarOverlay.setAlignRight(true);
         mapView.getOverlays().add(scaleBarOverlay);
+        
+         */
 
         return view;
     }

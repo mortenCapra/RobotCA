@@ -69,4 +69,20 @@
             android:text="@string/center" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/markerOption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/marker_option"
+        android:layout_alignBottom="@+id/mapview"
+        android:layout_alignRight="@+id/mapview"
+        android:layout_alignEnd="@+id/mapview" />
+
 </RelativeLayout>
