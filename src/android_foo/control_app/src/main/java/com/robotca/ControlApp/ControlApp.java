@@ -66,6 +66,8 @@ import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Polygon;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -165,6 +167,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     //
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
+
+    Polygon area = new Polygon();
+    MapView mapView;
 
     /**
      * Default Constructor.
@@ -1134,6 +1139,22 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     public ArrayList<GeoPoint> getAreaPoints() {
         return areaPoints;
+    }
+
+    public void setArea(Polygon area) {
+        this.area = area;
+    }
+
+    public Polygon getArea() {
+        return area;
+    }
+
+    public void setMapView(MapView mapView) {
+        this.mapView = mapView;
+    }
+
+    public MapView getMapView() {
+        return mapView;
     }
 
     public void addObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {

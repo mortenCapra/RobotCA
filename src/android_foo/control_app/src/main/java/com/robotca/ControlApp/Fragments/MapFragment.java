@@ -369,6 +369,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.invalidate();
         areaPointCheck = 0;
         ((ControlApp) getActivity()).setAreaPoints(null);
+        ((ControlApp) getActivity()).setArea(null);
     }
 
     /**
@@ -696,6 +697,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             areaPointCheck = pointCheck;
             areaPoints = points;
             ((ControlApp) getActivity()).setAreaPoints(areaPoints);
+            ((ControlApp) getActivity()).setArea(area);
+            ((ControlApp) getActivity()).setMapView(mapView);
         } else if (markerStrategy.equals("obstacle")) {
             obstacle = polygon;
             obstaclePointCheck = pointCheck;
