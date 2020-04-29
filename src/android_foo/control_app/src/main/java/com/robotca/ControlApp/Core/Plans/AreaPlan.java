@@ -8,9 +8,14 @@ import androidx.annotation.NonNull;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
+import com.robotca.ControlApp.Core.Utils;
 import com.robotca.ControlApp.Fragments.MapFragment;
 
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polygon;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,26 +24,27 @@ public class AreaPlan extends RobotPlan {
 
     private static final String TAG = "AreaPlan";
 
-    private final Random random;
+    private static final double MINIMUM_DISTANCE = 0.5;
+    private static final double MAX_SPEED = 1.00;
+
     private ControlApp controlApp;
     private ArrayList<Double> areaDistances;
     private ArrayList<Double> obstacleDistances;
     private ArrayList<Double> areaAngles;
     private ArrayList<Double> obstacleAngles;
-    private String distanceStrategy;
-    private boolean areaFlag;
+    private Polygon area;
+    private MapView mapView;
 
     /**
      * Creates an AreaPlan with the specified area.
      */
     public AreaPlan(ControlApp controlApp) {
         this.controlApp = controlApp;
-        random = new Random();
         areaDistances = new ArrayList<>();
         obstacleDistances = new ArrayList<>();
         areaAngles = new ArrayList<>();
         obstacleAngles = new ArrayList<>();
-        areaFlag = false;
+        area = new Polygon();
     }
 
     /**
@@ -54,7 +60,8 @@ public class AreaPlan extends RobotPlan {
 
         Log.d(TAG, "Started");
 
-        double areaResult, obstacleResult = 300;
+        double dir, dist, spd, heading, bearing;
+        float[] res;
 
         while (!isInterrupted()) {
 
@@ -66,247 +73,77 @@ public class AreaPlan extends RobotPlan {
             }
 
             // Get area and obstacle points, and location of robot
+            area = controlApp.getArea();
+            mapView = controlApp.getMapView();
             ArrayList<GeoPoint> areaPoints = controlApp.getAreaPoints();
             ArrayList<ArrayList<GeoPoint>> allObstaclePoints = controlApp.getObstaclePoints();
             Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
+
+            // New area
+            GeoPoint center = centerOfPolygon(area);
+
+            // Generate random point to drive towards
+            GeoPoint randomPoint = randomPoint(area, areaPoints);
+            Marker marker = addMarker(randomPoint, mapView);
 
             // If robot is outside area or inside obstacle, stop robot.
             while (!robotInArea(areaPoints, location) || robotInObstacle(allObstaclePoints, location)) {
                 waitFor(1000L);
             }
 
-            distanceStrategy = "area";
-            calculateDistFromRobotToLine(areaPoints, location);
-            angleOf(areaPoints);
+            spd = 0.0;
 
-            if (controlApp.getObstaclePoints().get(0).size() != 0) {
-                distanceStrategy = "obstacle";
-                for (ArrayList<GeoPoint> obstaclePoints: allObstaclePoints) {
-                    calculateDistFromRobotToLine(obstaclePoints, location);
-                    angleOf(obstaclePoints);
-                }
+            do {
+                spd += MAX_SPEED / 15.0;
+                if (spd > MAX_SPEED)
+                    spd = MAX_SPEED;
+
+                GeoPoint point = RobotController.getCurrentGPSLocation();
+
+                res = new float[3];
+                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), randomPoint.getLatitude(), randomPoint.getLongitude(), res);
+
+                bearing = Math.toRadians(res[2]);
+                heading = RobotController.getHeading();
+
+                dir = Utils.angleDifference(heading, -bearing);
+                dist = res[0];
+
+                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
+
+            } while (!isInterrupted() && dist > MINIMUM_DISTANCE);
+
+            final int N = 15;
+            for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
+                GeoPoint point = RobotController.getCurrentGPSLocation();
+
+                res = new float[3];
+                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), randomPoint.getLatitude(), randomPoint.getLongitude(), res);
+
+                dir = Utils.angleDifference(RobotController.getHeading(), -Math.toRadians(res[2])) / 2.0;
+
+                controller.publishVelocity(spd * ((double)i / N) * Math.cos(dir), 0.0, spd * ((double)i / N) * Math.sin(dir));
+                waitFor(N);
             }
 
-            // Get closest distance to area line
-            areaResult = areaDistances.get(0);
-
-            for (int i = 0; i < areaDistances.size(); i++) {
-                if (areaResult > areaDistances.get(i)) {
-                    areaResult = areaDistances.get(i);
-                }
-            }
-
-            // Get closest distance to obstacle line
-            if (controlApp.getObstaclePoints().get(0).size() != 0) {
-                obstacleResult = obstacleDistances.get(0);
-
-                for (int i = 0; i < obstacleDistances.size(); i++) {
-                    if (obstacleResult > obstacleDistances.get(i)) {
-                        obstacleResult = obstacleDistances.get(i);
-                    }
-                }
-            }
-
-            double heading = headingToNavigateFrom();
-
-            // If robot gets close to a line, rotate. Otherwise continue same direction
-            if (areaResult < 75) {
-                controller.publishVelocity(0, 0, 0);
-                waitFor(1000);
-                int indexOf = areaDistances.indexOf(areaResult);
-
-                double maxAngle, minAngle;
-
-                // Get angles at which robot should be between, above or under.
-                maxAngle = areaAngles.get(indexOf);
-
-                if (maxAngle < 180)
-                    minAngle = maxAngle + 180d;
-                else
-                    minAngle = maxAngle - 180d;
-
-                if (maxAngle < minAngle) {
-                    double tempAngle = maxAngle;
-                    maxAngle = minAngle;
-                    minAngle = tempAngle;
-                }
-
-                // Check heading of robot, and rotate to drive opposite
-                if (heading <= 90) {
-                    while (!(heading > minAngle && heading < maxAngle)) {
-                        controller.publishVelocity(0, 0, 2);
-                        //rotateRobot(controller);
-                        heading = headingToNavigateFrom();
-                    }
-                } else if (heading > 90 && heading <= 180d) {
-                    while (!(heading < minAngle || heading > maxAngle)) {
-                        controller.publishVelocity(0, 0, 2);
-                        //rotateRobot(controller);
-                        heading = headingToNavigateFrom();
-                    }
-                } else if (heading > 180 && heading < 270d) {
-                    while (!(heading < minAngle || heading > maxAngle)) {
-                        controller.publishVelocity(0, 0, 2);
-                        //rotateRobot(controller);
-                        heading = headingToNavigateFrom();
-                    }
-                } else if (heading > 270d) {
-                    while (!(heading > minAngle && heading < maxAngle)) {
-                        controller.publishVelocity(0, 0, 2);
-                        //rotateRobot(controller);
-                        heading = headingToNavigateFrom();
-                    }
-                }
-                controller.publishVelocity(0, 0, 0);
-
-                while(areaResult < 75 && !areaFlag) {
-                    areaDistances.clear();
-                    controller.publishVelocity(1, 0, 0);
-                    // For debugging
-                    /*waitFor(1000);
-                    controller.publishVelocity(0, 0, 0);*/
-                    calculateDistFromRobotToLine(areaPoints, location);
-                    areaResult = areaDistances.get(indexOf);
-                    areaDistances.remove(indexOf);
-                    for (double d: areaDistances) {
-                        if (d < 75) {
-                            areaFlag = true;
-                        }
-                    }
-                }
-                // For debugging
-                /*waitFor(3000);
-                controller.publishVelocity(0, 0, 0);*/
-            } else if (obstacleResult < 75) {
-                int indexOf = obstacleDistances.indexOf(obstacleResult);
-                double bearing = obstacleAngles.get(indexOf);
-
-                while (Math.abs(bearing - heading) > 10) {
-                    controller.publishVelocity(0, 0, 2);
-                    // For debugging
-                    /*waitFor(500);
-                    controller.publishVelocity(0, 0, 0);*/
-                    heading = headingToNavigateFrom();
-                }
-                controller.publishVelocity(1, 0, 0);
-                // For debugging
-                /*waitFor(3000);
-                controller.publishVelocity(0, 0, 0);*/
-            } else {
-                controller.publishVelocity(1, 0, 0);
-                // For debugging
-                /*waitFor(1000);
-                controller.publishVelocity(0, 0, 0);*/
-            }
             areaDistances.clear();
             obstacleDistances.clear();
             areaAngles.clear();
             obstacleAngles.clear();
-            areaFlag = false;
+            mapView.getOverlays().remove(marker);
         }
     }
 
-    /**
-     * Calculate distance from robot to all lines, inspiration from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-     * @param points used to make a line
-     * @param location of the robot
-     */
-    private void calculateDistFromRobotToLine(@NonNull ArrayList<GeoPoint> points, Location location) {
-        for (int i = 0; i < points.size() - 1; i++) {
-            double x = location.getLatitude();
-            double x1 = points.get(i).getLatitude();
-            double x2 = points.get(i+1).getLatitude();
-            double y = location.getLongitude();
-            double y1 = points.get(i).getLongitude();
-            double y2 = points.get(i+1).getLongitude();
+    private Marker addMarker(GeoPoint geoPoint, MapView mapView) {
+        Marker marker = new Marker(mapView);
+        marker.setPosition(geoPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setDraggable(false);
+        marker.setInfoWindow(null);
+        mapView.getOverlays().add(marker);
+        mapView.invalidate();
 
-            // Vectors
-            double A = x - x1;
-            double B = y - y1;
-            double C = x2 - x1;
-            double D = y2 - y1;
-
-            double dot = A * C + B * D;
-            double len_sq = C * C + D * D;
-            double param = -1;
-
-            if (len_sq != 0)
-                param = dot / len_sq;
-
-            double xx, yy;
-
-            // If lower or equal 0, closest to first point.
-            // If above 0 and under 1, closest to line segment.
-            // If higher or equal 1, closest to last point.
-            if (param <= 0) {
-                xx = x1;
-                yy = y1;
-            } else if (param >= 1) {
-                xx = x2;
-                yy = y2;
-            } else {
-                xx = x1 + param * C;
-                yy = y1 + param * D;
-            }
-
-            // Calculate distance from robot to xx and yy. Distance is in cm.
-            double dx = MapFragment.computeDistanceToKilometers(x, 0, xx, 0) * 100000;
-            double dy = MapFragment.computeDistanceToKilometers(y, 0, yy, 0) * 100000;
-
-            // Calculate length of vector and add to ArrayList
-            if (distanceStrategy.equals("area")) {
-                areaDistances.add((Math.sqrt(dx * dx + dy * dy)));
-            } else if (distanceStrategy.equals("obstacle")) {
-                obstacleDistances.add(Math.sqrt(dx * dx + dy * dy));
-            }
-        }
-    }
-
-    /**
-     * Get heading of robot and turn it to degrees
-     * @return heading in degrees
-     */
-    private double headingToNavigateFrom() {
-        double heading = RobotController.getHeading();
-
-        if (heading < 0) {
-            double h = Math.PI + heading;
-            heading = Math.PI + h;
-        }
-
-        heading = Math.toDegrees(heading);
-
-        return heading;
-    }
-
-    /**
-     * Get angle of line two points are forming
-     * @param geoPoints to get angle from
-     */
-    private void angleOf(@NonNull ArrayList<GeoPoint> geoPoints) {
-        for (int i = 0; i < geoPoints.size() - 1; i++) {
-            final double deltaY = (geoPoints.get(i).getLongitude() - geoPoints.get(i+1).getLongitude());
-            final double deltaX = (geoPoints.get(i).getLatitude() - geoPoints.get(i+1).getLatitude());
-            final double result = (int) Math.toDegrees(Math.atan2(deltaY, deltaX));
-
-            if (distanceStrategy.equals("area")) {
-                areaAngles.add((result < 0) ? (360 + result) : result);
-            } else if (distanceStrategy.equals("obstacle")) {
-                obstacleAngles.add((result < 0) ? (360 + result) : result);
-            }
-        }
-    }
-
-    /**
-     * Rotate robot random amount
-     */
-    private void rotateRobot(@NonNull RobotController controller) throws Exception {
-        controller.publishVelocity(0, 0, 0);
-        waitFor(1000);
-        long delay = (long) (2000 * (1 + random.nextFloat()));
-        controller.publishVelocity(0, 0, 2);
-        waitFor(delay);
-        controller.publishVelocity(0, 0, 0);
+        return marker;
     }
 
     /**
@@ -350,5 +187,50 @@ public class AreaPlan extends RobotPlan {
             }
         }
         return result;
+    }
+
+    private GeoPoint randomPoint(Polygon polygon, ArrayList<GeoPoint> points) {
+        BoundingBox bounds = polygon.getBounds();
+
+        double x_min = bounds.getLonEast();
+        double x_max = bounds.getLonWest();
+        double y_min = bounds.getLatSouth();
+        double y_max = bounds.getLatNorth();
+
+        double lat = y_min + (Math.random() * (y_max - y_min));
+        double lon = x_min + (Math.random() * (x_max - x_min));
+
+        GeoPoint geoPoint = new GeoPoint(lat, lon);
+
+        if (randomPointInArea(points, geoPoint)) {
+            return geoPoint;
+        } else {
+            return randomPoint(polygon, points);
+        }
+    }
+
+    private boolean randomPointInArea(ArrayList<GeoPoint> areaPoints, GeoPoint geoPoint) {
+        int i, j;
+        boolean result = false;
+
+        for (i = 0, j = areaPoints.size() - 1; i < areaPoints.size(); j = i++) {
+            if ((areaPoints.get(i).getLongitude() > geoPoint.getLongitude()) != (areaPoints.get(j).getLongitude() > geoPoint.getLongitude()) &&
+                    (geoPoint.getLatitude() < (areaPoints.get(j).getLatitude() - areaPoints.get(i).getLatitude()) * (geoPoint.getLongitude() - areaPoints.get(i).getLongitude())
+                            / (areaPoints.get(j).getLongitude() - areaPoints.get(i).getLongitude()) + areaPoints.get(i).getLatitude())) {
+                result = !result;
+            }
+        }
+        return result;
+    }
+
+    private GeoPoint centerOfPolygon(Polygon polygon) {
+        BoundingBox bounds = polygon.getBounds();
+
+        double lat = bounds.getCenterLatitude();
+        double lon = bounds.getCenterLongitude();
+
+        GeoPoint geoPoint = new GeoPoint(lat, lon);
+
+        return geoPoint;
     }
 }
