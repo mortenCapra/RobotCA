@@ -136,6 +136,8 @@ public class RobotController implements NodeMain, Savable {
     private static Point currentPos;
     // The Robot's last recorded GPSLocation
     private static GeoPoint currentGPSLocation;
+    // The Robot's startingPoint
+    private static GeoPoint startGpsLocation;
     // The Robot's last recorded orientation
     private static Quaternion rotation;
     // The Robot's last recorded speed
@@ -688,8 +690,11 @@ public class RobotController implements NodeMain, Savable {
     protected void setNavSatFix(NavSatFix navSatFix) {
         synchronized (navSatFixMutex) {
             this.navSatFix = navSatFix;
-
             currentGPSLocation = new GeoPoint(navSatFix.getLatitude(), navSatFix.getLongitude(), navSatFix.getAltitude());
+
+            if (startGpsLocation == null){
+                startGpsLocation = currentGPSLocation;
+            }
 
             // Call the listener callbacks
             for (MessageListener<NavSatFix> listener: navSatListeners) {
@@ -844,6 +849,17 @@ public class RobotController implements NodeMain, Savable {
     }
 
     /**
+     *
+     * @return the Robot's initial GPS location
+     */
+    public static GeoPoint getStartGpsLocation(){
+        return startGpsLocation;
+    }
+
+    public static void resetGps(){
+        startGpsLocation = null;
+    }
+    /**
      * @return The Robot's last reported heading in radians
      */
     public static double getHeading() {
@@ -894,5 +910,9 @@ public class RobotController implements NodeMain, Savable {
         synchronized (imageMutex) {
             return this.image;
         }
+    }
+
+    public Twist getCurrentVelocityCommand(){
+        return currentVelocityCommand;
     }
 }

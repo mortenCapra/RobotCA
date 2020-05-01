@@ -434,28 +434,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint1, GeoPoint geoPoint2) {
-        float[] res = new float[3];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint1.getLongitude(), res);
-        float x = res[0];
-        //  float b12 = res[2];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint1.getLatitude(), geoPoint2.getLongitude(), res);
-        float y = res[0];
-        //  float b22= res[2];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint2.getLongitude(), res);
-        float b = res[2];
-        // to accomodate the right heading for capra robot
-        if(b < 90 && b > 0){
-            x = -x;
-        } else if(b < 0 && b > -90){
-            y = -y;
-            x = -x;
-        } else if( b < -90){
-            y = -y;
-        }
-        return new Vector3(x,y,0.0);
-    }
-
     public Marker initializeMarker(GeoPoint geoPoint) {
         Marker newMarker = new Marker(mapView);
         newMarker.setPosition(geoPoint);

@@ -1,10 +1,21 @@
 package com.robotca.ControlApp.Core;
 
+import com.robotca.ControlApp.Core.Dijkstra.DistanceScorer;
+import com.robotca.ControlApp.Core.Dijkstra.GeoPointNode;
+import com.robotca.ControlApp.Core.Dijkstra.Graph;
+import com.robotca.ControlApp.Core.Dijkstra.RouteFinder;
 import com.robotca.ControlApp.Fragments.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
+import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Utils2 {
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
@@ -276,5 +287,73 @@ public class Utils2 {
         lon2 = Math.toDegrees(lon2);
 
         return new GeoPoint(lat2, lon2);
+    }
+
+    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint1, GeoPoint geoPoint2) {
+        float[] res = new float[3];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint1.getLongitude(), res);
+        float y = res[0];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint1.getLatitude(), geoPoint2.getLongitude(), res);
+        float x = res[0];
+        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint2.getLongitude(), res);
+        float b = res[2];
+        //To give correct signs
+        if(b > 90){
+            x = -x;
+        } else if(b < 0 && b > -90){
+            y = -y;
+        } else if( b < 90 && b > 0){
+            x = -x;
+            y = -y;
+        }
+
+        // assign reverse values to accomodate vehicle coordinates
+        return new Vector3(y,x,0.0);
+    }
+
+    public static GeoPoint createGeoPointFromPointandVector(GeoPoint p, Vector3 v) {
+        GeoPoint res = inverseHaversine(p, Math.atan2(v.getY(), v.getX()), v.getMagnitude());
+
+        return res;
+    }
+
+    public static LinkedList<GeoPoint> checkObstacle(ArrayList<GeoPoint> obstacle, LinkedList<GeoPoint> routePoints, int i) {
+        GeoPoint start;
+        if (i == 0) {
+            start = RobotController.getCurrentGPSLocation();
+        } else {
+            start = routePoints.get(i - 1);
+        }
+        GeoPoint goal = routePoints.get(i);
+        if (doesLineSegmentIntersectWithObstacle(start, goal, obstacle)) {
+            Set<GeoPointNode> nodes = new HashSet<>();
+            nodes.add(new GeoPointNode("start", start));
+            nodes.add(new GeoPointNode("goal", goal));
+            Map<String, Set<String>> connections = new HashMap<>();
+            for (int s = 0; s < obstacle.size() - 1; s++) {
+                nodes.add(new GeoPointNode("" + s, calculatePointOutsideObstacle(obstacle.get(s), obstacle)));
+            }
+            for (GeoPointNode p : nodes) {
+                Set<String> ids = new HashSet<>();
+                for (GeoPointNode n : nodes) {
+                    if (p != n && !doesLineSegmentIntersectWithObstacle(p.getGeoPoint(), n.getGeoPoint(), obstacle)) {
+                        ids.add(n.getId());
+                    }
+                }
+                connections.put(p.getId(), ids);
+            }
+            Graph<GeoPointNode> graph = new Graph<>(nodes, connections);
+            RouteFinder<GeoPointNode> routeFinder = new RouteFinder<>(graph, new DistanceScorer(), new DistanceScorer());
+            List<GeoPointNode> route = routeFinder.findRoute(graph.getNode("start"), graph.getNode("goal"));
+            if (route == null){
+                return null;
+            } else {
+                for (int s = route.size()-1; s > -1; s--){
+                    routePoints.add(i, route.get(s).getGeoPoint());
+                }
+                return routePoints;
+            }
+        }
+        return routePoints;
     }
 }
