@@ -13,6 +13,7 @@ import org.ros.rosjava_geometry.Vector3;
 import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
 import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints;
 import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
+import static com.robotca.ControlApp.Core.Utils2.getNormalPoint;
 
 /**
  * Pure pursuit.
@@ -94,7 +95,7 @@ public class RoutePlan extends RobotPlan {
                 double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
                 spd = MAX_SPEED * Math.cos(angleDiff);
                 if (spd < 0){
-                    spd = 0;
+                    spd = 0.2;
                 } else if(spd > MAX_SPEED){
                     spd = MAX_SPEED;
                 }
@@ -102,21 +103,13 @@ public class RoutePlan extends RobotPlan {
 
                 dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
-            } while(!(isInterrupted()) && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
+            } while(!isInterrupted() && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
 
-            controlApp.pollNextPointInRoute();
-            startPoint = goalPoint;
+            if (!isInterrupted() && goalPoint.equals(controlApp.getNextPointInRoute())) {
+                controlApp.pollNextPointInRoute();
+                startPoint = goalPoint;
+            }
         }
-    }
-
-    private Vector3 getNormalPoint(Vector3 p, Vector3 a, Vector3 b){
-        Vector3 ap = p.subtract(a);
-        Vector3 ab = b.subtract(a);
-
-        ab = ab.normalize();
-        ab = ab.scale(ap.dotProduct(ab));
-
-        return a.add(ab);
     }
 
 

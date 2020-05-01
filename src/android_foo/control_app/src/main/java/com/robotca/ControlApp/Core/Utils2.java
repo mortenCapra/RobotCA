@@ -356,4 +356,14 @@ public class Utils2 {
         }
         return routePoints;
     }
+
+    public static Vector3 getNormalPoint(Vector3 p, Vector3 a, Vector3 b){
+        Vector3 ap = p.subtract(a);
+        Vector3 ab = b.subtract(a);
+
+        ab = ab.normalize();
+        ab = ab.scale(ap.dotProduct(ab));
+
+        return a.add(ab);
+    }
 }

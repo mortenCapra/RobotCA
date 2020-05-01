@@ -25,6 +25,7 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
+import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
@@ -557,7 +558,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             mapView.invalidate();
         } else {
             route = new Polyline();
-            wayPoints.add(0, myLocationOverlay.getMyLocation());
+            wayPoints.add(0, RobotController.getCurrentGPSLocation());
             route.setPoints(wayPoints);
             mapView.getOverlays().add(1, route);
             mapView.invalidate();
