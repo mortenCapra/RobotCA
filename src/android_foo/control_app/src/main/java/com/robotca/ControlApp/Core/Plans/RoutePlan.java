@@ -15,9 +15,7 @@ import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints
 import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
 
 /**
- * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
- *
- * Created by Nathaniel Stone on 3/4/16.
+ * Pure pursuit.
  *
  */
 public class RoutePlan extends RobotPlan {
@@ -105,24 +103,6 @@ public class RoutePlan extends RobotPlan {
                 dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
             } while(!(isInterrupted()) && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
-            /*
-            final int N = 15;
-            for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
-
-
-                // Check angle to target
-                Vector3 robotToGoal = goalPosition.subtract(currentPosition);
-                double angle = -Math.atan2(robotToGoal.getY(), robotToGoal.getX());
-                double angleDiff = Utils.angleDifference(angle, currentHeading);
-
-                double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToGoal.getMagnitude());
-
-                // Slow down
-                controller.publishVelocity(spd * ((double)i / N), 0.0,((double)i / N) * angleVel);
-                waitFor(N);
-            }
-
-             */
 
             controlApp.pollNextPointInRoute();
             startPoint = goalPoint;
@@ -139,6 +119,8 @@ public class RoutePlan extends RobotPlan {
         return a.add(ab);
     }
 
+
+    // Old way of doing it
     protected void start2(RobotController controller) throws Exception {
 
         Log.d(TAG, "Started");
