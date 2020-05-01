@@ -23,16 +23,12 @@ import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
 public class RoutePlan extends RobotPlan {
 
     private static final double MINIMUM_DISTANCE = 0.5;
-    private static final double LOOKAHEAD_FACTOR = 1;
+    private static final double LOOKAHEAD_FACTOR = 2;
     private final ControlApp controlApp;
 
     private static final String TAG = "RoutePlan";
 
     private static final double MAX_SPEED = 1.00;
-
-
-    private final static double GAMMA = 2;
-    private final static double KAPPA = 0.4;
 
     private GeoPoint initialPoint = RobotController.getStartGpsLocation();
     private GeoPoint currentPoint;
@@ -76,14 +72,9 @@ public class RoutePlan extends RobotPlan {
             goalPoint = controlApp.getNextPointInRoute();
             startPosition = createVectorFromGeoPoint(startPoint, initialPoint);
             goalPosition = createVectorFromGeoPoint(goalPoint, initialPoint);
-            spd = 0.0;
+            spd = MAX_SPEED;
 
             do {
-                spd += MAX_SPEED / 15.0;
-                if (spd > MAX_SPEED) {
-                    spd = MAX_SPEED;
-                }
-
                 currentPoint = RobotController.getCurrentGPSLocation();
                 currentHeading = RobotController.getHeading();
                 currentPosition = createVectorFromGeoPoint(currentPoint, initialPoint);
@@ -103,13 +94,13 @@ public class RoutePlan extends RobotPlan {
                 double angleDiff = Utils.angleDifference(angle, currentHeading);
 
                 double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
-                double linearVel = spd * Math.cos(angleDiff);
-                if (linearVel < 0){
-                    linearVel = 0;
-                } else if(linearVel > MAX_SPEED){
-                    linearVel = MAX_SPEED;
+                spd = MAX_SPEED * Math.cos(angleDiff);
+                if (spd < 0){
+                    spd = 0;
+                } else if(spd > MAX_SPEED){
+                    spd = MAX_SPEED;
                 }
-                controller.publishVelocity(linearVel, 0, -angleVel);
+                controller.publishVelocity(spd, 0, -angleVel);
 
                 dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
