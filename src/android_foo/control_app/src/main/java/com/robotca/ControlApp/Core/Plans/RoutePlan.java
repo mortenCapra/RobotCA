@@ -103,17 +103,18 @@ public class RoutePlan extends RobotPlan {
                 double angleDiff = Utils.angleDifference(angle, currentHeading);
 
                 double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
-                double linearVel;
-                if (angleVel < 1){
-                    linearVel = spd;
-                } else{
-                    linearVel = spd/Math.abs(angleVel);
+                double linearVel = spd * Math.cos(angleDiff);
+                if (linearVel < 0){
+                    linearVel = 0;
+                } else if(linearVel > MAX_SPEED){
+                    linearVel = MAX_SPEED;
                 }
-                controller.publishVelocity(spd, 0, -angleVel);
+                controller.publishVelocity(linearVel, 0, -angleVel);
 
                 dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
             } while(!(isInterrupted()) && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
+            /*
             final int N = 15;
             for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
 
@@ -129,6 +130,8 @@ public class RoutePlan extends RobotPlan {
                 controller.publishVelocity(spd * ((double)i / N), 0.0,((double)i / N) * angleVel);
                 waitFor(N);
             }
+
+             */
 
             controlApp.pollNextPointInRoute();
             startPoint = goalPoint;
