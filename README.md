@@ -1,24 +1,26 @@
 # RobotCA
-### No longer actively maintained. Feel free to fork or make a PR.
-#### Check out https://github.com/ros-autom/RobotCA
 
-#### University of South Carolina  
-###### CSCE 490 & 492 Capstone Design  
+This project is under development, it's forked from mtbii/RobotCA. The further development envolves navigating the robot only by using the map. Here it will be possible to make a route with markers, which the robot will then follow. It will also be possible to make an area where the robot will drive randomly in. Furthermore it is possible to add obstacles in the route or in the area, where the robot will then navigate around it.
 
-Our project is to design an Android application to control a robot. Specifically, the goal is to create a native Android tablet application to interface with a Robot Operating System (ROS) robot, Clearpath Robotics' HUSKY model, for direct drive, diagnostic, and navigation information. The application will have to process data from various sensors on the robot and display the information in a user understandable fashion. For example, the robot will have a laser ranging system which will be collecting data on the environment. The application must parse this data and display the environment that the robot "sees".
+### Installation guide
+##### PreRequisites
+Installed Ubuntu and ROS melodic
 
-#### [Download from the Google Play Store today!](https://play.google.com/store/apps/details?id=com.robotca.ControlApp)
+##### Rosjava
+Follow the following link, Prerequisites and Core sources part is enough. Replace kinetic with melodic everywhere.
+http://wiki.ros.org/rosjava/Tutorials/kinetic/Source%20Installation
 
-Dependencies:  
-+ ROS
-+ ROSJava
-+ Android 4.0+ (API level 13+)
+##### Android studio
+Follow the following for installation of android studio
+http://wiki.ros.org/android/kinetic/Android%20Studio/Download
 
-![Master Chooser](https://cloud.githubusercontent.com/assets/8508489/14839465/021d5f80-0bf9-11e6-9580-10fa54de7cfc.png) 
+After installation, quit android studio.
+If failed to load module "canberra-gtk-module", install from terminal
+sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
 
-![Main Layout](https://cloud.githubusercontent.com/assets/8508489/14839460/0201419c-0bf9-11e6-82c9-8e51ce85d48c.png)  
+##### RobotCA App
+In terminal:
+git clone https://github.com/mortenCapra/RobotCA
 
-Client Information:  
-Dr. Ioannis Rekleitis  
-Assistant Professor  
-University of South Carolina  
+After it's done, open android studio and open an existing project. Navigate to RobotCA/src/android_foo.
+If prompted, install missing SDK packages.

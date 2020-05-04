@@ -20,6 +20,8 @@ import org.osmdroid.views.overlay.Polygon;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceToKilometers;
+
 public class AreaPlan extends RobotPlan {
 
     private static final String TAG = "AreaPlan";
