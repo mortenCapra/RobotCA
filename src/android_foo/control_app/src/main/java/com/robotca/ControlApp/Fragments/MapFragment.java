@@ -110,7 +110,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         clearRouteButton = view.findViewById(R.id.clear_route_button);
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
-        markerOptionButton = view.findViewById(R.id.markerOption);
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);

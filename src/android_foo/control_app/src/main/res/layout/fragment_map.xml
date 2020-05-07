@@ -13,76 +13,57 @@
     android:focusable="true" >
 
     </org.osmdroid.views.MapView>
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:orientation="vertical">
-
-<!--        <Button-->
-<!--            android:id="@+id/routing_button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/routing" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/area_button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/Area" />-->
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/White">
 
         <Button
             android:id="@+id/new_obstacle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/new_obstacle" />
+            android:text="@string/new_obstacle"
+            android:background="@null"/>
 
         <Button
             android:id="@+id/clear_route_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clear_route" />
+            android:text="@string/clear_route"
+            android:background="@null"/>
 
         <Button
             android:id="@+id/clear_area_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clear_area" />
+            android:text="@string/clear_area"
+            android:background="@null"/>
 
         <Button
             android:id="@+id/clear_obstacle_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clear_obstacle" />
+            android:text="@string/clear_obstacle"
+            android:background="@null"/>
 
         <Button
             android:id="@+id/clear_all_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clear_all" />
+            android:text="@string/clear_all"
+            android:background="@null"/>
 
         <Button
             android:id="@+id/recenter"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/center" />
+            android:text="@string/center"
+            android:background="@null"/>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="vertical">
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/markerOption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/marker_option"
-        android:layout_alignBottom="@+id/mapview"
-        android:layout_alignRight="@+id/mapview"
-        android:layout_alignEnd="@+id/mapview" />
 
 </RelativeLayout>
