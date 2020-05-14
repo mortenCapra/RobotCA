@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -38,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.Dijkstra.DistanceScorer;
@@ -101,6 +103,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar toolbar;
 
     // NodeMainExecutor encapsulating the Robot's connection
     private NodeMainExecutor nodeMainExecutor;
@@ -157,7 +160,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private Bundle savedInstanceState;
 
     private LocalBroadcastManager localBroadcastManager;
-
     //
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
@@ -224,6 +226,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.White)));
+            actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
             // Set custom Action Bar view
             LayoutInflater inflater = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -243,7 +247,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                // R.drawable.ic_drawer,
+                //R.drawable.ic_drawer,
                 R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
@@ -263,10 +267,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         //noinspection deprecation
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+
         int[] imgRes = new int[]{
                 R.drawable.ic_android_black_24dp,
-                R.drawable.ic_view_quilt_black_24dp,
-                R.drawable.ic_linked_camera_black_24dp,
+                //R.drawable.ic_view_quilt_black_24dp,
+                //R.drawable.ic_linked_camera_black_24dp,
                 R.drawable.ic_navigation_black_24dp,
                 R.drawable.ic_terrain_black_24dp,
                 R.drawable.ic_settings_black_24dp,

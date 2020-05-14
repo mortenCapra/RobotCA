@@ -19,51 +19,81 @@
         android:gravity="bottom"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@color/White">
+        android:background="@drawable/shadow_bottomleftright"
+        android:layout_margin="5dp">
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/new_obstacle_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_obstacle"
+                        style="?android:attr/borderlessButtonStyle"/>
+                    <View style="@style/Divider"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/clear_route_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clear_route"
+                        style="?android:attr/borderlessButtonStyle"/>
 
-        <Button
-            android:id="@+id/new_obstacle_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/new_obstacle"
-            android:background="@null"/>
+                    <View style="@style/Divider"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/clear_area_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clear_area"
+                        style="?android:attr/borderlessButtonStyle"/>
 
-        <Button
-            android:id="@+id/clear_route_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_route"
-            android:background="@null"/>
+                    <View style="@style/Divider"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/clear_obstacle_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clear_obstacle"
+                        style="?android:attr/borderlessButtonStyle"/>
 
-        <Button
-            android:id="@+id/clear_area_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_area"
-            android:background="@null"/>
+                    <View style="@style/Divider"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/clear_all_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clear_all"
+                        style="?android:attr/borderlessButtonStyle"/>
 
-        <Button
-            android:id="@+id/clear_obstacle_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_obstacle"
-            android:background="@null"/>
-
-        <Button
-            android:id="@+id/clear_all_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_all"
-            android:background="@null"/>
-
-        <Button
-            android:id="@+id/recenter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/center"
-            android:background="@null"/>
+                    <View style="@style/Divider"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/recenter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/center"
+                        style="?android:attr/borderlessButtonStyle"/>
+                </TableRow>
+            </TableLayout>
     </LinearLayout>
 
 </RelativeLayout>

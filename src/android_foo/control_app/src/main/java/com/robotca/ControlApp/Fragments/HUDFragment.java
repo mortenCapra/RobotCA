@@ -171,14 +171,14 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
         if (stop) {
             emergencyStopButton.setText(R.string.stop);
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_red));
+            emergencyStopButton.setBackgroundResource(R.drawable.emergency_stop_red);
         } else {
             emergencyStopButton.setText(R.string.start);
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_green));
+            emergencyStopButton.setBackgroundResource(R.drawable.emergency_stop_green);
         }
 
         if (getControlApp().getControlMode().USER_CONTROLLED)
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_gray));
+            emergencyStopButton.setBackgroundResource(R.drawable.shadow_bottomleftright);
     }
 
     /**

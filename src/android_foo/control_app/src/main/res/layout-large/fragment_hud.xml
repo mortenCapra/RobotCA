@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="48sp"
-    android:background="@android:color/darker_gray"
-    android:alpha="0.65"
+    android:layout_margin="7dp"
+    android:background="@drawable/shadow"
     tools:context="com.robotca.ControlApp.Fragments.HUDFragment">
 
     <ImageView
@@ -14,14 +14,12 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:contentDescription="@string/speedometer_icon_content_description"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         />
 
     <LinearLayout
         android:id="@+id/hud_speed_display"
         android:orientation="vertical"
-        android:layout_toRightOf="@id/hud_speedometer_icon"
         android:layout_toEndOf="@id/hud_speedometer_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
@@ -29,7 +27,6 @@
         <TextView
             android:id="@+id/hud_speed"
 
-            android:paddingLeft="8sp"
             android:paddingStart="8sp"
             android:paddingEnd="8sp"
             android:textSize="16sp"
@@ -41,7 +38,6 @@
         <TextView
             android:id="@+id/hud_turnrate"
             android:textSize="16sp"
-            android:paddingLeft="8sp"
             android:paddingStart="8sp"
             android:paddingEnd="8sp"
             android:layout_width="wrap_content"
@@ -58,14 +54,12 @@
         android:paddingBottom="6sp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/hud_speed_display"
         android:layout_toEndOf="@id/hud_speed_display"
         android:contentDescription="@string/gps_icon_content_description"/>
 
     <LinearLayout
         android:id="@+id/hud_gps_display"
         android:orientation="vertical"
-        android:layout_toRightOf="@id/hud_gps_icon"
         android:layout_toEndOf="@id/hud_gps_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
@@ -73,7 +67,6 @@
         <TextView
             android:id="@+id/hud_gps_lat"
 
-            android:paddingLeft="8sp"
             android:paddingStart="8sp"
             android:paddingEnd="8sp"
             android:textSize="16sp"
@@ -84,7 +77,6 @@
         <TextView
             android:id="@+id/hud_gps_long"
             android:textSize="16sp"
-            android:paddingLeft="8sp"
             android:paddingStart="8sp"
             android:paddingEnd="8sp"
             android:layout_width="wrap_content"
@@ -97,18 +89,17 @@
         android:id="@+id/emergency_stop_button"
         android:layout_width="128dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="@color/emergency_stop_gray"
+        android:background="@drawable/shadow_bottomleftright"
         android:text="@string/stop"
-        tools:ignore="RelativeOverlap" />
+        tools:ignore="RelativeOverlap"
+        android:layout_margin="2dp"/>
 
     <ImageView
         android:id="@+id/hud_wifi_strength"
         android:src="@drawable/wifi_0"
         android:scaleType="fitCenter"
-        android:layout_toLeftOf="@id/emergency_stop_button"
-        android:layout_toStartOf="@id/emergency_stop_button"
+        android:layout_toEndOf="@id/hud_gps_display"
         android:paddingTop="9sp"
         android:paddingBottom="9sp"
         android:layout_width="wrap_content"

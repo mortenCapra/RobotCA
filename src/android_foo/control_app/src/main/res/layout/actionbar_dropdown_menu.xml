@@ -7,8 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:text="@string/control_mode"
@@ -16,7 +15,7 @@
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/spinner_control_mode"
+
         android:layout_toStartOf="@id/spinner_control_mode"/>
 
 </RelativeLayout>
