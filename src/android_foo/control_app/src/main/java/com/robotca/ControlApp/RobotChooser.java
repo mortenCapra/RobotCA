@@ -194,7 +194,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                             showcaseView = new ShowcaseView.Builder(RobotChooser.this)
                                 .setTarget(new ViewTarget(R.id.connectToRobot, RobotChooser.this))
                                 .setStyle(R.style.CustomShowcaseTheme2)
-                                //.blockAllTouches()
+                                .blockAllTouches()
                                 //.singleShot(0) Can use this instead of manually saving in preferences
                                 .setContentTitle("Add a Robot")
                                 .setContentText("Let's get started! You can add a robot to connect to using this button. Try adding one now.")
