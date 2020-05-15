@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -103,7 +104,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Toolbar toolbar;
 
     // NodeMainExecutor encapsulating the Robot's connection
     private NodeMainExecutor nodeMainExecutor;
@@ -126,12 +126,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     FragmentManager fragmentManager;
     int fragmentsCreatedCounter = 0;
 
-    // For enabling/disabling the action menu
-    // private boolean actionMenuEnabled = true;
-    // The ActionBar spinner menu
-    private Spinner actionMenuSpinner;
 
-    // The index of the previously visible drawer
 
     // The index of the currently visible drawer
     private int drawerIndex = 1;
@@ -227,20 +222,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.White)));
-            actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+            actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
 
             // Set custom Action Bar view
             LayoutInflater inflater = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.actionbar_dropdown_menu, null);
 
-            actionMenuSpinner = v.findViewById(R.id.spinner_control_mode);
-
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                    R.array.motion_plans, android.R.layout.simple_spinner_item);
-
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            actionMenuSpinner.setAdapter(adapter);
-            actionMenuSpinner.setOnItemSelectedListener(this);
 
             actionBar.setCustomView(v);
             actionBar.setDisplayShowCustomEnabled(true);
@@ -273,7 +260,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 //R.drawable.ic_view_quilt_black_24dp,
                 //R.drawable.ic_linked_camera_black_24dp,
                 R.drawable.ic_navigation_black_24dp,
-                R.drawable.ic_terrain_black_24dp,
+                //R.drawable.ic_terrain_black_24dp,
                 R.drawable.ic_settings_black_24dp,
                 R.drawable.ic_info_outline_black_24dp
         };
@@ -297,9 +284,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         // Create the RobotController
         controller = new RobotController(this);
 
-        // Hud fragment
-        hudFragment = (HUDFragment) getFragmentManager().findFragmentById(R.id.hud_fragment);
-
         this.savedInstanceState = savedInstanceState;
 
         if (savedInstanceState != null) {
@@ -318,12 +302,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             // Load the controller
             controller.load(savedInstanceState);
         }
-
-        // Set the correct spinner item
-        if (actionMenuSpinner != null)
-        {
-            actionMenuSpinner.setSelection(getControlMode().ordinal());
-        }
+        // Hud fragment
+        hudFragment = (HUDFragment) getFragmentManager().findFragmentById(R.id.hud_fragment);
     }
 
     @Override
@@ -537,10 +517,14 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
+    public Fragment getFragment(){
+        return fragment;
+    }
+
     /*
      * Swaps fragments in the main content view.
      */
-    private void selectItem(int position) {
+    public void selectItem(int position) {
 
         Bundle args = new Bundle();
 
@@ -557,7 +541,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         fragmentManager = getFragmentManager();
 
-        setActionMenuEnabled(true);
 
         switch (position) {
             case 0:
@@ -604,8 +587,26 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
-            case 2:
+            case 10:
                 fragment = new CameraViewFragment();
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                position = 1;
+                break;
+
+            case 2:
+                if (joystickFragment != null)
+                    joystickFragment.hide();
+                if (hudFragment != null) {
+                    hudFragment.hide();
+
+                    boolean stop = controller.getMotionPlan() == null || !controller.getMotionPlan().isResumable();
+                    stop &= !controller.hasPausedPlan();
+                    hudFragment.toggleEmergencyStopUI(stop);
+                }
+
+                stopRobot(false);
+
+                fragment = new PreferencesFragment();
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
@@ -620,25 +621,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     hudFragment.toggleEmergencyStopUI(stop);
                 }
 
-                setActionMenuEnabled(false);
-                stopRobot(false);
-
-                fragment = new PreferencesFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 4:
-                if (joystickFragment != null)
-                    joystickFragment.hide();
-                if (hudFragment != null) {
-                    hudFragment.hide();
-
-                    boolean stop = controller.getMotionPlan() == null || !controller.getMotionPlan().isResumable();
-                    stop &= !controller.hasPausedPlan();
-                    hudFragment.toggleEmergencyStopUI(stop);
-                }
-
-                setActionMenuEnabled(false);
                 stopRobot(false);
 
                 fragment = new AboutFragment();
@@ -1033,18 +1015,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 }
             });
         }
-    }
-
-    /**
-     * Enables/disables the action bar menu.
-     * @param enabled Whether to enable or disable the menu
-     */
-    public void setActionMenuEnabled(boolean enabled)
-    {
-//        actionMenuEnabled = enabled;
-//        invalidateOptionsMenu();
-        if (actionMenuSpinner != null)
-            actionMenuSpinner.setEnabled(enabled);
     }
 
     /**

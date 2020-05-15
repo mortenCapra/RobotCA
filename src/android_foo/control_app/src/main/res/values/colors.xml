@@ -6,5 +6,6 @@
     <color name="emergency_stop_green">#FF00CC00</color>
     <color name="emergency_stop_gray">#FFAAAAAA</color>
     <color name="White">#FFFFFF</color>
+    <color name="capraBlue">#003D7A</color>
 
 </resources>

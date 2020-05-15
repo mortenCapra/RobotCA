@@ -2,7 +2,7 @@
 <resources>
 
     <!-- App name -->
-    <string name="app_name">ROS Control</string>
+    <string name="app_name">Capra Control</string>
 
     <!-- Topic values -->
     <string name="joy_topic">/joy_teleop/cmd_vel</string>
@@ -114,15 +114,13 @@
     <string name="Area">Area</string>
     <string name="new_obstacle">New Obstacle</string>
     <string name="marker_option">Marker Option</string>
+    <string name ="Camera">Camera</string>
+    <string name ="Map">Map</string>
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">
         <item>Select Robot</item>
-       <!-- <item>Overview</item>
-        <item>Robot</item>
-        -->
-        <item>Map</item>
-        <item>Camera</item>
+        <item>Control Robot</item>
         <item>Preferences</item>
         <item>About</item>
     </string-array>

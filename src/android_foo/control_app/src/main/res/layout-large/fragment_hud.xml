@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="48sp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="7dp"
     android:background="@drawable/shadow"
     tools:context="com.robotca.ControlApp.Fragments.HUDFragment">
@@ -82,8 +83,35 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"/>
-
     </LinearLayout>
+
+    <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+        android:id="@+id/toggleSwitch"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:textToggleLeft="@string/Camera"
+        app:textToggleRight="@string/Map"
+        android:layout_toEndOf="@id/hud_wifi_strength"
+        android:layout_centerVertical="true"
+        app:uncheckedBackgroundColor="@color/White"
+        app:checkedBackgroundColor="@color/capraBlue"
+        app:checkedBorderColor="@color/capraBlue"
+        app:borderWidth="1dp"
+        />
+    <Spinner
+        android:id="@+id/spinner_control_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/emergency_stop_button" />
+
+    <TextView
+        android:text="@string/control_mode"
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/spinner_control_mode"/>
 
     <Button
         android:id="@+id/emergency_stop_button"

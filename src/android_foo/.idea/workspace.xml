@@ -9,28 +9,32 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="CleanUp + alterations in mapFragment">
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/capraLogo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/emergency_stop_green.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/emergency_stop_red.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/layout_bg.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/shadow.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/shadow_bottomleftright.xml" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="HUD change + colorgrading">
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/capra_logo_large.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/capra_logo_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/gps_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/help_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/menu_button_large.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/menu_button_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/robot_symbol_large.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/robot_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/settings_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/speed_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/triangle_symbol_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/wifi_button_large.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/wifi_button_small.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-land/main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/drawable/capraLogo.png" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/capralogo.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-normal/fragment_hud.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-normal/fragment_hud.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/actionbar_dropdown_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/actionbar_dropdown_menu.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/fragment_map.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/nav_drawer_menu_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/nav_drawer_menu_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app_lib/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/control_app_lib/build.gradle" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +54,12 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <projects_view />
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
@@ -482,7 +491,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588842788527</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="HUD change + colorgrading">
+      <created>1589445305449</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1589445305450</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -540,6 +556,7 @@
     <MESSAGE value="works to for simple obstacles" />
     <MESSAGE value="obstacle + routing works rather well. Some bugs with the robot being cought in enclosing obstacles, and if one moves a marker, after route has been checked and redirected, the route still goes to the wrong points" />
     <MESSAGE value="CleanUp + alterations in mapFragment" />
-    <option name="LAST_COMMIT_MESSAGE" value="CleanUp + alterations in mapFragment" />
+    <MESSAGE value="HUD change + colorgrading" />
+    <option name="LAST_COMMIT_MESSAGE" value="HUD change + colorgrading" />
   </component>
 </project>
