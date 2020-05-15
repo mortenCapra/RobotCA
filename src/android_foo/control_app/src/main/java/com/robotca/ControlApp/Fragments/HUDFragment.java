@@ -411,7 +411,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
                 // Update warnings
                 if (warnAmount > 0.0f)
                 {
-                    view.setBackgroundColor(getBackgroundColor());
+                    //view.setBackgroundColor(getBackgroundColor());
 
                     if (System.currentTimeMillis() - lastWarn > WARN_DELAY) {
                         warnAmount *= WARN_AMOUNT_ATTEN;
@@ -426,10 +426,9 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             }
         }
     }
-
+/*
     /**
      * @return The background color based on the warning amount
-     */
     private int getBackgroundColor()
     {
         final float p = (((System.currentTimeMillis() >> 7) & 1) == 0) ? warnAmount: 0.0f;
@@ -437,4 +436,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
         return Color.argb(0xFF, (int)(p * 0xFF + q * 0xA0), (int)(q * 0xA0), (int)(q * 0xA0));
     }
+
+ */
+
 }
