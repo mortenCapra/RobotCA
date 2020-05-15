@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,6 +25,7 @@ import com.robotca.ControlApp.BuildConfig;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
+import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
 
 import org.osmdroid.api.IMapController;
@@ -124,6 +128,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Location overlay using the robot's GPS
         myLocationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
+        Bitmap b = Bitmap.createScaledBitmap(bitmap, 60, 50, false);
+        myLocationOverlay.setPersonIcon(b);
+
         // Location overlay using Android's GPS
         secondMyLocationOverlay = new MyLocationNewOverlay(mapView);
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this);
@@ -301,7 +309,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         scaleBarOverlay.setAlignBottom(true);
         scaleBarOverlay.setAlignRight(true);
         mapView.getOverlays().add(scaleBarOverlay);
-        
+
          */
 
         return view;
@@ -429,28 +437,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
-    public static Vector3 createVectorFromGeoPoint(GeoPoint geoPoint1, GeoPoint geoPoint2) {
-        float[] res = new float[3];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint1.getLongitude(), res);
-        float x = res[0];
-        //  float b12 = res[2];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint1.getLatitude(), geoPoint2.getLongitude(), res);
-        float y = res[0];
-        //  float b22= res[2];
-        computeDistanceAndBearing(geoPoint1.getLatitude(), geoPoint1.getLongitude(), geoPoint2.getLatitude(), geoPoint2.getLongitude(), res);
-        float b = res[2];
-        // to accomodate the right heading for capra robot
-        if(b < 90 && b > 0){
-            x = -x;
-        } else if(b < 0 && b > -90){
-            y = -y;
-            x = -x;
-        } else if( b < -90){
-            y = -y;
-        }
-        return new Vector3(x,y,0.0);
-    }
-
     public Marker initializeMarker(GeoPoint geoPoint) {
         Marker newMarker = new Marker(mapView);
         newMarker.setPosition(geoPoint);
@@ -574,7 +560,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             mapView.invalidate();
         } else {
             route = new Polyline();
-            wayPoints.add(0, myLocationOverlay.getMyLocation());
+            wayPoints.add(0, RobotController.getCurrentGPSLocation());
             route.setPoints(wayPoints);
             mapView.getOverlays().add(1, route);
             mapView.invalidate();
@@ -734,6 +720,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         return results.indexOf(minValue);
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

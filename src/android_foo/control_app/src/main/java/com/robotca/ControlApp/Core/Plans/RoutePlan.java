@@ -6,45 +6,41 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Utils;
-import com.robotca.ControlApp.Fragments.MapFragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.ros.rosjava_geometry.Vector3;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Vector;
-
-import sensor_msgs.LaserScan;
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints;
+import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
+import static com.robotca.ControlApp.Core.Utils2.getNormalPoint;
 
 import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
 
 /**
- * Rudimentary waypoint plan for testing. No collision detection, just moves towards the next waypoint.
- *
- * Created by Nathaniel Stone on 3/4/16.
+ * Pure pursuit.
  *
  */
 public class RoutePlan extends RobotPlan {
 
     private static final double MINIMUM_DISTANCE = 0.5;
+    private static final double LOOKAHEAD_FACTOR = 2;
     private final ControlApp controlApp;
 
     private static final String TAG = "RoutePlan";
 
     private static final double MAX_SPEED = 0.75;
 
-
-    private final static double GAMMA = 2;
-    private final static double KAPPA = 0.4;
+    private GeoPoint initialPoint = RobotController.getStartGpsLocation();
+    private GeoPoint currentPoint;
+    private GeoPoint startPoint;
+    private GeoPoint goalPoint;
 
 
     private Vector3 currentPosition;
     private double currentHeading;
     private Vector3 goalPosition;
-    private Vector3 lastPosition;
-    private double angularVelocity;
-    private double linearVelocity;
+    private Vector3 startPosition;
 
     /**
      * Creates a RoutePlan for the specified ControlApp.
@@ -65,6 +61,62 @@ public class RoutePlan extends RobotPlan {
 
     @Override
     protected void start(RobotController controller) throws Exception {
+        startPoint = initialPoint;
+        double dist, spd;
+        while(!isInterrupted()){
+
+            while (controlApp.getNextPointInRoute() == null) {
+                controller.publishVelocity(0, 0, 0);
+                waitFor(1000L);
+            }
+
+            goalPoint = controlApp.getNextPointInRoute();
+            startPosition = createVectorFromGeoPoint(startPoint, initialPoint);
+            goalPosition = createVectorFromGeoPoint(goalPoint, initialPoint);
+            spd = MAX_SPEED;
+
+            do {
+                currentPoint = RobotController.getCurrentGPSLocation();
+                currentHeading = RobotController.getHeading();
+                currentPosition = createVectorFromGeoPoint(currentPoint, initialPoint);
+
+                Vector3 normalPosition = getNormalPoint(currentPosition, startPosition, goalPosition);
+                Vector3 forwardVector = goalPosition.subtract(startPosition).normalize();
+
+                normalPosition = normalPosition.add(forwardVector.scale(LOOKAHEAD_FACTOR*spd));
+
+                if (Utils.distance(startPosition.getX(), startPosition.getY(), goalPosition.getX(), goalPosition.getY())
+                        < Utils.distance(startPosition.getX(), startPosition.getY(), normalPosition.getX(), normalPosition.getY())){
+                    normalPosition = goalPosition;
+                }
+
+                Vector3 robotToNormal = normalPosition.subtract(currentPosition);
+                double angle = -Math.atan2(robotToNormal.getY(), robotToNormal.getX());
+                double angleDiff = Utils.angleDifference(angle, currentHeading);
+
+                double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
+                spd = MAX_SPEED * Math.cos(angleDiff);
+                if (spd < 0){
+                    spd = 0.2;
+                } else if(spd > MAX_SPEED){
+                    spd = MAX_SPEED;
+                }
+                controller.publishVelocity(spd, 0, -angleVel);
+
+                dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
+
+            } while(!isInterrupted() && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
+
+            if (!isInterrupted() && goalPoint.equals(controlApp.getNextPointInRoute())) {
+                controlApp.pollNextPointInRoute();
+                startPoint = goalPoint;
+            }
+        }
+    }
+
+
+    // Old way of doing it
+    protected void start2(RobotController controller) throws Exception {
 
         Log.d(TAG, "Started");
 
@@ -111,7 +163,7 @@ public class RoutePlan extends RobotPlan {
                 }
 
 
-                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd* Math.sin(dir));
+                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
 
                 counter = counter + 1;
                 // Check distance to target
@@ -138,93 +190,4 @@ public class RoutePlan extends RobotPlan {
                 controlApp.pollNextPointInRoute();
         }
     }
-
-    //another shot at making the routing precise - possibly extendable for obstacle avoidance
-    protected void start2(RobotController controller) throws Exception {
-        GeoPoint initialPoint = RobotController.getCurrentGPSLocation();
-
-        while (!isInterrupted()) {
-            LaserScan scan = controller.getLaserScan();
-
-            while (controlApp.getNextPointInRoute() == null) {
-                controller.publishVelocity(0, 0, 0);
-                waitFor(1000L);
-            }
-
-
-            currentPosition = MapFragment.createVectorFromGeoPoint(RobotController.getCurrentGPSLocation(), initialPoint);
-            currentHeading = RobotController.getHeading();
-            goalPosition = MapFragment.createVectorFromGeoPoint(controlApp.getNextPointInRoute(), initialPoint);
-
-            if (goalPosition != null) {
-                Vector3 netforce = calculateForces();
-                applyForce(controller, netforce);
-
-                double dist = Utils.distance(RobotController.getX(), RobotController.getY(),
-                        goalPosition.getX(), goalPosition.getY());
-
-                if (dist < MINIMUM_DISTANCE)
-                    controlApp.pollNextPointInRoute();
-            } else {
-                controller.publishVelocity(0, 0, 0);
-            }
-
-            lastPosition = currentPosition;
-            waitFor(100L);
-        }
-    }
-
-    private Vector3 calculateForces() {
-        Vector3 netForce = new Vector3(0, 0, 0);
-        Vector3 attractiveForce = goalPosition.subtract(currentPosition);
-        attractiveForce = attractiveForce.scale(GAMMA * attractiveForce.getMagnitude()); // f_a = gamma * ||x_g - x_r||^2 = |x_g - x_r|| * gamma * |||x_g - x_r||
-        netForce = netForce.add(attractiveForce);
-        return netForce;
-    }
-
-    private void applyForce(RobotController controller, Vector3 netForce) throws InterruptedException {
-        double forceAngle = 0;
-        if (netForce.getY() != 0 || netForce.getX() != 0)
-            forceAngle = Math.atan2(netForce.getY(), netForce.getX());
-
-        if (forceAngle < 0) {
-            forceAngle += 2 * Math.PI;
-        }
-
-        if (currentHeading < 0) {
-            currentHeading += 2 * Math.PI;
-        }
-
-
-        Log.d("ControlApp", String.format("Force Angle: %f", Math.toDegrees(forceAngle)));
-        Log.d("ControlApp", String.format("Heading:     %f", Math.toDegrees(currentHeading)));
-
-        //compute angular vel
-        double angle1 = forceAngle - currentHeading;
-        double angle2 = 2 * Math.PI - Math.abs(angle1);
-        double angle;
-
-        if (Math.abs(angle1) > Math.abs(angle2)) {
-            angle = -angle2;
-        } else {
-            angle = angle1;
-        }
-
-        Log.d("ControlApp", String.format("Turn Angle:  %f", angle));
-
-        angularVelocity = -KAPPA * angle;
-
-        //compute linear vel
-        double linVel = (netForce.getMagnitude() * Math.cos(angle1));
-        if (linVel < 0) {
-            linearVelocity = 0;
-        } else
-            linearVelocity = linVel;
-
-        if (linearVelocity > MAX_SPEED)
-            linearVelocity = MAX_SPEED;
-
-        controller.publishVelocity(this.linearVelocity, 0, angularVelocity);
-    }
-
 }
