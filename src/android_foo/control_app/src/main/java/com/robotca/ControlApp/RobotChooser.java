@@ -15,6 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -53,11 +56,14 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     /** Key for whether this is the first time the app has been launched */
     public static final String FIRST_TIME_LAUNCH_KEY = "FIRST_TIME_LAUNCH";
 
+    private View chooserView;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
     private ShowcaseView showcaseView;
     private Toolbar mToolbar;
+
+    private ImageButton wifiButton;
 
     // Navigation drawer items
     private String[] mFeatureTitles;
@@ -80,7 +86,8 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
 
         this.setContentView(R.layout.robot_chooser);
 
-        // mEmptyView = findViewById(R.id.robot_empty_view);
+        chooserView = findViewById(R.id.robot_chooser_layout);
+
         mRecyclerView = findViewById(R.id.robot_recycler_view);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -99,6 +106,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
+            getActionBar().setDisplayShowTitleEnabled(false);
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
@@ -152,8 +160,19 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
 
         // Adapter for creating the list of Robot options
         mAdapter = new RobotInfoAdapter(this, RobotStorage.getRobots());
-
         mRecyclerView.setAdapter(mAdapter);
+
+        wifiButton = findViewById(R.id.wifiButton);
+        wifiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RobotInfo.resolveRobotCount(RobotStorage.getRobots());
+
+                AddEditRobotDialogFragment addRobotDialogFragment = new AddEditRobotDialogFragment();
+                addRobotDialogFragment.setArguments(null);
+                addRobotDialogFragment.show(getSupportFragmentManager(), "addrobotdialog");
+            }
+        });
 
         ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
@@ -173,10 +192,9 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                         if (RobotStorage.getRobots().size() == 0 && isFirstLaunch) {
                             //Show initial tutorial message
                             showcaseView = new ShowcaseView.Builder(RobotChooser.this)
-                                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_add_robot))
+                                .setTarget(new ViewTarget(R.id.connectToRobot, RobotChooser.this))
                                 .setStyle(R.style.CustomShowcaseTheme2)
-                                .hideOnTouchOutside()
-                                .blockAllTouches()
+                                //.blockAllTouches()
                                 //.singleShot(0) Can use this instead of manually saving in preferences
                                 .setContentTitle("Add a Robot")
                                 .setContentText("Let's get started! You can add a robot to connect to using this button. Try adding one now.")
@@ -207,7 +225,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
 
                 if (fragment != null) {
                     fragmentManager.beginTransaction().remove(fragment).commit();
-                    mRecyclerView.setVisibility(View.VISIBLE);
+                    chooserView.setVisibility(View.VISIBLE);
                 }
 
                 mDrawerLayout.closeDrawers();
@@ -217,7 +235,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                 fragment = new HelpFragment();
                 fragment.setArguments(args);
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                mRecyclerView.setVisibility(View.GONE);
+                chooserView.setVisibility(View.GONE);
 
                 // Insert the fragment by replacing any existing fragment
                 if (fragment != null) {
@@ -231,7 +249,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                 fragment = new AboutFragmentRobotChooser();
                 fragment.setArguments(args);
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                mRecyclerView.setVisibility(View.GONE);
+                chooserView.setVisibility(View.GONE);
 
                 // Insert the fragment by replacing any existing fragment
                 if (fragment != null) {
@@ -355,10 +373,11 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         }).start();
     }
 
+
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_robot_chooser, menu);
         return true;
     }
 
@@ -366,7 +385,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
      * Callback for when the user wants to add a new RobotItem.
      * @param item The selected MenuItem
      * @return True if the item selection was handled and false otherwise
-     */
+     /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -384,7 +403,6 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                 AddEditRobotDialogFragment addRobotDialogFragment = new AddEditRobotDialogFragment();
                 addRobotDialogFragment.setArguments(null);
                 addRobotDialogFragment.show(getSupportFragmentManager(), "addrobotdialog");
-
                 return true;
 
             default:
@@ -393,6 +411,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                 return super.onOptionsItemSelected(item);
         }
     }
+    */
 
     @Override
     public void onAddEditDialogPositiveClick(RobotInfo newRobotInfo, int position) {

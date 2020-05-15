@@ -6,6 +6,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ros_logo"/>
+            android:src="@drawable/capra_logo_large"/>
     </item>
 </layer-list>

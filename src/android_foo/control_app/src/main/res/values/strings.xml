@@ -88,6 +88,8 @@
     <string name="robot_name_hint">Robot Name</string>
     <string name="chooser_uri_hint">Master URI</string>
     <string name="no_robots">No Robots. Add a new one!</string>
+    <string name="my_robots">My Robots</string>
+    <string name="connect_new_robot">Connect a new robot</string>
 
     <!-- Robot chooser titles -->
     <string-array name="chooser_titles">

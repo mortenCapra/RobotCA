@@ -221,9 +221,14 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
+            actionBar.setLogo(R.drawable.capra_logo_small);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.White)));
             actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
 
+            /*
             // Set custom Action Bar view
             LayoutInflater inflater = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.actionbar_dropdown_menu, null);
@@ -231,6 +236,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             actionBar.setCustomView(v);
             actionBar.setDisplayShowCustomEnabled(true);
+
+             */
+
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,

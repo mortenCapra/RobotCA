@@ -2,15 +2,29 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <device id="Nexus 7" />
+        <device id="Nexus 7 2013" />
+        <device id="Nexus 9" />
+        <device id="pixel_c" />
+      </config>
     </shared>
   </component>
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Works rather well">
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/HUDFragment.java" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge with develop">
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/roundbutton.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/drawable/background_splash.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/drawable/background_splash.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/actionbar_dropdown_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/actionbar_dropdown_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_info_view.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_info_view.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,6 +61,7 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
+        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -79,6 +94,7 @@
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.Flavors" value="" />
     <property name="FullScreen" value="false" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/android/sdk" />
@@ -477,7 +493,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588329877810</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Merge with develop">
+      <created>1589531694198</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1589531694199</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -502,7 +525,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix control issues, icons, preferences, and dependencies" />
     <MESSAGE value="Added newest osmdroid version" />
     <MESSAGE value="Now checking for permissions at run time, required at API 23 or higher" />
     <MESSAGE value="Added a button to clear markers on map and a string associated with the button" />
@@ -527,6 +549,7 @@
     <MESSAGE value="CleanUp" />
     <MESSAGE value="Works rather well" />
     <MESSAGE value="change linearVelocity based on angle" />
-    <option name="LAST_COMMIT_MESSAGE" value="change linearVelocity based on angle" />
+    <MESSAGE value="Merge with develop" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge with develop" />
   </component>
 </project>
