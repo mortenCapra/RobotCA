@@ -16,24 +16,36 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
+import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import static com.robotca.ControlApp.Core.Utils2.computeDistanceToKilometers;
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints;
+import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
+import static com.robotca.ControlApp.Core.Utils2.getNormalPoint;
 
 public class AreaPlan extends RobotPlan {
 
     private static final String TAG = "AreaPlan";
 
     private static final double MINIMUM_DISTANCE = 0.5;
+    private static final double LOOKAHEAD_FACTOR = 2;
     private static final double MAX_SPEED = 1.00;
 
+    private GeoPoint initialPoint = RobotController.getStartGpsLocation();
+    private GeoPoint currentPoint;
+    private GeoPoint startPoint;
+    private GeoPoint goalPoint;
+
+    private Vector3 currentPosition;
+    private double currentHeading;
+    private Vector3 goalPosition;
+    private Vector3 startPosition;
+
     private ControlApp controlApp;
-    private ArrayList<Double> areaDistances;
-    private ArrayList<Double> obstacleDistances;
-    private ArrayList<Double> areaAngles;
-    private ArrayList<Double> obstacleAngles;
     private Polygon area;
     private MapView mapView;
 
@@ -42,10 +54,6 @@ public class AreaPlan extends RobotPlan {
      */
     public AreaPlan(ControlApp controlApp) {
         this.controlApp = controlApp;
-        areaDistances = new ArrayList<>();
-        obstacleDistances = new ArrayList<>();
-        areaAngles = new ArrayList<>();
-        obstacleAngles = new ArrayList<>();
         area = new Polygon();
     }
 
@@ -62,8 +70,8 @@ public class AreaPlan extends RobotPlan {
 
         Log.d(TAG, "Started");
 
-        double dir, dist, spd, heading, bearing;
-        float[] res;
+        startPoint = initialPoint;
+        double dist, spd;
 
         while (!isInterrupted()) {
 
@@ -81,57 +89,60 @@ public class AreaPlan extends RobotPlan {
             ArrayList<ArrayList<GeoPoint>> allObstaclePoints = controlApp.getObstaclePoints();
             Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
 
-            // New area
-            GeoPoint center = centerOfPolygon(area);
-
-            // Generate random point to drive towards
-            GeoPoint randomPoint = randomPoint(area, areaPoints);
+            // Generate random points to drive towards
+            GeoPoint randomPoint = randomPoint(area, areaPoints, allObstaclePoints);
             Marker marker = addMarker(randomPoint, mapView);
+            controlApp.addPointToRoute(randomPoint);
 
             // If robot is outside area or inside obstacle, stop robot.
             while (!robotInArea(areaPoints, location) || robotInObstacle(allObstaclePoints, location)) {
                 waitFor(1000L);
             }
 
-            spd = 0.0;
+            goalPoint = controlApp.getNextPointInRoute();
+            startPosition = createVectorFromGeoPoint(startPoint, initialPoint);
+            goalPosition = createVectorFromGeoPoint(goalPoint, initialPoint);
+            spd = MAX_SPEED;
 
             do {
-                spd += MAX_SPEED / 15.0;
-                if (spd > MAX_SPEED)
+                currentPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                currentHeading = RobotController.getHeading();
+                currentPosition = createVectorFromGeoPoint(currentPoint, initialPoint);
+
+                Vector3 normalPosition = getNormalPoint(currentPosition, startPosition, goalPosition);
+                Vector3 forwardVector = goalPosition.subtract(startPosition).normalize();
+
+                normalPosition = normalPosition.add(forwardVector.scale(LOOKAHEAD_FACTOR*spd));
+
+                if (Utils.distance(startPosition.getX(), startPosition.getY(), goalPosition.getX(), goalPosition.getY())
+                        < Utils.distance(startPosition.getX(), startPosition.getY(), normalPosition.getX(), normalPosition.getY())) {
+                    normalPosition = goalPosition;
+                }
+
+                Vector3 robotToNormal = normalPosition.subtract(currentPosition);
+                double angle = -Math.atan2(robotToNormal.getY(), robotToNormal.getX());
+                double angleDiff = Utils.angleDifference(angle, currentHeading);
+
+                double angleVel = Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
+                spd = MAX_SPEED * Math.cos(angleDiff);
+
+                if (spd < 0) {
+                    spd = 0.2;
+                } else if (spd > MAX_SPEED) {
                     spd = MAX_SPEED;
+                }
 
-                GeoPoint point = RobotController.getCurrentGPSLocation();
+                controller.publishVelocity(spd, 0, -angleVel);
 
-                res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), randomPoint.getLatitude(), randomPoint.getLongitude(), res);
+                dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
-                bearing = Math.toRadians(res[2]);
-                heading = RobotController.getHeading();
+            } while (!isInterrupted() && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
 
-                dir = Utils.angleDifference(heading, -bearing);
-                dist = res[0];
-
-                controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
-
-            } while (!isInterrupted() && dist > MINIMUM_DISTANCE);
-
-            final int N = 15;
-            for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
-                GeoPoint point = RobotController.getCurrentGPSLocation();
-
-                res = new float[3];
-                MapFragment.computeDistanceAndBearing(point.getLatitude(), point.getLongitude(), randomPoint.getLatitude(), randomPoint.getLongitude(), res);
-
-                dir = Utils.angleDifference(RobotController.getHeading(), -Math.toRadians(res[2])) / 2.0;
-
-                controller.publishVelocity(spd * ((double)i / N) * Math.cos(dir), 0.0, spd * ((double)i / N) * Math.sin(dir));
-                waitFor(N);
+            if (!isInterrupted() && goalPoint.equals(controlApp.getNextPointInRoute())) {
+                controlApp.pollNextPointInRoute();
+                startPoint = goalPoint;
             }
 
-            areaDistances.clear();
-            obstacleDistances.clear();
-            areaAngles.clear();
-            obstacleAngles.clear();
             mapView.getOverlays().remove(marker);
         }
     }
@@ -191,7 +202,7 @@ public class AreaPlan extends RobotPlan {
         return result;
     }
 
-    private GeoPoint randomPoint(Polygon polygon, ArrayList<GeoPoint> points) {
+    private GeoPoint randomPoint(Polygon polygon, ArrayList<GeoPoint> points, ArrayList<ArrayList<GeoPoint>> obstacles) {
         BoundingBox bounds = polygon.getBounds();
 
         double x_min = bounds.getLonEast();
@@ -204,10 +215,12 @@ public class AreaPlan extends RobotPlan {
 
         GeoPoint geoPoint = new GeoPoint(lat, lon);
 
-        if (randomPointInArea(points, geoPoint)) {
+        if (randomPointInObstacle(obstacles, geoPoint)) {
+            return randomPoint(polygon, points, obstacles);
+        } else if (randomPointInArea(points, geoPoint)){
             return geoPoint;
         } else {
-            return randomPoint(polygon, points);
+            return randomPoint(polygon, points, obstacles);
         }
     }
 
@@ -220,6 +233,23 @@ public class AreaPlan extends RobotPlan {
                     (geoPoint.getLatitude() < (areaPoints.get(j).getLatitude() - areaPoints.get(i).getLatitude()) * (geoPoint.getLongitude() - areaPoints.get(i).getLongitude())
                             / (areaPoints.get(j).getLongitude() - areaPoints.get(i).getLongitude()) + areaPoints.get(i).getLatitude())) {
                 result = !result;
+            }
+        }
+        return result;
+    }
+
+    private boolean randomPointInObstacle(ArrayList<ArrayList<GeoPoint>> obstaclePoints, GeoPoint geoPoint) {
+        int i, j, k;
+        boolean result = false;
+
+        for (i = 0; i < obstaclePoints.size(); i++) {
+            for (j = 0, k = obstaclePoints.get(i).size() - 1; j < obstaclePoints.get(i).size(); k = j++) {
+                if ((obstaclePoints.get(i).get(j).getLongitude() > geoPoint.getLongitude()) != (obstaclePoints.get(i).get(k).getLongitude() > geoPoint.getLongitude()) &&
+                        (geoPoint.getLatitude() < (obstaclePoints.get(i).get(k).getLatitude() - obstaclePoints.get(i).get(j).getLatitude()) * (geoPoint.getLongitude() -
+                                obstaclePoints.get(i).get(j).getLongitude()) / (obstaclePoints.get(i).get(k).getLongitude() - obstaclePoints.get(i).get(j).getLongitude()) +
+                                obstaclePoints.get(i).get(j).getLatitude())) {
+                    result = !result;
+                }
             }
         }
         return result;
