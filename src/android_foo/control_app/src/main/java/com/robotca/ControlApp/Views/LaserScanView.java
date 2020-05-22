@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.robotca.ControlApp.ControlApp;
-import com.robotca.ControlApp.Layers.LaserScanRenderer;
+import com.robotca.ControlApp.UnusedCode.Layers.LaserScanRenderer;
 
 /**
  * Custom GLSurfaceView for rendering a LaserScanLayer.

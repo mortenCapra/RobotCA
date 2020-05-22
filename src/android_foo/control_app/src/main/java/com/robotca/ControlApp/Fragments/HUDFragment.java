@@ -1,5 +1,6 @@
 package com.robotca.ControlApp.Fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,10 +13,13 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
@@ -44,6 +48,9 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
     private ImageView wifiStrengthView;
 
     private Button emergencyStopButton;
+    private ToggleSwitch toggleSwitch;
+
+    private Spinner actionMenuSpinner;
 
     // Updates this Fragments UI on the UI Thread
     private final UpdateUIRunnable UPDATE_UI_RUNNABLE = new UpdateUIRunnable();
@@ -105,6 +112,28 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             // locationView = (TextView) view.findViewById(R.id.hud_location);
             latView = (TextView) view.findViewById(R.id.hud_gps_lat);
             longView = (TextView) view.findViewById(R.id.hud_gps_long);
+            toggleSwitch = (ToggleSwitch) view.findViewById(R.id.toggleSwitch);
+            toggleSwitch.setCheckedPosition(1);
+            toggleSwitch.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+                @Override
+                public void onToggleSwitchChanged(int i) {
+                    if (i == 0){
+                        getControlApp().selectItem(10);
+                    } else {
+                        getControlApp().selectItem(i);
+                    }
+                }
+            });
+
+            actionMenuSpinner = view.findViewById(R.id.spinner_control_mode);
+
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getControlApp(),
+                    R.array.motion_plans, android.R.layout.simple_spinner_item);
+
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            actionMenuSpinner.setAdapter(adapter);
+            actionMenuSpinner.setOnItemSelectedListener(getControlApp());
+
 
             wifiStrengthView = (ImageView) view.findViewById(R.id.hud_wifi_strength);
 
@@ -171,14 +200,14 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
         if (stop) {
             emergencyStopButton.setText(R.string.stop);
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_red));
+            emergencyStopButton.setBackgroundResource(R.drawable.emergency_stop_red);
         } else {
             emergencyStopButton.setText(R.string.start);
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_green));
+            emergencyStopButton.setBackgroundResource(R.drawable.emergency_stop_green);
         }
 
         if (getControlApp().getControlMode().USER_CONTROLLED)
-            emergencyStopButton.setBackgroundColor(getResources().getColor(R.color.emergency_stop_gray));
+            emergencyStopButton.setBackgroundResource(R.drawable.shadow_bottomleftright);
     }
 
     /**
@@ -382,7 +411,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
                 // Update warnings
                 if (warnAmount > 0.0f)
                 {
-                    view.setBackgroundColor(getBackgroundColor());
+                    //view.setBackgroundColor(getBackgroundColor());
 
                     if (System.currentTimeMillis() - lastWarn > WARN_DELAY) {
                         warnAmount *= WARN_AMOUNT_ATTEN;
@@ -397,10 +426,9 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             }
         }
     }
-
+/*
     /**
      * @return The background color based on the warning amount
-     */
     private int getBackgroundColor()
     {
         final float p = (((System.currentTimeMillis() >> 7) & 1) == 0) ? warnAmount: 0.0f;
@@ -408,4 +436,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
         return Color.argb(0xFF, (int)(p * 0xFF + q * 0xA0), (int)(q * 0xA0), (int)(q * 0xA0));
     }
+
+ */
+
 }

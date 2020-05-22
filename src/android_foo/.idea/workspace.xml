@@ -2,17 +2,20 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <device id="Nexus 7" />
+        <device id="Nexus 7 2013" />
+        <device id="Nexus 9" />
+        <device id="pixel_c" />
+      </config>
     </shared>
   </component>
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Works rather well">
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Utils2.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Utils2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge with develop">
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +35,12 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <projects_view />
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
@@ -44,6 +52,7 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
+        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -55,14 +64,16 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="feature/Pursuit" />
+        <entry key="$PROJECT_DIR$/../.." value="feature/cleanUp" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
     <option name="UPDATE_TYPE" value="MERGE" />
   </component>
   <component name="ProjectId" id="1YNe7WW2BIyYIeAYYLe4B6CJPea" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_5_API_23" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="192.168.1.2:5555" />
@@ -74,6 +85,7 @@
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.Flavors" value="" />
     <property name="FullScreen" value="false" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/android/sdk" />
@@ -472,7 +484,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588329877810</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Merge with develop">
+      <created>1589531694198</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1589531694199</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -497,7 +516,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix control issues, icons, preferences, and dependencies" />
     <MESSAGE value="Added newest osmdroid version" />
     <MESSAGE value="Now checking for permissions at run time, required at API 23 or higher" />
     <MESSAGE value="Added a button to clear markers on map and a string associated with the button" />
@@ -522,6 +540,7 @@
     <MESSAGE value="CleanUp" />
     <MESSAGE value="Works rather well" />
     <MESSAGE value="change linearVelocity based on angle" />
-    <option name="LAST_COMMIT_MESSAGE" value="change linearVelocity based on angle" />
+    <MESSAGE value="Merge with develop" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge with develop" />
   </component>
 </project>

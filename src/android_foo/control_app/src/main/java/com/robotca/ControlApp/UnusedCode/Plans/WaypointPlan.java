@@ -1,9 +1,10 @@
-package com.robotca.ControlApp.Core.Plans;
+package com.robotca.ControlApp.UnusedCode.Plans;
 
 import android.util.Log;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.ControlMode;
+import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.Core.Utils;
 
@@ -63,7 +64,8 @@ public class WaypointPlan extends RobotPlan {
      */
     @Override
     public ControlMode getControlMode() {
-        return ControlMode.Waypoint;
+        return null;
+       // return ControlMode.Waypoint;
     }
 
     /**

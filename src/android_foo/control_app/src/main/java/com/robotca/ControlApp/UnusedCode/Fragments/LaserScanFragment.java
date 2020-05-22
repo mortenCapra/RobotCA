@@ -1,4 +1,4 @@
-package com.robotca.ControlApp.Fragments;
+package com.robotca.ControlApp.UnusedCode.Fragments;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Savable;
+import com.robotca.ControlApp.Fragments.SimpleFragment;
 import com.robotca.ControlApp.R;
 import com.robotca.ControlApp.Views.LaserScanView;
 

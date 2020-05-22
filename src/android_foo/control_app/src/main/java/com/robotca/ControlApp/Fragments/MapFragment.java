@@ -54,14 +54,12 @@ import static com.robotca.ControlApp.Core.Utils2.computeDistanceToKilometers;
  */
 public class MapFragment extends Fragment implements MapEventsReceiver {
 
-    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
-
     private MyLocationNewOverlay myLocationOverlay;
     private MyLocationNewOverlay secondMyLocationOverlay;
     private MapView mapView;
     GeoPoint initialPoint;
 
-    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton;
+    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton, markerOptionButton;
 
     ArrayList<Double> results = new ArrayList<>();
     ArrayList<Marker> areaMarkers = new ArrayList<>();
@@ -117,6 +115,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
 
+
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
@@ -141,7 +140,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         myLocationOverlay.enableMyLocation();
         myLocationOverlay.enableFollowLocation();
         secondMyLocationOverlay.enableMyLocation();
-
         mapView.getOverlays().add(myLocationOverlay);
         mapView.getOverlays().add(secondMyLocationOverlay);
         mapView.getOverlays().add(0, mapEventsOverlay);
@@ -304,11 +302,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.invalidate();
         controlApp = (ControlApp) getActivity();
 
+        //if it only worked
+        /*
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setEnableAdjustLength(true);
         scaleBarOverlay.setAlignBottom(true);
         scaleBarOverlay.setAlignRight(true);
         mapView.getOverlays().add(scaleBarOverlay);
+
+         */
 
         return view;
     }

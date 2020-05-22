@@ -1,16 +1,12 @@
 package com.robotca.ControlApp.Core;
 
-import android.preference.PreferenceManager;
 
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.AreaPlan;
-import com.robotca.ControlApp.Core.Plans.RandomWalkPlan;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.Core.Plans.RoutePlan;
-import com.robotca.ControlApp.Core.Plans.WaypointPlan;
+import com.robotca.ControlApp.UnusedCode.Plans.WaypointPlan;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Polygon;
 
 /**
  * Enum for different ways to control the Robot.
@@ -20,8 +16,7 @@ import org.osmdroid.views.overlay.Polygon;
 public enum ControlMode {
     Joystick (true), // Joystick control
     Tilt (true), // Tilt sensor control
-    Waypoint (false), // Potential field waypoint control
-    RandomWalk (false), // Random walk
+    //Waypoint (false), // Potential field waypoint control
     Routing (false),
     Area (false),
     Obstacles (false);
@@ -51,12 +46,7 @@ public enum ControlMode {
         switch (controlMode) {
 
             case Routing: plan = new RoutePlan(controlApp); break;
-            case Waypoint: plan = new WaypointPlan(controlApp); break;
-            case RandomWalk: plan = new RandomWalkPlan(
-                    Float.parseFloat(PreferenceManager
-                            .getDefaultSharedPreferences(controlApp)
-                            .getString("edittext_random_walk_range_proximity", "1")));
-                break;
+           // case Waypoint: plan = new WaypointPlan(controlApp); break;
             case Area: plan = new AreaPlan(controlApp); break;
             default: plan = null; break;
         }

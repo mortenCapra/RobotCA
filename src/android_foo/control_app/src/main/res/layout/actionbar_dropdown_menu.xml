@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true">
 
-    <Spinner
-        android:id="@+id/spinner_control_mode"
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_height="match_parent"
+        android:contentDescription=""
+        android:maxWidth="30dp"
+        android:maxHeight="30dp"
+        android:src="@drawable/capra_logo_small" />
 
-    <TextView
-        android:text="@string/control_mode"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/spinner_control_mode"
-        android:layout_toStartOf="@id/spinner_control_mode"/>
-
-</RelativeLayout>
+</LinearLayout>

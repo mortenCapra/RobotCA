@@ -13,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -38,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.Dijkstra.DistanceScorer;
@@ -59,9 +62,7 @@ import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
 import com.robotca.ControlApp.Fragments.HUDFragment;
 import com.robotca.ControlApp.Fragments.JoystickFragment;
-import com.robotca.ControlApp.Fragments.LaserScanFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
-import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
 
@@ -74,8 +75,6 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -129,12 +128,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     FragmentManager fragmentManager;
     int fragmentsCreatedCounter = 0;
 
-    // For enabling/disabling the action menu
-    // private boolean actionMenuEnabled = true;
-    // The ActionBar spinner menu
-    private Spinner actionMenuSpinner;
 
-    // The index of the previously visible drawer
 
     // The index of the currently visible drawer
     private int drawerIndex = 1;
@@ -163,7 +157,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private Bundle savedInstanceState;
 
     private LocalBroadcastManager localBroadcastManager;
-
     //
     ArrayList<GeoPoint> areaPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
@@ -233,26 +226,28 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
+            actionBar.setLogo(R.drawable.capra_logo_small);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
 
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.White)));
+            actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
+
+            /*
             // Set custom Action Bar view
             LayoutInflater inflater = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.actionbar_dropdown_menu, null);
 
-            actionMenuSpinner = v.findViewById(R.id.spinner_control_mode);
-
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                    R.array.motion_plans, android.R.layout.simple_spinner_item);
-
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            actionMenuSpinner.setAdapter(adapter);
-            actionMenuSpinner.setOnItemSelectedListener(this);
 
             actionBar.setCustomView(v);
             actionBar.setDisplayShowCustomEnabled(true);
+
+             */
+
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                // R.drawable.ic_drawer,
+                //R.drawable.ic_drawer,
                 R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
@@ -272,12 +267,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         //noinspection deprecation
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+
         int[] imgRes = new int[]{
                 R.drawable.ic_android_black_24dp,
-                R.drawable.ic_view_quilt_black_24dp,
-                R.drawable.ic_linked_camera_black_24dp,
+                //R.drawable.ic_view_quilt_black_24dp,
+                //R.drawable.ic_linked_camera_black_24dp,
                 R.drawable.ic_navigation_black_24dp,
-                R.drawable.ic_terrain_black_24dp,
+                //R.drawable.ic_terrain_black_24dp,
                 R.drawable.ic_settings_black_24dp,
                 R.drawable.ic_info_outline_black_24dp
         };
@@ -301,9 +297,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         // Create the RobotController
         controller = new RobotController(this);
 
-        // Hud fragment
-        hudFragment = (HUDFragment) getFragmentManager().findFragmentById(R.id.hud_fragment);
-
         this.savedInstanceState = savedInstanceState;
 
         if (savedInstanceState != null) {
@@ -322,12 +315,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             // Load the controller
             controller.load(savedInstanceState);
         }
-
-        // Set the correct spinner item
-        if (actionMenuSpinner != null)
-        {
-            actionMenuSpinner.setSelection(getControlMode().ordinal());
-        }
+        // Hud fragment
+        hudFragment = (HUDFragment) getFragmentManager().findFragmentById(R.id.hud_fragment);
     }
 
     @Override
@@ -541,10 +530,14 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
+    public Fragment getFragment(){
+        return fragment;
+    }
+
     /*
      * Swaps fragments in the main content view.
      */
-    private void selectItem(int position) {
+    public void selectItem(int position) {
 
         Bundle args = new Bundle();
 
@@ -561,7 +554,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         fragmentManager = getFragmentManager();
 
-        setActionMenuEnabled(true);
 
         switch (position) {
             case 0:
@@ -589,29 +581,32 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 finish();
 
                 return;
-
+/*
             case 1:
                 fragment = new OverviewFragment();
                 fragmentsCreatedCounter = 0;
                 break;
 
             case 2:
-                fragment = new CameraViewFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 3:
                 fragment = new LaserScanFragment();
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
-            case 4:
+ */
+
+            case 1:
                 fragment = new MapFragment();
                 map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
-            case 5:
+            case 10:
+                fragment = new CameraViewFragment();
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                position = 1;
+                break;
+
+            case 2:
                 if (joystickFragment != null)
                     joystickFragment.hide();
                 if (hudFragment != null) {
@@ -622,14 +617,13 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     hudFragment.toggleEmergencyStopUI(stop);
                 }
 
-                setActionMenuEnabled(false);
                 stopRobot(false);
 
                 fragment = new PreferencesFragment();
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;
 
-            case 6:
+            case 3:
                 if (joystickFragment != null)
                     joystickFragment.hide();
                 if (hudFragment != null) {
@@ -640,7 +634,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                     hudFragment.toggleEmergencyStopUI(stop);
                 }
 
-                setActionMenuEnabled(false);
                 stopRobot(false);
 
                 fragment = new AboutFragment();
@@ -724,14 +717,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case R.id.action_routing_control:
                 setControlMode(ControlMode.Routing);
-                return true;
-
-            case R.id.action_waypoint_control:
-                setControlMode(ControlMode.Waypoint);
-                return true;
-
-            case R.id.action_random_walk_control:
-                setControlMode(ControlMode.RandomWalk);
                 return true;
 
             case R.id.action_area_control:
@@ -843,10 +828,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         invalidateOptionsMenu();
 
-        if (controlMode == ControlMode.Waypoint) {
+       /* if (controlMode == ControlMode.Waypoint) {
             Toast.makeText(this, "Tap twice to place or delete a waypoint. " +
                     "Tap and hold a waypoint to move it.", Toast.LENGTH_LONG).show();
         }
+
+        */
 
         if (controlMode == ControlMode.Routing){
             Toast.makeText(this, "Look at and change route in map", Toast.LENGTH_LONG).show();
@@ -1044,18 +1031,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     }
 
     /**
-     * Enables/disables the action bar menu.
-     * @param enabled Whether to enable or disable the menu
-     */
-    public void setActionMenuEnabled(boolean enabled)
-    {
-//        actionMenuEnabled = enabled;
-//        invalidateOptionsMenu();
-        if (actionMenuSpinner != null)
-            actionMenuSpinner.setEnabled(enabled);
-    }
-
-    /**
      * Callback for when a Spinner item is selected from the ActionBar.
      *
      * @param parent   The AdapterView where the selection happened
@@ -1133,6 +1108,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
+
     public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
         this.areaPoints = areaPoints;
     }

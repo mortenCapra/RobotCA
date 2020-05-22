@@ -15,6 +15,8 @@ import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints
 import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
 import static com.robotca.ControlApp.Core.Utils2.getNormalPoint;
 
+import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
+
 /**
  * Pure pursuit.
  *
@@ -27,7 +29,7 @@ public class RoutePlan extends RobotPlan {
 
     private static final String TAG = "RoutePlan";
 
-    private static final double MAX_SPEED = 1.00;
+    private static final double MAX_SPEED = 0.75;
 
     private GeoPoint initialPoint = RobotController.getStartGpsLocation();
     private GeoPoint currentPoint;
@@ -150,7 +152,7 @@ public class RoutePlan extends RobotPlan {
                 // Check angle to target - bearing is negative to accomodate the standard of angles in ros
                 dir = Utils.angleDifference(heading, -bearing);
                 dist = res[0];
-                /*
+
                 //initialize route with correct angle
                 if (counter == 0){
                     while(!(dir < 0.2 && dir > -0.2)) {
@@ -159,7 +161,7 @@ public class RoutePlan extends RobotPlan {
                         dir = Utils.angleDifference(tempHeading, -bearing);
                     }
                 }
-                */
+
 
                 controller.publishVelocity(spd * Math.cos(dir), 0.0, spd * Math.sin(dir));
 

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- App name -->
-    <string name="app_name">ROS Control</string>
+    <string name="app_name">Capra Control</string>
 
     <!-- Topic values -->
     <string name="joy_topic">/joy_teleop/cmd_vel</string>
@@ -88,6 +88,8 @@
     <string name="robot_name_hint">Robot Name</string>
     <string name="chooser_uri_hint">Master URI</string>
     <string name="no_robots">No Robots. Add a new one!</string>
+    <string name="my_robots">My Robots</string>
+    <string name="connect_new_robot">Connect a new robot</string>
 
     <!-- Robot chooser titles -->
     <string-array name="chooser_titles">
@@ -113,14 +115,14 @@
     <string name="routing">Routing</string>
     <string name="Area">Area</string>
     <string name="new_obstacle">New Obstacle</string>
+    <string name="marker_option">Marker Option</string>
+    <string name ="Camera">Camera</string>
+    <string name ="Map">Map</string>
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">
         <item>Select Robot</item>
-        <item>Overview</item>
-        <item>Camera</item>
-        <item>Robot</item>
-        <item>Map</item>
+        <item>Control Robot</item>
         <item>Preferences</item>
         <item>About</item>
     </string-array>
@@ -160,8 +162,6 @@
     <string name="use_tilt_sensor_string">Use Tilt</string>
     <string name="joystick_control">Joystick Control</string>
     <string name="motion_control">Tilt Control</string>
-    <string name="waypoint_control">Waypoint Control</string>
-    <string name="random_walk">Random Walk</string>
     <string name="route_control">Route Control</string>
     <string name="area_control">Area Control</string>
     <string name="obstacle_control">Obstacle Control</string>
@@ -170,8 +170,6 @@
     <string-array name="motion_plans">
         <item>Joystick</item>
         <item>Tilt</item>
-        <item>Waypoint</item>
-        <item>Random Walk</item>
         <item>Routing</item>
         <item>Area</item>
         <item>Obstacles</item>

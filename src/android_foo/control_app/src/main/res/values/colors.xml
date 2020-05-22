@@ -5,5 +5,8 @@
     <color name="emergency_stop_red">@android:color/holo_red_dark</color>
     <color name="emergency_stop_green">#FF00CC00</color>
     <color name="emergency_stop_gray">#FFAAAAAA</color>
+    <color name="White">#FFFFFF</color>
+    <color name="capraBlue">#003D7A</color>
+    <color name="capraBeige">#B9A171</color>
 
 </resources>
