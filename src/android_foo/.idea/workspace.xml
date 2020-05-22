@@ -15,7 +15,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge with develop">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/setup.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/setup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/using.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/using.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

@@ -61,6 +61,7 @@ import com.robotca.ControlApp.Core.WarningSystem;
 import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
 import com.robotca.ControlApp.Fragments.HUDFragment;
+import com.robotca.ControlApp.Fragments.HelpFragment;
 import com.robotca.ControlApp.Fragments.JoystickFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
@@ -551,6 +552,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
 
         switch (position) {
+            case 10:
+                fragment = new CameraViewFragment();
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                position = 1;
+                break;
+
             case 0:
                 Log.d(TAG, "Drawer item 0 selected, finishing");
 
@@ -576,29 +583,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 finish();
 
                 return;
-/*
-            case 1:
-                fragment = new OverviewFragment();
-                fragmentsCreatedCounter = 0;
-                break;
-
-            case 2:
-                fragment = new LaserScanFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
- */
 
             case 1:
                 fragment = new MapFragment();
                 map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 10:
-                fragment = new CameraViewFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                position = 1;
                 break;
 
             case 2:

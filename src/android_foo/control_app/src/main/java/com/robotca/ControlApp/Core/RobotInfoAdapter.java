@@ -181,7 +181,7 @@ public class RobotInfoAdapter extends RecyclerView.Adapter<RobotInfoAdapter.View
                     bundle.putInt(AddEditRobotDialogFragment.POSITION_KEY, position);
                     editRobotDialogFragment.setArguments(bundle);
 
-                    editRobotDialogFragment.show(activity.getSupportFragmentManager(), "editrobotialog");
+                    editRobotDialogFragment.show();
                     break;
 
                 case R.id.robot_delete_button:

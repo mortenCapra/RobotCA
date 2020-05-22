@@ -31,6 +31,7 @@ import com.robotca.ControlApp.Core.DrawerItem;
 import com.robotca.ControlApp.Core.NavDrawerAdapter;
 import com.robotca.ControlApp.Fragments.AboutFragmentRobotChooser;
 import com.robotca.ControlApp.Fragments.HelpFragment;
+import com.robotca.ControlApp.Fragments.SimpleFragment;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,9 +77,10 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     private Fragment fragment = null;
     private FragmentManager fragmentManager;
     private int fragmentsCreatedCounter = 0;
-
     // Log tag String
     private static final String TAG = "RobotChooser";
+
+    private AddEditRobotDialogFragment addRobotFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -162,15 +164,18 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         mAdapter = new RobotInfoAdapter(this, RobotStorage.getRobots());
         mRecyclerView.setAdapter(mAdapter);
 
+        fragmentManager = getSupportFragmentManager();
+        addRobotFragment = (AddEditRobotDialogFragment) fragmentManager.findFragmentById(R.id.addRobotFragment);
+
         wifiButton = findViewById(R.id.wifiButton);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RobotInfo.resolveRobotCount(RobotStorage.getRobots());
-
-                AddEditRobotDialogFragment addRobotDialogFragment = new AddEditRobotDialogFragment();
-                addRobotDialogFragment.setArguments(null);
-                addRobotDialogFragment.show(getSupportFragmentManager(), "addrobotdialog");
+                addRobotFragment = new AddEditRobotDialogFragment();
+                fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.connect, addRobotFragment).commit();
+                wifiButton.setVisibility(View.GONE);
             }
         });
 
@@ -414,17 +419,20 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     */
 
     @Override
-    public void onAddEditDialogPositiveClick(RobotInfo newRobotInfo, int position) {
+    public void onAddEditDialogPositiveClick(RobotInfo newRobotInfo, int position, AddEditRobotDialogFragment fragment) {
         if (position >= 0 && position < RobotStorage.getRobots().size()) {
             updateRobot(position, newRobotInfo);
         } else {
             addRobot(newRobotInfo);
         }
+        fragment.hide();
+        wifiButton.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onAddEditDialogNegativeClick(DialogFragment dialog) {
-
+    public void onAddEditDialogNegativeClick(AddEditRobotDialogFragment fragment) {
+        fragment.hide();
+        wifiButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -498,5 +506,13 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectItem(position);
+    }
+
+    public Fragment getAddRobotFragment(){
+        return addRobotFragment;
+    }
+
+    public void setAddRobotFragment(AddEditRobotDialogFragment fragment){
+        addRobotFragment = fragment;
     }
 }

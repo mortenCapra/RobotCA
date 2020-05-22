@@ -118,6 +118,8 @@
     <string name="marker_option">Marker Option</string>
     <string name ="Camera">Camera</string>
     <string name ="Map">Map</string>
+    <string name ="Add">Add</string>
+    <string name ="Cancel">Cancel</string>
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">
@@ -139,7 +141,7 @@
     <string name="map_clear_string">Clear Waypoints</string>
     <string name="map_lock_camera_string">Lock Camera Angle</string>
     <string name="control_mode">Control Mode: </string>
-    <string name="robot_name">Robot Name:</string>
+    <string name="robot_name">Robot Name</string>
     <string name="master_uri">Master URI:</string>
     <string name="joystick_topic_prompt">Joystick Topic:</string>
     <string name="camera_topic_prompt">Camera Topic:</string>
