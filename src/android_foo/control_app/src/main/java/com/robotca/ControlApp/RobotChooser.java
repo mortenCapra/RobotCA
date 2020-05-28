@@ -14,11 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -65,6 +68,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     private Toolbar mToolbar;
 
     private ImageButton wifiButton;
+    private RelativeLayout textAndButton;
 
     // Navigation drawer items
     private String[] mFeatureTitles;
@@ -167,15 +171,18 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         fragmentManager = getSupportFragmentManager();
         addRobotFragment = (AddEditRobotDialogFragment) fragmentManager.findFragmentById(R.id.addRobotFragment);
 
+        textAndButton = findViewById(R.id.connect);
+
         wifiButton = findViewById(R.id.wifiButton);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RobotInfo.resolveRobotCount(RobotStorage.getRobots());
                 addRobotFragment = new AddEditRobotDialogFragment();
+                addRobotFragment.setArguments(null);
                 fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.connect, addRobotFragment).commit();
-                wifiButton.setVisibility(View.GONE);
+                fragmentManager.beginTransaction().replace(R.id.connectToRobot, addRobotFragment).commit();
+                textAndButton.setVisibility(View.GONE);
             }
         });
 
@@ -426,13 +433,23 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
             addRobot(newRobotInfo);
         }
         fragment.hide();
-        wifiButton.setVisibility(View.VISIBLE);
+        textAndButton.setVisibility(View.VISIBLE);
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
     public void onAddEditDialogNegativeClick(AddEditRobotDialogFragment fragment) {
         fragment.hide();
-        wifiButton.setVisibility(View.VISIBLE);
+        textAndButton.setVisibility(View.VISIBLE);
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -474,6 +491,13 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         RobotStorage.update(this, newRobotInfo);
         mAdapter.notifyItemChanged(position);
     }
+
+    public void showAddRobotDialog(AddEditRobotDialogFragment fragment){
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.connectToRobot, fragment).commit();
+        textAndButton.setVisibility(View.GONE);
+    }
+
 
     /**
      * Removes the RobotInfo at the specified position.

@@ -21,7 +21,6 @@
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/dialog_add_robot.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" afterDir="false" />
@@ -76,7 +75,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="feature/Pursuit" />
+        <entry key="$PROJECT_DIR$/../.." value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />

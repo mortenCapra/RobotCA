@@ -69,42 +69,49 @@
                     android:background="@color/capraBlue" />
 
                 <LinearLayout
-                    android:id="@+id/connectToRobot"
+                    android:id="@+id/LinearConnectToRobot"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_weight="1">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <FrameLayout
+                        android:id="@+id/connectToRobot"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:layout_marginTop="20dp"
-                        android:textSize="40sp"
-                        android:textColor="@color/capraBlue"
-                        android:text="@string/connect_new_robot"/>
-
-                    <RelativeLayout
-                        android:id="@+id/connect"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         android:layout_marginStart="100dp"
                         android:layout_marginEnd="100dp"
-                        android:layout_marginBottom="50dp">
+                        android:layout_marginTop="20dp">
 
-                        <ImageButton
-                            android:background="@drawable/roundbutton"
-                            android:elevation="4dp"
-                            android:id="@+id/wifiButton"
-                            android:paddingBottom="200dp"
-                            android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/wifi_button_large"/>
-                    </RelativeLayout>
+                        <RelativeLayout
+                            android:id="@+id/connect"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/connect_new_robot"
+                                android:textColor="@color/capraBlue"
+                                android:textSize="40sp" />
+
+                            <ImageButton
+                                android:id="@+id/wifiButton"
+                                android:layout_below="@id/text"
+                                android:layout_centerHorizontal="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="50dp"
+                                android:background="@drawable/roundbutton"
+                                android:elevation="4dp"
+                                android:src="@drawable/wifi_button_large" />
+                        </RelativeLayout>
+
+                    </FrameLayout>
 
                 </LinearLayout>
-
 
             </LinearLayout>
 

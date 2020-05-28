@@ -24,6 +24,7 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Dialogs.AddEditRobotDialogFragment;
 import com.robotca.ControlApp.Dialogs.ConfirmDeleteDialogFragment;
 import com.robotca.ControlApp.R;
+import com.robotca.ControlApp.RobotChooser;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -181,7 +182,9 @@ public class RobotInfoAdapter extends RecyclerView.Adapter<RobotInfoAdapter.View
                     bundle.putInt(AddEditRobotDialogFragment.POSITION_KEY, position);
                     editRobotDialogFragment.setArguments(bundle);
 
-                    editRobotDialogFragment.show();
+                    RobotChooser parent = (RobotChooser) activity;
+                    parent.showAddRobotDialog(editRobotDialogFragment);
+
                     break;
 
                 case R.id.robot_delete_button:
