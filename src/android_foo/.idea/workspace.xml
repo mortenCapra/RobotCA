@@ -14,11 +14,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="RobotChooser finished up.">
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
-    </list>
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge of cleanUp" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -525,7 +521,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Now checking for permissions at run time, required at API 23 or higher" />
     <MESSAGE value="Added a button to clear markers on map and a string associated with the button" />
     <MESSAGE value="Added an ability to add markers to the map with line between them.&#10;Added button to clear markers" />
     <MESSAGE value="fix of overlay-permission" />
@@ -550,6 +545,7 @@
     <MESSAGE value="change linearVelocity based on angle" />
     <MESSAGE value="Merge with develop" />
     <MESSAGE value="RobotChooser finished up." />
-    <option name="LAST_COMMIT_MESSAGE" value="RobotChooser finished up." />
+    <MESSAGE value="Merge of cleanUp" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge of cleanUp" />
   </component>
 </project>
