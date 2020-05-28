@@ -27,6 +27,7 @@ import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
+import com.robotca.ControlApp.RobotChooser;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -555,15 +556,19 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     private void addRoute(GeoPoint geoPoint) {
-        if (route != null){
-            route.addPoint(geoPoint);
-            mapView.invalidate();
+        if (RobotController.getCurrentGPSLocation() == null){
+            Toast.makeText(mapView.getContext(), "Can not find Robot's current GPS location", Toast.LENGTH_LONG).show();
         } else {
-            route = new Polyline();
-            wayPoints.add(0, RobotController.getCurrentGPSLocation());
-            route.setPoints(wayPoints);
-            mapView.getOverlays().add(1, route);
-            mapView.invalidate();
+            if (route != null) {
+                route.addPoint(geoPoint);
+                mapView.invalidate();
+            } else {
+                route = new Polyline();
+                wayPoints.add(0, RobotController.getCurrentGPSLocation());
+                route.setPoints(wayPoints);
+                mapView.getOverlays().add(1, route);
+                mapView.invalidate();
+            }
         }
     }
 

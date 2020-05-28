@@ -688,17 +688,19 @@ public class RobotController implements NodeMain, Savable {
      * @param navSatFix The NavSatFix
      */
     protected void setNavSatFix(NavSatFix navSatFix) {
-        synchronized (navSatFixMutex) {
-            this.navSatFix = navSatFix;
-            currentGPSLocation = new GeoPoint(navSatFix.getLatitude(), navSatFix.getLongitude(), navSatFix.getAltitude());
+        if (navSatFix != null) {
+            synchronized (navSatFixMutex) {
+                this.navSatFix = navSatFix;
+                currentGPSLocation = new GeoPoint(navSatFix.getLatitude(), navSatFix.getLongitude(), navSatFix.getAltitude());
 
-            if (startGpsLocation == null){
-                startGpsLocation = currentGPSLocation;
-            }
+                if (startGpsLocation == null) {
+                    startGpsLocation = currentGPSLocation;
+                }
 
-            // Call the listener callbacks
-            for (MessageListener<NavSatFix> listener: navSatListeners) {
-                listener.onNewMessage(navSatFix);
+                // Call the listener callbacks
+                for (MessageListener<NavSatFix> listener : navSatListeners) {
+                    listener.onNewMessage(navSatFix);
+                }
             }
         }
     }

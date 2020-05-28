@@ -14,19 +14,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge with develop">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotInfoAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Dialogs/AddEditRobotDialogFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout/robot_chooser.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/faq.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/setup.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/setup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/raw/using.html" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/raw/using.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/values/strings.xml" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="RobotChooser finished up.">
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/Plans/RoutePlan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/RobotController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/MapFragment.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -502,7 +493,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589531694199</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="RobotChooser finished up.">
+      <created>1590655389242</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1590655389242</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -527,7 +525,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added newest osmdroid version" />
     <MESSAGE value="Now checking for permissions at run time, required at API 23 or higher" />
     <MESSAGE value="Added a button to clear markers on map and a string associated with the button" />
     <MESSAGE value="Added an ability to add markers to the map with line between them.&#10;Added button to clear markers" />
@@ -552,6 +549,7 @@
     <MESSAGE value="Works rather well" />
     <MESSAGE value="change linearVelocity based on angle" />
     <MESSAGE value="Merge with develop" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge with develop" />
+    <MESSAGE value="RobotChooser finished up." />
+    <option name="LAST_COMMIT_MESSAGE" value="RobotChooser finished up." />
   </component>
 </project>
