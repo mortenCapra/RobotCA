@@ -66,6 +66,7 @@ import com.robotca.ControlApp.Fragments.JoystickFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
+import com.robotca.ControlApp.UnusedCode.Fragments.OverviewFragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.ros.android.RosActivity;
@@ -154,6 +155,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // The saved instance state
     private Bundle savedInstanceState;
+
+    private Fragment.SavedState savedState;
 
     private LocalBroadcastManager localBroadcastManager;
     //
@@ -530,6 +533,9 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return fragment;
     }
 
+    public Fragment.SavedState getSavedState(){
+        return savedState;
+    }
     /*
      * Swaps fragments in the main content view.
      */
@@ -550,11 +556,23 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         fragmentManager = getFragmentManager();
 
+        if (fragment instanceof OverviewFragment || fragment instanceof MapFragment){
+            savedState = fragmentManager.saveFragmentInstanceState(fragment);
+        }
+
 
         switch (position) {
             case 10:
+
                 fragment = new CameraViewFragment();
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                position = 1;
+                break;
+
+            case 20:
+                fragment = new OverviewFragment();
+                fragment.setInitialSavedState(savedState);
+                fragmentsCreatedCounter = fragmentsCreatedCounter +1;
                 position = 1;
                 break;
 
@@ -586,6 +604,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
             case 1:
                 fragment = new MapFragment();
+                fragment.setInitialSavedState(savedState);
                 map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
                 break;

@@ -1,17 +1,40 @@
 package com.robotca.ControlApp.UnusedCode.Fragments;
 
+import android.app.Fragment;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+
+import com.robotca.ControlApp.ControlApp;
+import com.robotca.ControlApp.Core.RobotController;
+import com.robotca.ControlApp.Fragments.MapFragment;
+import com.robotca.ControlApp.Fragments.RosFragment;
+import com.robotca.ControlApp.R;
+
+import org.ros.android.BitmapFromCompressedImage;
+import org.ros.android.view.RosImageView;
+import org.ros.message.MessageListener;
+
+import sensor_msgs.CompressedImage;
+
 /**
  * Fragment containing a CameraView and a LaserScanView.
  *
  * Created by Michael Brunson on 11/7/15.
  */
-/*
+
 public class OverviewFragment extends RosFragment {
 
     private View view;
     private TextView noCameraTextView;
-    private RosImageView<sensor_msgs.CompressedImage> cameraView;
+    private RosImageView<CompressedImage> cameraView;
     private RobotController controller;
+    private MapFragment mapFragment;
 
     @SuppressWarnings("unused")
     private static final String TAG = "OverviewFragment";
@@ -26,10 +49,13 @@ public class OverviewFragment extends RosFragment {
         {
             view = inflater.inflate(R.layout.fragment_overview, container, false);
             noCameraTextView = (TextView)view.findViewById(R.id.noCameraTextView);
+            ControlApp controlApp = ((ControlApp) getActivity());
 
-            LaserScanFragment laserScanFragment = new LaserScanFragment();
+            mapFragment = new MapFragment();
+            mapFragment.setInitialSavedState(controlApp.getSavedState());
+
             getFragmentManager().beginTransaction().replace(
-                    R.id.laser_scan_placeholder, laserScanFragment).commit();
+                    R.id.laser_scan_placeholder, mapFragment).commit();
 
             //noinspection unchecked
             cameraView = (RosImageView) view.findViewById(R.id.camera_view);
@@ -71,10 +97,20 @@ public class OverviewFragment extends RosFragment {
 
     @Override
     public void shutdown(){
-
         if (isInitialized()) {
             nodeMainExecutor.shutdownNodeMain(cameraView);
         }
-
     }
-}*/
+
+    public MapFragment getMap(){
+        return mapFragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        mapFragment.onSaveInstanceState(outState);
+    }
+
+
+}

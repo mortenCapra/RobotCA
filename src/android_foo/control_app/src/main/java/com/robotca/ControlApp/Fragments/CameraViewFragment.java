@@ -79,7 +79,7 @@ public class CameraViewFragment extends RosFragment {
     }
 
     @Override
-    void shutdown() {
+    public void shutdown() {
         nodeMainExecutor.shutdownNodeMain(cameraView);
     }
 }

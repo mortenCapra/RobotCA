@@ -85,18 +85,9 @@
                 android:layout_weight="1"/>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/hud_wifi_strength"
-            android:src="@drawable/wifi_0"
-            android:scaleType="fitCenter"
-            android:paddingTop="9sp"
-            android:paddingBottom="9sp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/wifi_strength_content_description" />
     </LinearLayout>
 
-    <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+    <com.llollox.androidtoggleswitch.widgets.MultipleToggleSwitch
         android:id="@+id/toggleSwitch"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -138,6 +129,16 @@
             android:text="@string/stop"
             tools:ignore="RelativeOverlap"
             android:layout_margin="2dp"/>
+
+        <ImageView
+            android:id="@+id/hud_wifi_strength"
+            android:src="@drawable/wifi_0"
+            android:scaleType="fitCenter"
+            android:paddingTop="9sp"
+            android:paddingBottom="9sp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/wifi_strength_content_description" />
     </LinearLayout>
 
 </RelativeLayout>

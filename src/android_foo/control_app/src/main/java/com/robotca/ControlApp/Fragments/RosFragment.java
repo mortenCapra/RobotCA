@@ -28,7 +28,7 @@ public abstract class RosFragment extends SimpleFragment {
     /**
      * Called when the Fragment is shutdown.
      */
-    abstract void shutdown();
+    public abstract void shutdown();
 
     /**
      * Called when the Fragment is initialized.

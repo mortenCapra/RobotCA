@@ -18,7 +18,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.llollox.androidtoggleswitch.widgets.MultipleToggleSwitch;
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.RobotController;
@@ -26,6 +28,9 @@ import com.robotca.ControlApp.R;
 
 import org.ros.internal.message.Message;
 import org.ros.message.MessageListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import nav_msgs.Odometry;
 import sensor_msgs.Imu;
@@ -48,7 +53,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
     private ImageView wifiStrengthView;
 
     private Button emergencyStopButton;
-    private ToggleSwitch toggleSwitch;
+    private MultipleToggleSwitch toggleSwitch;
 
     private Spinner actionMenuSpinner;
 
@@ -112,18 +117,51 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             // locationView = (TextView) view.findViewById(R.id.hud_location);
             latView = (TextView) view.findViewById(R.id.hud_gps_lat);
             longView = (TextView) view.findViewById(R.id.hud_gps_long);
-            toggleSwitch = (ToggleSwitch) view.findViewById(R.id.toggleSwitch);
-            toggleSwitch.setCheckedPosition(1);
-            toggleSwitch.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+            toggleSwitch = (MultipleToggleSwitch) view.findViewById(R.id.toggleSwitch);
+            List<Integer> checkedList = new ArrayList<Integer>();
+            checkedList.add(1);
+            toggleSwitch.setCheckedPositions(checkedList);
+            toggleSwitch.setOnChangeListener(new MultipleToggleSwitch.OnChangeListener(){
+
                 @Override
-                public void onToggleSwitchChanged(int i) {
-                    if (i == 0){
-                        getControlApp().selectItem(10);
-                    } else {
-                        getControlApp().selectItem(i);
+                public void onMultipleToggleSwitchChanged(int i, boolean b) {
+                    if (i == 0 && b){
+                        if (toggleSwitch.getCheckedPositions().contains(1)){
+                            getControlApp().selectItem(20);
+                        } else {
+                            getControlApp().selectItem(10);
+                        }
+                    } else if(i == 0){
+                        if (toggleSwitch.getCheckedPositions().contains(1)){
+                            getControlApp().selectItem(1);
+                        } else {
+                            Toast.makeText(getActivity(), "Select atleast 1 option", Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (i == 1 && b){
+                        if (toggleSwitch.getCheckedPositions().contains(0)){
+                            getControlApp().selectItem(20);
+                        } else{
+                            getControlApp().selectItem(1);
+                        }
+                    } else if(i == 1){
+                        if (toggleSwitch.getCheckedPositions().contains(0)){
+                            getControlApp().selectItem(10);
+                        } else{
+                            Toast.makeText(getActivity(), "Select atleast 1 option", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
+/*
+            public void onMultipleToggleSwitchChanged(int position, boolean checked) {
+                if (i == 0){
+                    getControlApp().selectItem(10);
+                } else {
+                    getControlApp().selectItem(i);
+                }
+            }
+
+ */
 
             actionMenuSpinner = view.findViewById(R.id.spinner_control_mode);
 
