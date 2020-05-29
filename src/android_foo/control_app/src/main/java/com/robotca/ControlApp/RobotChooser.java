@@ -204,7 +204,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                         if (RobotStorage.getRobots().size() == 0 && isFirstLaunch) {
                             //Show initial tutorial message
                             showcaseView = new ShowcaseView.Builder(RobotChooser.this)
-                                .setTarget(new ViewTarget(R.id.connectToRobot, RobotChooser.this))
+                                .setTarget(new ViewTarget(R.id.wifiButton, RobotChooser.this))
                                 .setStyle(R.style.CustomShowcaseTheme2)
                                 .blockAllTouches()
                                 //.singleShot(0) Can use this instead of manually saving in preferences

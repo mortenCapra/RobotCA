@@ -14,8 +14,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge of cleanUp">
-      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/xml/prefs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/xml/prefs.xml" afterDir="false" />
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Deletion of warning system">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/RobotChooser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/res/layout-large/fragment_hud.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -505,7 +507,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590658073261</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Deletion of warning system">
+      <created>1590658382471</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1590658382471</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -530,7 +539,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added a button to clear markers on map and a string associated with the button" />
     <MESSAGE value="Added an ability to add markers to the map with line between them.&#10;Added button to clear markers" />
     <MESSAGE value="fix of overlay-permission" />
     <MESSAGE value="merge into develop" />
@@ -555,6 +563,7 @@
     <MESSAGE value="Merge with develop" />
     <MESSAGE value="RobotChooser finished up." />
     <MESSAGE value="Merge of cleanUp" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge of cleanUp" />
+    <MESSAGE value="Deletion of warning system" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deletion of warning system" />
   </component>
 </project>
