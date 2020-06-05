@@ -28,6 +28,9 @@ import java.util.UUID;
  * Dialog for adding or editing a Robot.
  * <p/>
  * Created by Michael Brunson on 1/23/16.
+ *
+ * Not a dialog anymore but merely a fragment.
+ * 28/05/20
  */
 public class AddEditRobotDialogFragment extends Fragment {
 

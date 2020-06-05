@@ -395,7 +395,7 @@ public class RobotController implements NodeMain, Savable {
         initialize();
     }
 
-    /*
+    /**
      * Initializes the RobotController.
      */
     public void initialize() {

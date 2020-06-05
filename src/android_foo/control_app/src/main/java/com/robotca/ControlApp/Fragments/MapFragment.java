@@ -129,8 +129,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Location overlay using the robot's GPS
         myLocationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-        Bitmap b = Bitmap.createScaledBitmap(bitmap, 60, 50, false);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.capralogo);
+        Bitmap b = Bitmap.createScaledBitmap(bitmap, 60, 60, false);
         myLocationOverlay.setPersonIcon(b);
 
         // Location overlay using Android's GPS
@@ -222,6 +222,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
         });
 
+        // set state of map if savedInstance != null
         if(savedInstanceState != null) {
 
             initialPoint = savedInstanceState.getParcelable("initialPoint");
@@ -316,6 +317,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return view;
     }
 
+    /**
+     * prepare for creating a new obstacle
+     */
     private void prepareForNewObstacle() {
         markerStrategy = "obstacle";
         Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
@@ -330,6 +334,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         obstaclePointCheck = 0;
     }
 
+    /**
+     * clear obstacles on the map
+     */
     private void clearObstacleOnMap() {
         for (int i = 0; i < allObstacleMarkers.size(); i++) {
             for (Marker marker : allObstacleMarkers.get(i)) {
@@ -351,6 +358,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         ((ControlApp) getActivity()).clearObstaclePoints();
     }
 
+    /**
+     * clear the route on the map
+     */
     private void clearRoute() {
         // Clear route on map
         for (Marker marker : routingMarkers) {
@@ -364,6 +374,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         ((ControlApp) getActivity()).clearRoute();
     }
 
+    /**
+     * clear the area on the map
+     */
     private void clearArea() {
         // Clear area on map
         for (Marker marker : areaMarkers) {
@@ -438,6 +451,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return true;
     }
 
+    /**
+     * initialize a marker with the common attributes of all markers
+     * @param geoPoint where the marker is to be at
+     * @return marker
+     */
     public Marker initializeMarker(GeoPoint geoPoint) {
         Marker newMarker = new Marker(mapView);
         newMarker.setPosition(geoPoint);
@@ -449,7 +467,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         return newMarker;
     }
 
-
+    /**
+     * set attributes specific to areamarkers
+     * @param marker area marker
+     */
     private void handleAreaMarker(Marker marker) {
         marker.setDefaultIcon();
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
@@ -490,6 +511,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
     }
 
+    /**
+     * set the attributes specific to obstacle markers
+     * @param marker obstacle marker
+     */
     private void handleObstacleMarker(Marker marker) {
         marker.setDefaultIcon();
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
@@ -530,6 +555,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
     }
 
+    /**
+     * set attributes specific to route markers
+     * @param marker
+     */
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
@@ -555,6 +584,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         });
     }
 
+    /**
+     * add a geopoint to the route
+     * @param geoPoint to add to route
+     */
     private void addRoute(GeoPoint geoPoint) {
         if (RobotController.getCurrentGPSLocation() == null){
             Toast.makeText(mapView.getContext(), "Can not find Robot's current GPS location", Toast.LENGTH_LONG).show();
@@ -572,6 +605,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
+    /**
+     * remove points from the route on the map. Called from controlapp, where the actual route is
+     * @param pointsInRoute amount of routepoints in the actual route in controlapp
+     */
     public void removePointsFromRoute(int pointsInRoute){
         int pointsPassed = wayPoints.size() - pointsInRoute;
         for(int i = 0; i < pointsPassed - 1; i++) {
@@ -583,6 +620,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
+    /**
+     * add an area to the map. Can both be area and obstacle
+     * @param geoPoint the newest geopoint in the area
+     * @param polygon the polygon for the given area
+     * @param pointCheck ???
+     * @param points points in the given polygon
+     */
     private void addArea(GeoPoint geoPoint, Polygon polygon, int pointCheck, ArrayList<GeoPoint> points) {
         if (polygon != null) {
             mapView.getOverlays().remove(polygon);
@@ -590,7 +634,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             if (!movingMarker && pointCheck >= 2) {
                 points.remove(points.size() - 2);
 
-                int index = calculateClosestMarker(geoPoint, points);
+                int index = calculateClosestPointInPolygon(geoPoint, points);
 
                 points.remove(points.size() - 1);
                 points.add(index + 1, geoPoint);
@@ -692,7 +736,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         }
     }
 
-    private int calculateClosestMarker(GeoPoint geoPoint, ArrayList<GeoPoint> points) {
+    /**
+     * Find the closest point in a given polygon to the given geopoint
+     * @param geoPoint the geopoint to compare the lengths to
+     * @param points in the polygon
+     * @return
+     */
+    private int calculateClosestPointInPolygon(GeoPoint geoPoint, ArrayList<GeoPoint> points) {
         double newLon = geoPoint.getLongitude();
         double newLat = geoPoint.getLatitude();
 
@@ -775,6 +825,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         outState.putDouble("mapLocationLong", mapView.getMapCenter().getLongitude());
     }
 
+    /**
+     * method to show buttons corresponding to the current controlmode
+     */
     public void controlMode() {
         switch (controlMode) {
             case Routing:

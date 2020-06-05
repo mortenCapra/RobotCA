@@ -117,6 +117,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             // locationView = (TextView) view.findViewById(R.id.hud_location);
             latView = (TextView) view.findViewById(R.id.hud_gps_lat);
             longView = (TextView) view.findViewById(R.id.hud_gps_long);
+            // toggle switch to switch between fragments.
             toggleSwitch = (MultipleToggleSwitch) view.findViewById(R.id.toggleSwitch);
             List<Integer> checkedList = new ArrayList<Integer>();
             checkedList.add(1);
@@ -125,6 +126,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
                 @Override
                 public void onMultipleToggleSwitchChanged(int i, boolean b) {
+                    // a bit of a hack simulating selecting an item from the navdrawer
                     if (i == 0 && b){
                         if (toggleSwitch.getCheckedPositions().contains(1)){
                             getControlApp().selectItem(20);
@@ -152,17 +154,8 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
                     }
                 }
             });
-/*
-            public void onMultipleToggleSwitchChanged(int position, boolean checked) {
-                if (i == 0){
-                    getControlApp().selectItem(10);
-                } else {
-                    getControlApp().selectItem(i);
-                }
-            }
 
- */
-
+            // spinner containing controlmodes
             actionMenuSpinner = view.findViewById(R.id.spinner_control_mode);
 
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getControlApp(),
