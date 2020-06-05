@@ -202,6 +202,13 @@ public class AreaPlan extends RobotPlan {
         return result;
     }
 
+    /**
+     * Calculate a random point inside the area
+     * @param polygon used to get bounds to random point
+     * @param points check if new point is inside polygon
+     * @param obstacles check if new point is outside polygon
+     * @return new point
+     */
     private GeoPoint randomPoint(Polygon polygon, ArrayList<GeoPoint> points, ArrayList<ArrayList<GeoPoint>> obstacles) {
         BoundingBox bounds = polygon.getBounds();
 
