@@ -29,7 +29,7 @@ public class RoutePlan extends RobotPlan {
 
     private static final String TAG = "RoutePlan";
 
-    private static final double MAX_SPEED = 0.75;
+    private static final double MAX_SPEED = 1;
 
     private GeoPoint initialPoint = RobotController.getStartGpsLocation();
     private GeoPoint currentPoint;

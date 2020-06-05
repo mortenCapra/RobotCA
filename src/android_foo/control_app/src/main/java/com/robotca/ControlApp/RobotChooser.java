@@ -14,11 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -31,6 +34,7 @@ import com.robotca.ControlApp.Core.DrawerItem;
 import com.robotca.ControlApp.Core.NavDrawerAdapter;
 import com.robotca.ControlApp.Fragments.AboutFragmentRobotChooser;
 import com.robotca.ControlApp.Fragments.HelpFragment;
+import com.robotca.ControlApp.Fragments.SimpleFragment;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -64,6 +68,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     private Toolbar mToolbar;
 
     private ImageButton wifiButton;
+    private RelativeLayout textAndButton;
 
     // Navigation drawer items
     private String[] mFeatureTitles;
@@ -76,9 +81,10 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     private Fragment fragment = null;
     private FragmentManager fragmentManager;
     private int fragmentsCreatedCounter = 0;
-
     // Log tag String
     private static final String TAG = "RobotChooser";
+
+    private AddEditRobotDialogFragment addRobotFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -162,15 +168,21 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         mAdapter = new RobotInfoAdapter(this, RobotStorage.getRobots());
         mRecyclerView.setAdapter(mAdapter);
 
+        fragmentManager = getSupportFragmentManager();
+        addRobotFragment = (AddEditRobotDialogFragment) fragmentManager.findFragmentById(R.id.addRobotFragment);
+
+        textAndButton = findViewById(R.id.connect);
+
         wifiButton = findViewById(R.id.wifiButton);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RobotInfo.resolveRobotCount(RobotStorage.getRobots());
-
-                AddEditRobotDialogFragment addRobotDialogFragment = new AddEditRobotDialogFragment();
-                addRobotDialogFragment.setArguments(null);
-                addRobotDialogFragment.show(getSupportFragmentManager(), "addrobotdialog");
+                addRobotFragment = new AddEditRobotDialogFragment();
+                addRobotFragment.setArguments(null);
+                fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.connectToRobot, addRobotFragment).commit();
+                textAndButton.setVisibility(View.GONE);
             }
         });
 
@@ -192,7 +204,7 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
                         if (RobotStorage.getRobots().size() == 0 && isFirstLaunch) {
                             //Show initial tutorial message
                             showcaseView = new ShowcaseView.Builder(RobotChooser.this)
-                                .setTarget(new ViewTarget(R.id.connectToRobot, RobotChooser.this))
+                                .setTarget(new ViewTarget(R.id.wifiButton, RobotChooser.this))
                                 .setStyle(R.style.CustomShowcaseTheme2)
                                 .blockAllTouches()
                                 //.singleShot(0) Can use this instead of manually saving in preferences
@@ -414,17 +426,30 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     */
 
     @Override
-    public void onAddEditDialogPositiveClick(RobotInfo newRobotInfo, int position) {
+    public void onAddEditDialogPositiveClick(RobotInfo newRobotInfo, int position, AddEditRobotDialogFragment fragment) {
         if (position >= 0 && position < RobotStorage.getRobots().size()) {
             updateRobot(position, newRobotInfo);
         } else {
             addRobot(newRobotInfo);
         }
+        fragment.hide();
+        textAndButton.setVisibility(View.VISIBLE);
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
-    public void onAddEditDialogNegativeClick(DialogFragment dialog) {
-
+    public void onAddEditDialogNegativeClick(AddEditRobotDialogFragment fragment) {
+        fragment.hide();
+        textAndButton.setVisibility(View.VISIBLE);
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -467,6 +492,13 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
         mAdapter.notifyItemChanged(position);
     }
 
+    public void showAddRobotDialog(AddEditRobotDialogFragment fragment){
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.connectToRobot, fragment).commit();
+        textAndButton.setVisibility(View.GONE);
+    }
+
+
     /**
      * Removes the RobotInfo at the specified position.
      *
@@ -498,5 +530,13 @@ public class RobotChooser extends AppCompatActivity implements AddEditRobotDialo
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectItem(position);
+    }
+
+    public Fragment getAddRobotFragment(){
+        return addRobotFragment;
+    }
+
+    public void setAddRobotFragment(AddEditRobotDialogFragment fragment){
+        addRobotFragment = fragment;
     }
 }

@@ -61,10 +61,12 @@ import com.robotca.ControlApp.Core.WarningSystem;
 import com.robotca.ControlApp.Fragments.AboutFragment;
 import com.robotca.ControlApp.Fragments.CameraViewFragment;
 import com.robotca.ControlApp.Fragments.HUDFragment;
+import com.robotca.ControlApp.Fragments.HelpFragment;
 import com.robotca.ControlApp.Fragments.JoystickFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
+import com.robotca.ControlApp.UnusedCode.Fragments.OverviewFragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -155,6 +157,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     // The saved instance state
     private Bundle savedInstanceState;
+
+    private Fragment.SavedState savedState;
 
     private LocalBroadcastManager localBroadcastManager;
     //
@@ -530,12 +534,26 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
+    /**
+     * get the current fragment being shown
+     * @return the fragment being shown
+     */
     public Fragment getFragment(){
         return fragment;
     }
 
-    /*
+    /**
+     * get the saved state of the latest mapfragment
+     * @return
+     */
+    public Fragment.SavedState getSavedState(){
+        return savedState;
+    }
+
+
+    /**
      * Swaps fragments in the main content view.
+     * @param position of the item in the navdrawer pressed. A hack with camerafragment and overview has been applied
      */
     public void selectItem(int position) {
 
@@ -554,8 +572,26 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         fragmentManager = getFragmentManager();
 
+        if (fragment instanceof OverviewFragment || fragment instanceof MapFragment){
+            savedState = fragmentManager.saveFragmentInstanceState(fragment);
+        }
+
 
         switch (position) {
+            case 10:
+
+                fragment = new CameraViewFragment();
+                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
+                position = 1;
+                break;
+
+            case 20:
+                fragment = new OverviewFragment();
+                fragment.setInitialSavedState(savedState);
+                fragmentsCreatedCounter = fragmentsCreatedCounter +1;
+                position = 1;
+                break;
+
             case 0:
                 Log.d(TAG, "Drawer item 0 selected, finishing");
 
@@ -581,29 +617,12 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 finish();
 
                 return;
-/*
-            case 1:
-                fragment = new OverviewFragment();
-                fragmentsCreatedCounter = 0;
-                break;
-
-            case 2:
-                fragment = new LaserScanFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
- */
 
             case 1:
                 fragment = new MapFragment();
+                fragment.setInitialSavedState(savedState);
                 map = (MapFragment) fragment;
                 fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                break;
-
-            case 10:
-                fragment = new CameraViewFragment();
-                fragmentsCreatedCounter = fragmentsCreatedCounter + 1;
-                position = 1;
                 break;
 
             case 2:
@@ -1095,6 +1114,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
+    /**
+     * restores the state of a fragment if a savedstate exists
+     * @param fragment to restore state of
+     * @param key to find correct saved state
+     */
     public void restoreState(Fragment fragment, int key){
         if(fragmentSavedStates.get(key) != null){
             if(!fragment.isAdded()){
@@ -1103,16 +1127,29 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
     }
 
+    /**
+     * save the state of a fragment
+     * @param fragment to save state of
+     * @param key to the saved state for alter retrieval
+     */
     public void saveState(Fragment fragment, int key){
         if(fragment.isAdded()){
             fragmentSavedStates.put(key, fragmentManager.saveFragmentInstanceState(fragment));
         }
     }
 
+    /**
+     * sets the areapoints
+     * @param areaPoints to set
+     */
     public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
         this.areaPoints = areaPoints;
     }
 
+    /**
+     * gets the areapoints
+     * @return the areapoints
+     */
     public ArrayList<GeoPoint> getAreaPoints() {
         return areaPoints;
     }
@@ -1133,35 +1170,61 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return mapView;
     }
 
+    /**
+     * add obstacle points
+     * @param obstaclePoints to add
+     */
     public void addObstaclePoints(ArrayList<GeoPoint> obstaclePoints) {
         this.obstaclePoints.add(obstaclePoints);
         checkRoute(0, this.obstaclePoints.indexOf(obstaclePoints));
     }
 
+    /**
+     * clears the obstacles
+     */
     public void clearObstaclePoints(){
         obstaclePoints.clear();
     }
 
+    /**
+     * returns the obstalce points
+     * @return a list of obstalces
+     */
     public ArrayList<ArrayList<GeoPoint>> getObstaclePoints() {
         return obstaclePoints;
     }
 
+    /**
+     * add a point to a route
+     * @param v the point to add
+     */
     public void addPointToRoute(GeoPoint v){
         routePoints.addLast(v);
         routePointsCopy.addLast(v);
         checkRoute(routePoints.indexOf(v), 0);
     }
 
+    /**
+     * clears the route
+     */
     public void clearRoute(){
         routePoints.clear();
         routePointsCopy.clear();
         RobotController.resetGps();
     }
 
+    /**
+     * gets the next point in route
+     * @return the first point in the route
+     */
     public GeoPoint getNextPointInRoute(){
         return routePoints.peekFirst();
     }
 
+    /**
+     * polls the next point in the route
+     * @return the polled point
+     */
     public GeoPoint pollNextPointInRoute(){
         GeoPoint p;
         p = routePoints.pollFirst();
@@ -1172,6 +1235,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         return p;
     }
 
+    /**
+     * alter a point in the route
+     * @param oldP the old point
+     * @param newP the new point
+     */
     public void alterPointInRoute(GeoPoint oldP, GeoPoint newP){
         int j = routePointsCopy.indexOf(oldP);
         routePointsCopy.remove(oldP);
@@ -1181,14 +1249,27 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     }
 
+    /**
+     * gets the points in the route
+     * @return a linkedlsit of the routepoints
+     */
     public LinkedList<GeoPoint> getRoutePoints(){
         return routePoints;
     }
 
+    /**
+     * gets the mapfragment of the application
+     */
     public MapFragment getMap(){
         return map;
     }
 
+    /**
+     * checks the route for intersections with obstacles, and finds a way around them
+     * @param routeIndex index of the where on the route to start checking from
+     * @param obstacleIndex index of what obstalce to start checking from
+     * @return false if no fix is applicable
+     */
     public boolean checkRoute(int routeIndex, int obstacleIndex) {
         for(int i = routeIndex; i < routePoints.size(); i++) {
             for (int j = obstacleIndex; j < obstaclePoints.size(); j++) {

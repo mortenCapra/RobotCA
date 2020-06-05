@@ -8,13 +8,18 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.robotca.ControlApp.Core.RobotInfo;
+import com.robotca.ControlApp.Fragments.SimpleFragment;
 import com.robotca.ControlApp.R;
 
 import java.util.UUID;
@@ -23,8 +28,11 @@ import java.util.UUID;
  * Dialog for adding or editing a Robot.
  * <p/>
  * Created by Michael Brunson on 1/23/16.
+ *
+ * Not a dialog anymore but merely a fragment.
+ * 28/05/20
  */
-public class AddEditRobotDialogFragment extends DialogFragment {
+public class AddEditRobotDialogFragment extends Fragment {
 
     /**
      * Bundle key for position
@@ -53,6 +61,9 @@ public class AddEditRobotDialogFragment extends DialogFragment {
     private CheckBox mInvertXAxisCheckBox;
     private CheckBox mInvertYAxisCheckBox;
     private CheckBox mInvertAngularVelocityCheckBox;
+
+    private Button addButton;
+    private Button cancelButton;
 
 
     // Position of the RobotInfo in the list of RobotInfos
@@ -84,10 +95,8 @@ public class AddEditRobotDialogFragment extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.dialog_add_robot, null);
         mNameEditTextView = (EditText) v.findViewById(R.id.robot_name_edit_text);
         mMasterUriEditTextView = (EditText) v.findViewById(R.id.master_uri_edit_view);
@@ -132,6 +141,48 @@ public class AddEditRobotDialogFragment extends DialogFragment {
         mInvertYAxisCheckBox.setChecked(mInfo.isInvertY());
         mInvertAngularVelocityCheckBox.setChecked(mInfo.isInvertAngularVelocity());
 
+        addButton = v.findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = mNameEditTextView.getText().toString().trim();
+                String masterUri = mMasterUriEditTextView.getText().toString().trim();
+                String joystickTopic = mJoystickTopicEditTextView.getText().toString().trim();
+                String laserScanTopic = mLaserScanTopicEditTextView.getText().toString().trim();
+                String cameraTopic = mCameraTopicEditTextView.getText().toString().trim();
+                String navsatTopic = mNavSatTopicEditTextView.getText().toString().trim();
+                String odometryTopic = mOdometryTopicEditTextView.getText().toString().trim();
+                String poseTopic = mPoseTopicEditTextView.getText().toString().trim();
+                String imuTopic = mImuTopicEditTextView.getText().toString().trim();
+                boolean reverseLaserScan = mReverseLaserScanCheckBox.isChecked();
+                boolean invertX = mInvertXAxisCheckBox.isChecked();
+                boolean invertY = mInvertYAxisCheckBox.isChecked();
+                boolean invertAngVel = mInvertAngularVelocityCheckBox.isChecked();
+
+                if (masterUri.equals("")) {
+                    Toast.makeText(getActivity(), "Master URI required", Toast.LENGTH_SHORT).show();
+                } else if (joystickTopic.equals("") || laserScanTopic.equals("") || cameraTopic.equals("")
+                        || navsatTopic.equals("") || odometryTopic.equals("") || poseTopic.equals("")) {
+                    Toast.makeText(getActivity(), "All topic names are required", Toast.LENGTH_SHORT).show();
+                } else if (!name.equals("")) {
+                    mListener.onAddEditDialogPositiveClick(new RobotInfo(mInfo.getId(), name,
+                            masterUri, joystickTopic, laserScanTopic, cameraTopic, navsatTopic,
+                            odometryTopic, poseTopic, imuTopic, reverseLaserScan, invertX, invertY, invertAngVel), mPosition, AddEditRobotDialogFragment.this);
+                } else {
+                    Toast.makeText(getActivity(), "Robot name required", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        cancelButton = v.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                mListener.onAddEditDialogNegativeClick(AddEditRobotDialogFragment.this);
+            }
+        });
+
+        /*
         builder.setTitle(R.string.add_edit_robot)
                 .setView(v)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -175,12 +226,24 @@ public class AddEditRobotDialogFragment extends DialogFragment {
         });
 
         return builder.create();
+
+         */
+        return v;
     }
 
-    public interface DialogListener {
-        void onAddEditDialogPositiveClick(RobotInfo info, int position);
+    public void show(){
+        getFragmentManager().beginTransaction().show(this).commit();
+    }
 
-        void onAddEditDialogNegativeClick(DialogFragment dialog);
+    public void hide(){
+        getFragmentManager().beginTransaction().hide(this).commit();
+    }
+
+
+    public interface DialogListener {
+        void onAddEditDialogPositiveClick(RobotInfo info, int position, AddEditRobotDialogFragment fragment);
+
+        void onAddEditDialogNegativeClick(AddEditRobotDialogFragment fragment);
     }
 
 }

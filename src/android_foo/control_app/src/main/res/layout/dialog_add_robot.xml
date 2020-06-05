@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:id="@+id/addRobotFragment"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/shadow_bottomleftright">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
         <TextView
             android:id="@+id/robot_name_textview"
@@ -14,8 +17,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="@string/robot_name"
@@ -30,8 +31,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@id/robot_name_textview"
-            android:layout_toRightOf="@id/robot_name_textview"
-            android:hint="@string/robot_name_hint"
+            android:hint="@string/robot_name"
             android:singleLine="true" />
 
         <TextView
@@ -41,8 +41,6 @@
             android:layout_below="@id/robot_name_textview"
             android:layout_marginBottom="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="@string/master_uri"
@@ -52,15 +50,12 @@
             android:id="@+id/master_uri_edit_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/robot_name_edit_text"
             android:layout_alignStart="@+id/robot_name_edit_text"
             android:layout_below="@id/robot_name_textview"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@id/robot_masteruri_textview"
-            android:layout_toRightOf="@id/robot_masteruri_textview"
             android:hint="@string/chooser_uri_hint"
             android:inputType="textUri"
             android:singleLine="true" />
@@ -77,7 +72,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/advanced_options_checkbox_view"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -126,6 +120,7 @@
                     android:inputType="textUri"
                     android:singleLine="true" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -264,6 +259,7 @@
                     android:singleLine="true" />
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -329,6 +325,26 @@
                     android:layout_weight="3"
                     android:singleLine="true" />
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_below="@id/advanced_options_view"
+            android:layout_alignParentEnd="true"
+            android:paddingBottom="20dp">
+            <Button
+                android:id="@+id/addButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Add" />
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Cancel"/>
+
+
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>
