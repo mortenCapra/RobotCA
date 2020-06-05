@@ -78,7 +78,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="develop" />
+        <entry key="$PROJECT_DIR$/../.." value="feature/cleanUp" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -575,9 +575,13 @@
     <option name="LAST_COMMIT_MESSAGE" value="Introduction of overView Fragment with savedState" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="649" y="380" key="com.intellij.ide.util.TipDialog" timestamp="1591342410195">
+    <state x="761" y="473" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1591348148727">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="649" y="380" key="com.intellij.ide.util.TipDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1591342410195" />
+    <state x="761" y="473" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/67.27.1853.1053@67.27.1853.1053" timestamp="1591348148727" />
+    <state x="713" y="247" width="550" height="612" key="git4idea.branch.GitSmartOperationDialog" timestamp="1591348184141">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="713" y="247" width="550" height="612" key="git4idea.branch.GitSmartOperationDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1591348184141" />
   </component>
 </project>
