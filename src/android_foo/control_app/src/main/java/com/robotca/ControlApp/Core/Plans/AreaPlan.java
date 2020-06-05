@@ -147,6 +147,12 @@ public class AreaPlan extends RobotPlan {
         }
     }
 
+    /**
+     * Adds a marker on the map
+     * @param geoPoint used to place marker at
+     * @param mapView update mapView with new marker
+     * @return the marker
+     */
     private Marker addMarker(GeoPoint geoPoint, MapView mapView) {
         Marker marker = new Marker(mapView);
         marker.setPosition(geoPoint);
@@ -231,6 +237,12 @@ public class AreaPlan extends RobotPlan {
         }
     }
 
+    /**
+     * Checking if the random point is inside the area
+     * @param areaPoints used to check if point is inside
+     * @param geoPoint used to check if inside polygon from areaPoints
+     * @return true or false depending on if point is inside or not
+     */
     private boolean randomPointInArea(ArrayList<GeoPoint> areaPoints, GeoPoint geoPoint) {
         int i, j;
         boolean result = false;
@@ -245,6 +257,12 @@ public class AreaPlan extends RobotPlan {
         return result;
     }
 
+    /**
+     * Checking if the random point is inside the obstacle
+     * @param obstaclePoints used to check if point is inside
+     * @param geoPoint used to check if inside polygon from obstaclePoints
+     * @return true or false depending on if point is inside or not
+     */
     private boolean randomPointInObstacle(ArrayList<ArrayList<GeoPoint>> obstaclePoints, GeoPoint geoPoint) {
         int i, j, k;
         boolean result = false;
@@ -260,16 +278,5 @@ public class AreaPlan extends RobotPlan {
             }
         }
         return result;
-    }
-
-    private GeoPoint centerOfPolygon(Polygon polygon) {
-        BoundingBox bounds = polygon.getBounds();
-
-        double lat = bounds.getCenterLatitude();
-        double lon = bounds.getCenterLongitude();
-
-        GeoPoint geoPoint = new GeoPoint(lat, lon);
-
-        return geoPoint;
     }
 }
