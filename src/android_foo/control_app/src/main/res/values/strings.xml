@@ -106,14 +106,14 @@
     <string name="stop">STOP</string>
     <string name="start">START</string>
     <string name="center">Center View</string>
-    <string name="clear_area">Clear Area</string>
+    <string name="clear_random_track">Clear Random Track</string>
     <string name="clear_route">Clear Route</string>
     <string name="clear_obstacle">Clear Obstacles</string>
     <string name="clear_all">Clear All</string>
     <string name="show_advanced_options">Show Advanced Options</string>
     <string name="ok">OK</string>
     <string name="routing">Routing</string>
-    <string name="Area">Area</string>
+    <string name="randomTrack">Random Track</string>
     <string name="new_obstacle">New Obstacle</string>
     <string name="marker_option">Marker Option</string>
     <string name ="Camera">Camera</string>
@@ -165,7 +165,7 @@
     <string name="joystick_control">Joystick Control</string>
     <string name="motion_control">Tilt Control</string>
     <string name="route_control">Route Control</string>
-    <string name="area_control">Area Control</string>
+    <string name="random_track_control">Random Track Control</string>
     <string name="obstacle_control">Obstacle Control</string>
 
     <!-- Array of Motion plan names -->
@@ -173,7 +173,7 @@
         <item>Joystick</item>
         <item>Tilt</item>
         <item>Routing</item>
-        <item>Area</item>
+        <item>Random Track</item>
         <item>Obstacles</item>
     </string-array>
 

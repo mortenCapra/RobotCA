@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -27,7 +26,6 @@ import com.robotca.ControlApp.Core.ControlMode;
 import com.robotca.ControlApp.Core.LocationProvider;
 import com.robotca.ControlApp.Core.RobotController;
 import com.robotca.ControlApp.R;
-import com.robotca.ControlApp.RobotChooser;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -39,14 +37,11 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.ros.rosjava_geometry.Vector3;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.robotca.ControlApp.Core.Utils2.computeDistanceAndBearing;
 import static com.robotca.ControlApp.Core.Utils2.computeDistanceToKilometers;
 
 /**
@@ -60,13 +55,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     private MapView mapView;
     GeoPoint initialPoint;
 
-    Button robotRecenterButton, clearAreaButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton, markerOptionButton;
+    Button robotRecenterButton, clearRandomTrackButton, clearRouteButton, clearObstacleButton, clearAll, newObstacleButton;
 
     ArrayList<Double> results = new ArrayList<>();
-    ArrayList<Marker> areaMarkers = new ArrayList<>();
+    ArrayList<Marker> randomTrackMarkers = new ArrayList<>();
     ArrayList<Marker> routingMarkers = new ArrayList<>();
     ArrayList<Marker> obstacleMarkers = new ArrayList<>();
-    ArrayList<GeoPoint> areaPoints = new ArrayList<>();
+    ArrayList<GeoPoint> randomTrackPoints = new ArrayList<>();
     ArrayList<GeoPoint> wayPoints = new ArrayList<>();
     ArrayList<GeoPoint> obstaclePoints = new ArrayList<>();
     ArrayList<Polygon> obstacles = new ArrayList<>();
@@ -76,13 +71,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
     private String markerStrategy = null;
 
-    Polygon area;
+    Polygon randomTrack;
     Polygon obstacle;
     Polyline route;
 
     boolean movingMarker = false;
 
-    int areaPointCheck = 0;
+    int randomTrackPointCheck = 0;
     int obstaclePointCheck = 0;
 
     ControlApp controlApp;
@@ -108,14 +103,14 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_map, null);
+        // Initialize buttons
         mapView = view.findViewById(R.id.mapview);
         robotRecenterButton = view.findViewById(R.id.recenter);
         clearAll = view.findViewById(R.id.clear_all_button);
-        clearAreaButton = view.findViewById(R.id.clear_area_button);
+        clearRandomTrackButton = view.findViewById(R.id.clear_random_track_button);
         clearRouteButton = view.findViewById(R.id.clear_route_button);
         clearObstacleButton = view.findViewById(R.id.clear_obstacle_button);
         newObstacleButton = view.findViewById(R.id.new_obstacle_button);
-
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -129,6 +124,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
         // Location overlay using the robot's GPS
         myLocationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
+
+        // Set logo of robot on map
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.capralogo);
         Bitmap b = Bitmap.createScaledBitmap(bitmap, 60, 60, false);
         myLocationOverlay.setPersonIcon(b);
@@ -149,7 +146,6 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.getController().animateTo(myLocationOverlay.getMyLocation());
         myLocationOverlay.enableFollowLocation();
         initialPoint = myLocationOverlay.getMyLocation();
-
 
         // Set up the Center button
         robotRecenterButton.setFocusable(false);
@@ -186,18 +182,16 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearAreaButton.performClick();
-
+                clearRandomTrackButton.performClick();
                 clearRouteButton.performClick();
-
                 clearObstacleButton.performClick();
             }
         });
 
-        clearAreaButton.setOnClickListener(new View.OnClickListener() {
+        clearRandomTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearArea();
+                clearRandomTrack();
             }
         });
 
@@ -222,7 +216,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             }
         });
 
-        // set state of map if savedInstance != null
+        // Set state of map if savedInstance != null
         if(savedInstanceState != null) {
 
             initialPoint = savedInstanceState.getParcelable("initialPoint");
@@ -234,31 +228,31 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             mapView.invalidate();
             markerStrategy = savedInstanceState.getString("markerStrategy");
             wayPoints = savedInstanceState.getParcelableArrayList("wayPoints");
-            areaPoints = savedInstanceState.getParcelableArrayList("areaPoints");
+            randomTrackPoints = savedInstanceState.getParcelableArrayList("randomTrackPoints");
             obstaclePoints = savedInstanceState.getParcelableArrayList("obstaclePoints");
             int size = savedInstanceState.getInt("size");
             for (int i = 0; i < size; i++){
                 allObstaclePoints.add(i, savedInstanceState.getParcelableArrayList("item" + i));
             }
             obstaclePointCheck = savedInstanceState.getInt("obstaclePointCheck");
-            areaPointCheck = savedInstanceState.getInt("areaPointCheck");
+            randomTrackPointCheck = savedInstanceState.getInt("randomTrackPointCheck");
 
 
-            //Initialize saved area
-            if (!areaPoints.isEmpty()) {
-                area = new Polygon();
-                area.setPoints(areaPoints);
-                area.getFillPaint().setARGB(180, 0, 255, 0);
-                mapView.getOverlays().add(area);
+            // Initialize saved random track
+            if (!randomTrackPoints.isEmpty()) {
+                randomTrack = new Polygon();
+                randomTrack.setPoints(randomTrackPoints);
+                randomTrack.getFillPaint().setARGB(180, 0, 255, 0);
+                mapView.getOverlays().add(randomTrack);
 
-                for (int i = 0; i < areaPoints.size() - 1; i++) {
-                    Marker newMarker = initializeMarker(areaPoints.get(i));
-                    areaMarkers.add(newMarker);
-                    handleAreaMarker(newMarker);
+                for (int i = 0; i < randomTrackPoints.size() - 1; i++) {
+                    Marker newMarker = initializeMarker(randomTrackPoints.get(i));
+                    randomTrackMarkers.add(newMarker);
+                    handleRandomTrackMarker(newMarker);
                 }
             }
 
-            //initialize saved route
+            // Initialize saved route
             if (!wayPoints.isEmpty()) {
                 route = new Polyline();
                 route.setPoints(wayPoints);
@@ -271,7 +265,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 }
             }
 
-            //initialize saved Obstacles
+            // Initialize saved Obstacles
             for (int i = 0; i < allObstaclePoints.size(); i++) {
                 Polygon polygon = new Polygon();
                 obstacles.add(polygon);
@@ -304,21 +298,11 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         mapView.invalidate();
         controlApp = (ControlApp) getActivity();
 
-        //if it only worked
-        /*
-        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mapView);
-        scaleBarOverlay.setEnableAdjustLength(true);
-        scaleBarOverlay.setAlignBottom(true);
-        scaleBarOverlay.setAlignRight(true);
-        mapView.getOverlays().add(scaleBarOverlay);
-
-         */
-
         return view;
     }
 
     /**
-     * prepare for creating a new obstacle
+     * Prepare for creating a new obstacle
      */
     private void prepareForNewObstacle() {
         markerStrategy = "obstacle";
@@ -335,7 +319,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * clear obstacles on the map
+     * Clear obstacles on the map
      */
     private void clearObstacleOnMap() {
         for (int i = 0; i < allObstacleMarkers.size(); i++) {
@@ -359,13 +343,14 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * clear the route on the map
+     * Clear the route on the map
      */
     private void clearRoute() {
         // Clear route on map
         for (Marker marker : routingMarkers) {
             mapView.getOverlays().remove(marker);
         }
+
         mapView.getOverlays().remove(route);
         routingMarkers.clear();
         wayPoints.clear();
@@ -375,21 +360,21 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * clear the area on the map
+     * Clear the random track on the map
      */
-    private void clearArea() {
-        // Clear area on map
-        for (Marker marker : areaMarkers) {
+    private void clearRandomTrack() {
+        // Clear random track on map
+        for (Marker marker : randomTrackMarkers) {
             mapView.getOverlays().remove(marker);
         }
-        mapView.getOverlays().remove(area);
-        areaMarkers.clear();
-        areaPoints.clear();
-        area = null;
+        mapView.getOverlays().remove(randomTrack);
+        randomTrackMarkers.clear();
+        randomTrackPoints.clear();
+        randomTrack = null;
         mapView.invalidate();
-        areaPointCheck = 0;
-        ((ControlApp) getActivity()).setAreaPoints(null);
-        ((ControlApp) getActivity()).setArea(null);
+        randomTrackPointCheck = 0;
+        ((ControlApp) getActivity()).setRandomTrackPoints(null);
+        ((ControlApp) getActivity()).setRandomTrack(null);
     }
 
     /**
@@ -416,13 +401,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             Marker newMarker = initializeMarker(geoPoint);
 
             switch (markerStrategy) {
-                case "area":
-                    areaPoints.add(geoPoint);
-                    areaMarkers.add(newMarker);
-                    handleAreaMarker(newMarker);
+                case "random track":
+                    randomTrackPoints.add(geoPoint);
+                    randomTrackMarkers.add(newMarker);
+                    handleRandomTrackMarker(newMarker);
 
-                    if (areaMarkers.size() > 1) {
-                        addArea(geoPoint, area, areaPointCheck, areaPoints);
+                    if (randomTrackMarkers.size() > 1) {
+                        addRandomTrack(geoPoint, randomTrack, randomTrackPointCheck, randomTrackPoints);
                     }
                     break;
 
@@ -443,7 +428,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                     handleObstacleMarker(newMarker);
 
                     if (obstacleMarkers.size() > 1) {
-                        addArea(geoPoint, obstacle, obstaclePointCheck, obstaclePoints);
+                        addRandomTrack(geoPoint, obstacle, obstaclePointCheck, obstaclePoints);
                     }
                     break;
             }
@@ -453,9 +438,9 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * initialize a marker with the common attributes of all markers
-     * @param geoPoint where the marker is to be at
-     * @return marker
+     * Initialize a marker with the common attributes of all markers
+     * @param geoPoint Where the marker is to be at
+     * @return new marker
      */
     public Marker initializeMarker(GeoPoint geoPoint) {
         Marker newMarker = new Marker(mapView);
@@ -469,10 +454,10 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * set attributes specific to areamarkers
-     * @param marker area marker
+     * Set attributes specific to random track markers
+     * @param marker RandomTrack marker
      */
-    private void handleAreaMarker(Marker marker) {
+    private void handleRandomTrackMarker(Marker marker) {
         marker.setDefaultIcon();
         marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
             GeoPoint startMarker;
@@ -485,23 +470,23 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             public void onMarkerDragEnd(Marker marker) {
                 movingMarker = true;
 
-                int index = areaPoints.indexOf(startMarker);
+                int index = randomTrackPoints.indexOf(startMarker);
 
-                if (marker.getPosition() == areaMarkers.get(0).getPosition()) {
-                    areaPoints.set(0, marker.getPosition());
-                    areaPoints.set(areaPoints.indexOf(areaPoints.get(areaPoints.size() - 1)), marker.getPosition());
+                if (marker.getPosition() == randomTrackMarkers.get(0).getPosition()) {
+                    randomTrackPoints.set(0, marker.getPosition());
+                    randomTrackPoints.set(randomTrackPoints.indexOf(randomTrackPoints.get(randomTrackPoints.size() - 1)), marker.getPosition());
                 } else {
-                    areaPoints.set(index, marker.getPosition());
+                    randomTrackPoints.set(index, marker.getPosition());
                 }
 
-                areaMarkers.set(areaMarkers.indexOf(marker), marker);
+                randomTrackMarkers.set(randomTrackMarkers.indexOf(marker), marker);
 
                 if (markerStrategy.equals("obstacle")) {
-                    markerStrategy = "area";
-                    addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
+                    markerStrategy = "random track";
+                    addRandomTrack(marker.getPosition(), randomTrack, randomTrackPointCheck, randomTrackPoints);
                     markerStrategy = "obstacle";
-                } else if (markerStrategy.equals("area")) {
-                    addArea(marker.getPosition(), area, areaPointCheck, areaPoints);
+                } else if (markerStrategy.equals("random track")) {
+                    addRandomTrack(marker.getPosition(), randomTrack, randomTrackPointCheck, randomTrackPoints);
                 }
             }
 
@@ -513,8 +498,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * set the attributes specific to obstacle markers
-     * @param marker obstacle marker
+     * Set the attributes specific to obstacle markers
+     * @param marker Obstacle marker
      */
     private void handleObstacleMarker(Marker marker) {
         marker.setDefaultIcon();
@@ -540,12 +525,12 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 obstacleMarkers.set(obstacleMarkers.indexOf(marker), marker);
 
-                if (markerStrategy.equals("area")) {
+                if (markerStrategy.equals("random track")) {
                     markerStrategy = "obstacle";
-                    addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
-                    markerStrategy = "area";
+                    addRandomTrack(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
+                    markerStrategy = "random track";
                 } else if (markerStrategy.equals("obstacle")) {
-                    addArea(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
+                    addRandomTrack(marker.getPosition(), obstacle, obstaclePointCheck, obstaclePoints);
                 }
             }
 
@@ -557,8 +542,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * set attributes specific to route markers
-     * @param marker
+     * Set attributes specific to route markers
+     * @param marker Route marker
      */
     private void handleRouteMarker(Marker marker) {
         marker.setIcon(getResources().getDrawable(R.drawable.ic_flag_black_24dp).mutate());
@@ -586,8 +571,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * add a geopoint to the route
-     * @param geoPoint to add to route
+     * Add a geoPoint to the route
+     * @param geoPoint To add to route
      */
     private void addRoute(GeoPoint geoPoint) {
         if (RobotController.getCurrentGPSLocation() == null){
@@ -607,8 +592,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * remove points from the route on the map. Called from controlapp, where the actual route is
-     * @param pointsInRoute amount of routepoints in the actual route in controlapp
+     * Remove points from the route on the map. Called from controlApp, where the actual route is
+     * @param pointsInRoute Amount of route points in the actual route in controlApp
      */
     public void removePointsFromRoute(int pointsInRoute){
         int pointsPassed = wayPoints.size() - pointsInRoute;
@@ -622,16 +607,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * add an area to the map. Can both be area and obstacle
-     * @param geoPoint the newest geopoint in the area
-     * @param polygon the polygon for the given area
-     * @param pointCheck ???
+     * add a random track to the map. Can both be random track and obstacle
+     * @param geoPoint the newest geoPoint in the random track
+     * @param polygon the polygon for the given random track
+     * @param pointCheck to check how many points the polygon has
      * @param points points in the given polygon
      */
-    private void addArea(GeoPoint geoPoint, Polygon polygon, int pointCheck, ArrayList<GeoPoint> points) {
+    private void addRandomTrack(GeoPoint geoPoint, Polygon polygon, int pointCheck, ArrayList<GeoPoint> points) {
         if (polygon != null) {
             mapView.getOverlays().remove(polygon);
 
+            // Check if polygon represents a polygon or just line or point
             if (!movingMarker && pointCheck >= 2) {
                 points.remove(points.size() - 2);
 
@@ -648,7 +634,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 pointCheck++;
             }
 
-            if (markerStrategy.equals("area")) {
+            // Set color of polygon depending on random track or obstacle
+            if (markerStrategy.equals("random track")) {
                 polygon.getFillPaint().setARGB(180, 0, 255, 0);
             } else if (markerStrategy.equals("obstacle")) {
                 polygon.getFillPaint().setARGB(180, 255, 0, 0);
@@ -656,12 +643,13 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
             polygon.setPoints(points);
 
-            if (markerStrategy.equals("area")) {
+            if (markerStrategy.equals("random track")) {
                 mapView.getOverlays().add(0, polygon);
             } else if (markerStrategy.equals("obstacle")) {
                 mapView.getOverlays().add(polygon);
             }
 
+            // Making obstacle polygons clickable, deleting the one clicked
             polygon.setOnClickListener(new Polygon.OnClickListener() {
                 @Override
                 public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
@@ -702,7 +690,8 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         } else {
             polygon = new Polygon();
 
-            if (markerStrategy.equals("area")) {
+            // Set color of polygon depending on random track or obstacle
+            if (markerStrategy.equals("random track")) {
                 polygon.getFillPaint().setARGB(180, 0, 255, 0);
             } else if (markerStrategy.equals("obstacle")) {
                 polygon.getFillPaint().setARGB(180, 255, 0, 0);
@@ -721,16 +710,15 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             if (!allObstaclePoints.contains(obstaclePoints)) {
                 allObstaclePoints.add(obstaclePoints);
                 controlApp.addObstaclePoints(obstaclePoints);
-
             }
         }
 
-        if (markerStrategy.equals("area")) {
-            area = polygon;
-            areaPointCheck = pointCheck;
-            areaPoints = points;
-            ((ControlApp) getActivity()).setAreaPoints(areaPoints);
-            ((ControlApp) getActivity()).setArea(area);
+        if (markerStrategy.equals("random track")) {
+            randomTrack = polygon;
+            randomTrackPointCheck = pointCheck;
+            randomTrackPoints = points;
+            ((ControlApp) getActivity()).setRandomTrackPoints(randomTrackPoints);
+            ((ControlApp) getActivity()).setRandomTrack(randomTrack);
             ((ControlApp) getActivity()).setMapView(mapView);
         } else if (markerStrategy.equals("obstacle")) {
             obstacle = polygon;
@@ -743,7 +731,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
      * Find the closest point in a given polygon to the given geopoint
      * @param geoPoint the geopoint to compare the lengths to
      * @param points in the polygon
-     * @return
+     * @return shortest distance
      */
     private int calculateClosestPointInPolygon(GeoPoint geoPoint, ArrayList<GeoPoint> points) {
         double newLon = geoPoint.getLongitude();
@@ -764,21 +752,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
         double minValue = copyResults.get(0);
         double secondMinValue = copyResults.get(1);
 
-        if (markerStrategy.equals("area"))
+        if (markerStrategy.equals("random track"))
         {
-            areaPoints = points;
+            randomTrackPoints = points;
 
         } else if (markerStrategy.equals("obstacle")) {
 
             obstaclePoints = points;
         }
-        if (results.indexOf(minValue) > results.indexOf(secondMinValue)) {
-            return results.indexOf(secondMinValue);
-        }
 
-        return results.indexOf(minValue);
+        return Math.min(results.indexOf(minValue), results.indexOf(secondMinValue));
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -813,7 +797,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("initialPoint", initialPoint);
-        outState.putParcelableArrayList("areaPoints", areaPoints);
+        outState.putParcelableArrayList("randomTrackPoints", randomTrackPoints);
         outState.putParcelableArrayList("wayPoints", wayPoints);
         outState.putParcelableArrayList("obstaclePoints", obstaclePoints);
         outState.putInt("size", allObstaclePoints.size());
@@ -821,7 +805,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
             outState.putParcelableArrayList("item" + i, allObstaclePoints.get(i));
         }
         outState.putString("markerStrategy", markerStrategy);
-        outState.putInt("areaPointCheck", areaPointCheck);
+        outState.putInt("randomTrackPointCheck", randomTrackPointCheck);
         outState.putInt("obstaclePointCheck", obstaclePointCheck);
         outState.putDouble("zoomLevel", mapView.getZoomLevelDouble());
         outState.putDouble("mapLocationLat", mapView.getMapCenter().getLatitude());
@@ -829,7 +813,7 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
     }
 
     /**
-     * method to show buttons corresponding to the current controlmode
+     * method to show buttons corresponding to the current controlMode
      */
     public void controlMode() {
         switch (controlMode) {
@@ -839,17 +823,17 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
 
                 clearAll.setVisibility(View.VISIBLE);
                 clearRouteButton.setVisibility(View.VISIBLE);
-                clearAreaButton.setVisibility(View.GONE);
+                clearRandomTrackButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
                 break;
 
-            case Area:
-                markerStrategy = "area";
+            case RandomTrack:
+                markerStrategy = "random track";
                 Toast.makeText(mapView.getContext(), "Marking-Strategy set to " + markerStrategy, Toast.LENGTH_LONG).show();
 
                 clearAll.setVisibility(View.VISIBLE);
-                clearAreaButton.setVisibility(View.VISIBLE);
+                clearRandomTrackButton.setVisibility(View.VISIBLE);
                 clearRouteButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
@@ -862,16 +846,16 @@ public class MapFragment extends Fragment implements MapEventsReceiver {
                 clearAll.setVisibility(View.VISIBLE);
                 newObstacleButton.setVisibility(View.VISIBLE);
                 clearObstacleButton.setVisibility(View.VISIBLE);
-                clearAreaButton.setVisibility(View.GONE);
+                clearRandomTrackButton.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
                 break;
 
             default:
-                Toast.makeText(mapView.getContext(), "Change Control Mode to Routing, Area or Obstacles to add markers", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mapView.getContext(), "Change Control Mode to Routing, Random Track or Obstacles to add markers", Toast.LENGTH_SHORT).show();
 
                 clearAll.setVisibility(View.GONE);
                 clearRouteButton.setVisibility(View.GONE);
-                clearAreaButton.setVisibility(View.GONE);
+                clearRandomTrackButton.setVisibility(View.GONE);
                 newObstacleButton.setVisibility(View.GONE);
                 clearObstacleButton.setVisibility(View.GONE);
                 break;

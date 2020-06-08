@@ -27,9 +27,9 @@ import static com.robotca.ControlApp.Core.Utils2.computeDistanceBetweenTwoPoints
 import static com.robotca.ControlApp.Core.Utils2.createVectorFromGeoPoint;
 import static com.robotca.ControlApp.Core.Utils2.getNormalPoint;
 
-public class AreaPlan extends RobotPlan {
+public class RandomTrackPlan extends RobotPlan {
 
-    private static final String TAG = "AreaPlan";
+    private static final String TAG = "RandomTrackPlan";
 
     private static final double MINIMUM_DISTANCE = 0.5;
     private static final double LOOKAHEAD_FACTOR = 2;
@@ -46,15 +46,15 @@ public class AreaPlan extends RobotPlan {
     private Vector3 startPosition;
 
     private ControlApp controlApp;
-    private Polygon area;
+    private Polygon randomTrack;
     private MapView mapView;
 
     /**
-     * Creates an AreaPlan with the specified area.
+     * Creates a RandomTrackPlan with the specified random track.
      */
-    public AreaPlan(ControlApp controlApp) {
+    public RandomTrackPlan(ControlApp controlApp) {
         this.controlApp = controlApp;
-        area = new Polygon();
+        randomTrack = new Polygon();
     }
 
     /**
@@ -62,7 +62,7 @@ public class AreaPlan extends RobotPlan {
      */
     @Override
     public ControlMode getControlMode() {
-        return ControlMode.Area;
+        return ControlMode.RandomTrack;
     }
 
     @Override
@@ -77,25 +77,25 @@ public class AreaPlan extends RobotPlan {
 
             Log.d(TAG, "Begin loop");
 
-            // Wait for enough area points
-            while (controlApp.getAreaPoints() == null || controlApp.getAreaPoints().size() < 5) {
+            // Wait for enough random track points
+            while (controlApp.getRandomTrackPoints() == null || controlApp.getRandomTrackPoints().size() < 5) {
                 waitFor(1000L);
             }
 
-            // Get area and obstacle points, and location of robot
-            area = controlApp.getArea();
+            // Get random track and obstacle points, and location of robot
+            randomTrack = controlApp.getRandomTrack();
             mapView = controlApp.getMapView();
-            ArrayList<GeoPoint> areaPoints = controlApp.getAreaPoints();
+            ArrayList<GeoPoint> randomTrackPoints = controlApp.getRandomTrackPoints();
             ArrayList<ArrayList<GeoPoint>> allObstaclePoints = controlApp.getObstaclePoints();
             Location location = controlApp.getRobotController().LOCATION_PROVIDER.getLastKnownLocation();
 
             // Generate random points to drive towards
-            GeoPoint randomPoint = randomPoint(area, areaPoints, allObstaclePoints);
+            GeoPoint randomPoint = randomPoint(randomTrack, randomTrackPoints, allObstaclePoints);
             Marker marker = addMarker(randomPoint, mapView);
             controlApp.addPointToRoute(randomPoint);
 
-            // If robot is outside area or inside obstacle, stop robot.
-            while (!robotInArea(areaPoints, location) || robotInObstacle(allObstaclePoints, location)) {
+            // If robot is outside random track area or inside obstacle, stop robot.
+            while (!robotInRandomTrackArea(randomTrackPoints, location) || robotInObstacle(allObstaclePoints, location)) {
                 waitFor(1000L);
             }
 
@@ -166,19 +166,19 @@ public class AreaPlan extends RobotPlan {
     }
 
     /**
-     * Check if robot is inside the marked area
-     * @param areaPoints used to mark area
+     * Check if robot is inside the marked random track area
+     * @param randomTrackPoints used to mark random track area
      * @param location of robot
      * @return true or false depending on if robot is inside or outside
      */
-    private boolean robotInArea(ArrayList<GeoPoint> areaPoints, Location location) {
+    private boolean robotInRandomTrackArea(ArrayList<GeoPoint> randomTrackPoints, Location location) {
         int i, j;
         boolean result = false;
 
-        for (i = 0, j = areaPoints.size() - 1; i < areaPoints.size(); j = i++) {
-            if ((areaPoints.get(i).getLongitude() > location.getLongitude()) != (areaPoints.get(j).getLongitude() > location.getLongitude()) &&
-                    (location.getLatitude() < (areaPoints.get(j).getLatitude() - areaPoints.get(i).getLatitude()) * (location.getLongitude() - areaPoints.get(i).getLongitude())
-                    / (areaPoints.get(j).getLongitude() - areaPoints.get(i).getLongitude()) + areaPoints.get(i).getLatitude())) {
+        for (i = 0, j = randomTrackPoints.size() - 1; i < randomTrackPoints.size(); j = i++) {
+            if ((randomTrackPoints.get(i).getLongitude() > location.getLongitude()) != (randomTrackPoints.get(j).getLongitude() > location.getLongitude()) &&
+                    (location.getLatitude() < (randomTrackPoints.get(j).getLatitude() - randomTrackPoints.get(i).getLatitude()) * (location.getLongitude() - randomTrackPoints.get(i).getLongitude())
+                    / (randomTrackPoints.get(j).getLongitude() - randomTrackPoints.get(i).getLongitude()) + randomTrackPoints.get(i).getLatitude())) {
                 result = !result;
             }
         }
@@ -209,7 +209,7 @@ public class AreaPlan extends RobotPlan {
     }
 
     /**
-     * Calculate a random point inside the area
+     * Calculate a random point inside the random track area
      * @param polygon used to get bounds to random point
      * @param points check if new point is inside polygon
      * @param obstacles check if new point is outside polygon
@@ -230,7 +230,7 @@ public class AreaPlan extends RobotPlan {
 
         if (randomPointInObstacle(obstacles, geoPoint)) {
             return randomPoint(polygon, points, obstacles);
-        } else if (randomPointInArea(points, geoPoint)){
+        } else if (randomPointInRandomTrack(points, geoPoint)){
             return geoPoint;
         } else {
             return randomPoint(polygon, points, obstacles);
@@ -238,19 +238,19 @@ public class AreaPlan extends RobotPlan {
     }
 
     /**
-     * Checking if the random point is inside the area
-     * @param areaPoints used to check if point is inside
-     * @param geoPoint used to check if inside polygon from areaPoints
+     * Checking if the random point is inside the random track area
+     * @param randomTrackPoints used to check if point is inside
+     * @param geoPoint used to check if inside polygon from randomTrackPoints
      * @return true or false depending on if point is inside or not
      */
-    private boolean randomPointInArea(ArrayList<GeoPoint> areaPoints, GeoPoint geoPoint) {
+    private boolean randomPointInRandomTrack(ArrayList<GeoPoint> randomTrackPoints, GeoPoint geoPoint) {
         int i, j;
         boolean result = false;
 
-        for (i = 0, j = areaPoints.size() - 1; i < areaPoints.size(); j = i++) {
-            if ((areaPoints.get(i).getLongitude() > geoPoint.getLongitude()) != (areaPoints.get(j).getLongitude() > geoPoint.getLongitude()) &&
-                    (geoPoint.getLatitude() < (areaPoints.get(j).getLatitude() - areaPoints.get(i).getLatitude()) * (geoPoint.getLongitude() - areaPoints.get(i).getLongitude())
-                            / (areaPoints.get(j).getLongitude() - areaPoints.get(i).getLongitude()) + areaPoints.get(i).getLatitude())) {
+        for (i = 0, j = randomTrackPoints.size() - 1; i < randomTrackPoints.size(); j = i++) {
+            if ((randomTrackPoints.get(i).getLongitude() > geoPoint.getLongitude()) != (randomTrackPoints.get(j).getLongitude() > geoPoint.getLongitude()) &&
+                    (geoPoint.getLatitude() < (randomTrackPoints.get(j).getLatitude() - randomTrackPoints.get(i).getLatitude()) * (geoPoint.getLongitude() - randomTrackPoints.get(i).getLongitude())
+                            / (randomTrackPoints.get(j).getLongitude() - randomTrackPoints.get(i).getLongitude()) + randomTrackPoints.get(i).getLatitude())) {
                 result = !result;
             }
         }

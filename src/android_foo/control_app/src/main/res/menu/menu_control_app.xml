@@ -12,8 +12,8 @@
         <item android:id="@+id/action_routing_control"
               android:title="@string/routing"/>
 
-        <item android:id="@+id/action_area_control"
-              android:title="@string/area_control" />
+        <item android:id="@+id/action_random_track_control"
+              android:title="@string/random_track_control" />
 
         <item android:id="@+id/action_obstacle_control"
               android:title="@string/obstacle_control" />
