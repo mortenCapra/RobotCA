@@ -1,5 +1,5 @@
 # Capra Robotics
-This project is under development, it's forked from mtbii/RobotCA. The further development envolves navigating the robot only by using the map. Here it will be possible to make a route with markers, which the robot will then follow. It will also be possible to make an area where the robot will drive randomly in. Furthermore it is possible to add obstacles in the route or in the area, where the robot will then navigate around it.
+This project is under development, it's forked from mtbii/RobotCA. The further development envolves navigating the robot only by using the map with help from the GPS. Here it will be possible to make a route with markers, which the robot will then follow. It will also be possible to make a random track area where the robot will drive randomly in. Furthermore it is possible to add obstacles in the route or in the area, where the robot will then navigate around it.
 
 The further developed application is developed by Capra Robotics and tested on their mobile robots.
 
