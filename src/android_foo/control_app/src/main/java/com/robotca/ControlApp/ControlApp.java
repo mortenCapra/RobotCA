@@ -69,6 +69,8 @@ import com.robotca.ControlApp.Fragments.RosFragment;
 import com.robotca.ControlApp.UnusedCode.Fragments.OverviewFragment;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Polygon;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
@@ -128,8 +130,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     FragmentManager fragmentManager;
     int fragmentsCreatedCounter = 0;
 
-
-
     // The index of the currently visible drawer
     private int drawerIndex = 1;
 
@@ -161,8 +161,11 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     private LocalBroadcastManager localBroadcastManager;
     //
-    ArrayList<GeoPoint> areaPoints = new ArrayList<>();
+    ArrayList<GeoPoint> randomTrackPoints = new ArrayList<>();
     ArrayList<ArrayList<GeoPoint>> obstaclePoints = new ArrayList<>();
+
+    Polygon randomTrack = new Polygon();
+    MapView mapView;
 
     /**
      * Default Constructor.
@@ -734,8 +737,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 setControlMode(ControlMode.Routing);
                 return true;
 
-            case R.id.action_area_control:
-                setControlMode(ControlMode.Area);
+            case R.id.action_random_track_control:
+                setControlMode(ControlMode.RandomTrack);
                 return true;
 
             case R.id.action_obstacle_control:
@@ -1135,19 +1138,35 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     }
 
     /**
-     * sets the areapoints
-     * @param areaPoints to set
+     * sets the randomTrackPoints
+     * @param randomTrackPoints to set
      */
-    public void setAreaPoints(ArrayList<GeoPoint> areaPoints) {
-        this.areaPoints = areaPoints;
+    public void setRandomTrackPoints(ArrayList<GeoPoint> randomTrackPoints) {
+        this.randomTrackPoints = randomTrackPoints;
     }
 
     /**
-     * gets the areapoints
-     * @return the areapoints
+     * gets the randomTrackPoints
+     * @return the randomTrackPoints
      */
-    public ArrayList<GeoPoint> getAreaPoints() {
-        return areaPoints;
+    public ArrayList<GeoPoint> getRandomTrackPoints() {
+        return randomTrackPoints;
+    }
+
+    public void setRandomTrack(Polygon randomTrack) {
+        this.randomTrack = randomTrack;
+    }
+
+    public Polygon getRandomTrack() {
+        return randomTrack;
+    }
+
+    public void setMapView(MapView mapView) {
+        this.mapView = mapView;
+    }
+
+    public MapView getMapView() {
+        return mapView;
     }
 
     /**
