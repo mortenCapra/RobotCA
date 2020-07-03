@@ -106,6 +106,38 @@ public class RoutePlan extends RobotPlan {
                 dist = computeDistanceBetweenTwoPoints(currentPoint, goalPoint);
 
             } while(!isInterrupted() && dist > MINIMUM_DISTANCE && goalPoint == controlApp.getNextPointInRoute());
+            //stop - An attempt to remove the fullstops which occur
+            final int N = 15;
+            for (int i = N - 1; i >= 0 && !isInterrupted(); --i) {
+                currentPoint = RobotController.getCurrentGPSLocation();
+                currentHeading = RobotController.getHeading();
+                currentPosition = createVectorFromGeoPoint(currentPoint, initialPoint);
+
+                Vector3 normalPosition = getNormalPoint(currentPosition, startPosition, goalPosition);
+                Vector3 forwardVector = goalPosition.subtract(startPosition).normalize();
+
+                normalPosition = normalPosition.add(forwardVector.scale(LOOKAHEAD_FACTOR*spd));
+
+                if (Utils.distance(startPosition.getX(), startPosition.getY(), goalPosition.getX(), goalPosition.getY())
+                        < Utils.distance(startPosition.getX(), startPosition.getY(), normalPosition.getX(), normalPosition.getY())){
+                    normalPosition = goalPosition;
+                }
+
+                Vector3 robotToNormal = normalPosition.subtract(currentPosition);
+                double angle = -Math.atan2(robotToNormal.getY(), robotToNormal.getX());
+                double angleDiff = Utils.angleDifference(angle, currentHeading);
+
+                double angleVel =  Math.atan((2*Math.sin(angleDiff))/robotToNormal.getMagnitude());
+                spd = MAX_SPEED * Math.cos(angleDiff);
+                if (spd < 0){
+                    spd = 0.2;
+                } else if(spd > MAX_SPEED){
+                    spd = MAX_SPEED;
+                }
+                // slow down
+                controller.publishVelocity(((double)i / N) * spd, 0, ((double)i / N) * -angleVel);
+                waitFor(N);
+            }
 
             if (!isInterrupted() && goalPoint.equals(controlApp.getNextPointInRoute())) {
                 controlApp.pollNextPointInRoute();

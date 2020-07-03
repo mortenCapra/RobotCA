@@ -10,7 +10,7 @@
     <string name="laser_scan_topic">/scan</string>
     <string name="odometry_topic">/odometry/filtered</string>
     <string name="pose_topic">/pose</string>
-    <string name="imu_topic">/ubloxTest/navheading</string>
+    <string name="imu_topic">/gps/navheading</string>
     <string name="navsat_topic">/navsat/fix</string>
 
     <!-- Preference titles -->
@@ -120,6 +120,9 @@
     <string name ="Map">Map</string>
     <string name ="Add">Add</string>
     <string name ="Cancel">Cancel</string>
+    <string name ="Loop">Loop</string>
+    <string name ="NoLoop"> No Loop</string>
+
 
     <!-- Drawer item titles -->
     <string-array name="feature_titles">

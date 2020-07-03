@@ -136,6 +136,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     // Log tag String
     private static final String TAG = "ControlApp";
     // List of routePoints
+    private boolean loopFlag;
     private LinkedList<GeoPoint> routePoints;
     private LinkedList<GeoPoint> routePointsCopy;
     // List of waypoints
@@ -1208,7 +1209,10 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         GeoPoint p;
         p = routePoints.pollFirst();
         routePointsCopy.remove(p);
-        if (fragment == getMap()) {
+        if (loopFlag) {
+            routePoints.addLast(p);
+            routePointsCopy.addLast(p);
+        } else if (fragment == getMap()) {
             getMap().removePointsFromRoute(routePointsCopy.size());
         }
         return p;
@@ -1279,5 +1283,14 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
             }
         }
         return true;
+    }
+
+    public void setLoopFlag(Boolean value){
+        loopFlag = value;
+        if (value) {
+            Toast.makeText(this, "Route is looping", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Route is not looping", Toast.LENGTH_LONG).show();
+        }
     }
 }

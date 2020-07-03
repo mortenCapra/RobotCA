@@ -54,6 +54,7 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
 
     private Button emergencyStopButton;
     private MultipleToggleSwitch toggleSwitch;
+    private ToggleSwitch loopSwitch;
 
     private Spinner actionMenuSpinner;
 
@@ -117,6 +118,19 @@ public class HUDFragment extends SimpleFragment implements MessageListener<Messa
             // locationView = (TextView) view.findViewById(R.id.hud_location);
             latView = (TextView) view.findViewById(R.id.hud_gps_lat);
             longView = (TextView) view.findViewById(R.id.hud_gps_long);
+            // toggle switch to turn on or off looping
+            loopSwitch = (ToggleSwitch) view.findViewById(R.id.loopSwitch);
+            loopSwitch.setCheckedPosition(0);
+            loopSwitch.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+                @Override
+                public void onToggleSwitchChanged(int i) {
+                    if (i == 1){
+                        getControlApp().setLoopFlag(true);
+                    } else {
+                        getControlApp().setLoopFlag(false);
+                    }
+                }
+            });
             // toggle switch to switch between fragments.
             toggleSwitch = (MultipleToggleSwitch) view.findViewById(R.id.toggleSwitch);
             List<Integer> checkedList = new ArrayList<Integer>();
