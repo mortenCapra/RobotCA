@@ -934,6 +934,7 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
                 }
             }
         }
+        //
 
         if (near != null && minDist * scale < MINIMUM_WAYPOINT_DISTANCE) {
 
