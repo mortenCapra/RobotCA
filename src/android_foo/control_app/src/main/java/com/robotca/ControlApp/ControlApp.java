@@ -64,9 +64,9 @@ import com.robotca.ControlApp.Fragments.HUDFragment;
 import com.robotca.ControlApp.Fragments.HelpFragment;
 import com.robotca.ControlApp.Fragments.JoystickFragment;
 import com.robotca.ControlApp.Fragments.MapFragment;
+import com.robotca.ControlApp.Fragments.OverviewFragment;
 import com.robotca.ControlApp.Fragments.PreferencesFragment;
 import com.robotca.ControlApp.Fragments.RosFragment;
-import com.robotca.ControlApp.UnusedCode.Fragments.OverviewFragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -90,8 +90,7 @@ import static com.robotca.ControlApp.Core.Utils2.*;
  * Main Activity for the App. The RobotController manages the connection with the Robot while this
  * class handles the UI.
  */
-public class ControlApp extends RosActivity implements ListView.OnItemClickListener,
-        IWaypointProvider, AdapterView.OnItemSelectedListener {
+public class ControlApp extends RosActivity implements ListView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     /** Notification ticker for the App */
     public static final String NOTIFICATION_TICKER = "ROS Control";
@@ -139,16 +138,8 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     private boolean loopFlag;
     private LinkedList<GeoPoint> routePoints;
     private LinkedList<GeoPoint> routePointsCopy;
-    // List of waypoints
-    private final LinkedList<Vector3> waypoints;
-    // Specifies how close waypoints need to be to be considered touching
-    private static final double MINIMUM_WAYPOINT_DISTANCE = 1.0;
-
-    // Laser scan map // static so that it doesn't need to be saved/loaded every time the screen rotates
-    // private static LaserScanMap laserScanMap;
 
     // Bundle keys
-    private static final String WAYPOINT_BUNDLE_ID = "com.robotca.ControlApp.waypoints";
     private static final String SELECTED_VIEW_NUMBER_BUNDLE_ID = "com.robotca.ControlApp.drawerIndex";
     private static final String CONTROL_MODE_BUNDLE_ID = "com.robotca.Views.Fragments.JoystickFragment.controlMode";
 
@@ -173,7 +164,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
     public ControlApp() {
         super(NOTIFICATION_TICKER, NOTIFICATION_TITLE, ROBOT_INFO.getUri());
 
-        waypoints = new LinkedList<>();
         routePoints = new LinkedList<>();
         routePointsCopy = new LinkedList<>();
 
@@ -303,15 +293,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         this.savedInstanceState = savedInstanceState;
 
         if (savedInstanceState != null) {
-            //noinspection unchecked
-            List<Vector3> list = (List<Vector3>) savedInstanceState.getSerializable(WAYPOINT_BUNDLE_ID);
-
-            if (list != null) {
-                waypoints.clear();
-                waypoints.addAll(list);
-                wayPointsChanged();
-            }
-
             setControlMode(ControlMode.values()[savedInstanceState.getInt(CONTROL_MODE_BUNDLE_ID)]);
             drawerIndex = savedInstanceState.getInt(SELECTED_VIEW_NUMBER_BUNDLE_ID);
 
@@ -320,14 +301,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         }
         // Hud fragment
         hudFragment = (HUDFragment) getFragmentManager().findFragmentById(R.id.hud_fragment);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Refresh the Clear Waypoints button
-        wayPointsChanged();
     }
 
     @Override
@@ -364,8 +337,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
-        // Save Waypoints
-        bundle.putSerializable(WAYPOINT_BUNDLE_ID, waypoints);
         // Save Control Mode
         bundle.putInt(CONTROL_MODE_BUNDLE_ID, getControlMode().ordinal());
         // Save current drawer
@@ -689,18 +660,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
         mDrawerList.setItemChecked(position, true);
         mDrawerLayout.closeDrawer(mDrawerList);
         setTitle(mFeatureTitles[position]);
-
-        // Refresh waypoints
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException ignore) {}
-                wayPointsChanged();
-                return null;
-            }
-        }.execute();
     }
 
     @Override
@@ -855,196 +814,6 @@ public class ControlApp extends RosActivity implements ListView.OnItemClickListe
 
         if (controlMode == ControlMode.Routing){
             Toast.makeText(this, "Look at and change route in map", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Sets the destination point.
-     *
-     * @param location The point
-     */
-    public void setDestination(Vector3 location) {
-        synchronized (waypoints) {
-            waypoints.addFirst(location);
-        }
-        wayPointsChanged();
-    }
-
-    /**
-     * Adds a waypoint.
-     *
-     * @param point The point
-     */
-    public void addWayPoint(Vector3 point) {
-        synchronized (waypoints) {
-            waypoints.addLast(point);
-        }
-        wayPointsChanged();
-    }
-
-    /**
-     * Attempts to find a Waypoint at the specified position.
-     *
-     * @param point The position
-     * @return The index of the Waypoint in the Waypoint list or -1 if no Waypoint was found at the point
-     */
-    public int findwaypointAt(Vector3 point, float scale) {
-        // First find the nearest point
-        double minDist = Double.MAX_VALUE, dist;
-        Vector3 pt, near = null;
-        int idx = -1;
-
-        for (int i = 0; i < waypoints.size(); ++i) {
-
-            pt = waypoints.get(i);
-            dist = Utils.distanceSquared(point.getX(), point.getY(), pt.getX(), pt.getY());
-
-            if (dist < minDist) {
-                minDist = dist;
-                near = pt;
-                idx = i;
-            }
-        }
-
-        if (near == null || minDist * scale >= MINIMUM_WAYPOINT_DISTANCE)
-            idx = -1;
-
-        return idx;
-    }
-
-    /**
-     * Same as above but will remove a nearby way point if one is close instead of adding the new point.
-     *
-     * @param point The point
-     * @param scale The camera scale
-     */
-    public void addRobotPointWithCheck(Vector3 point, float scale) {
-
-        // First find the nearest point
-        double minDist = Double.MAX_VALUE, dist;
-        Vector3 near = null;
-
-        synchronized (waypoints) {
-            for (Vector3 pt : waypoints) {
-                dist = Utils.distanceSquared(point.getX(), point.getY(), pt.getX(), pt.getY());
-
-                if (dist < minDist) {
-                    minDist = dist;
-                    near = pt;
-                }
-            }
-        }
-
-        if (near != null && minDist * scale < MINIMUM_WAYPOINT_DISTANCE) {
-
-            final Vector3 remove = near;
-
-            AlertDialog.Builder alert = new AlertDialog.Builder(ControlApp.this);
-            alert.setTitle("Delete Waypoint");
-            alert.setMessage("Are you sure you wish to delete this way point?");
-            alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    synchronized (waypoints) {
-                        waypoints.remove(remove);
-                    }
-                    wayPointsChanged();
-
-                    dialog.dismiss();
-                }
-            });
-            alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    dialog.dismiss();
-                }
-            });
-
-            alert.show();
-
-        } else {
-
-            minDist = Double.MAX_VALUE;
-            int j = -1;
-
-            // See if the waypoint is on an existing line segment and if so insert it
-            for (int i = 0; i < waypoints.size() - 1; ++i) {
-                dist = Utils.distanceToLine(point.getX(), point.getY(), waypoints.get(i), waypoints.get(i + 1));
-
-                if (dist < minDist) {
-                    minDist = dist;
-                    j = i;
-                }
-            }
-
-            // Insert the waypoint if it is between two other waypoints
-            if (minDist * scale < MINIMUM_WAYPOINT_DISTANCE) {
-                synchronized (waypoints) {
-                    waypoints.add(j + 1, point);
-                }
-                wayPointsChanged();
-            } else {
-                addWayPoint(point);
-            }
-        }
-    }
-
-    /**
-     * @return The next waypoint in line
-     */
-    @Override
-    public Vector3 getDestination() {
-        return waypoints.peekFirst();
-    }
-
-    /**
-     * @return The next waypoint in line and removes it
-     */
-    public Vector3 pollDestination() {
-
-        Vector3 r;
-
-        r = waypoints.pollFirst();
-
-        wayPointsChanged();
-
-        return r;
-    }
-
-    /**
-     * @return The list of waypoints.
-     */
-    public LinkedList<Vector3> getWayPoints() {
-        return waypoints;
-    }
-
-    /**
-     * Clears all waypoints.
-     */
-    public void clearWaypoints() {
-        synchronized (waypoints) {
-            waypoints.clear();
-        }
-        wayPointsChanged();
-    }
-
-    /*
-     * Called when the waypoints have been edited.
-     */
-    private void wayPointsChanged() {
-        // Enable/Disable the clear waypoints button
-        final View view;
-
-        if (fragment != null && fragment.getView() != null
-                && (view = fragment.getView().findViewById(R.id.clear_waypoints_button)) != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    view.setEnabled(!waypoints.isEmpty());
-                }
-            });
         }
     }
 

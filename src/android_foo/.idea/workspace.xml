@@ -14,11 +14,29 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Merge with cleanup">
+    <list default="true" id="d6093856-d985-42b4-958d-e9141d5f1742" name="Default" comment="Update dependencies">
+      <change afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Fragments/OverviewFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/control_app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/ControlApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Core/ControlMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Fragments/LaserScanFragment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Fragments/OverviewFragment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Layers/LaserScanRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Plans/RandomWalkPlan.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/UnusedCode/Plans/WaypointPlan.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app/src/main/java/com/robotca/ControlApp/Views/LaserScanView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/res/drawable-hdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/res/drawable-ldpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/res/drawable-mdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/res/layout/main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/control_app_lib/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,8 +71,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="resourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -66,7 +84,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="feature/cleanUp" />
+        <entry key="$PROJECT_DIR$/../.." value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -508,7 +526,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591348211474</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Update dependencies">
+      <created>1597309082451</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1597309082452</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -543,7 +568,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added an ability to add markers to the map with line between them.&#10;Added button to clear markers" />
     <MESSAGE value="fix of overlay-permission" />
     <MESSAGE value="merge into develop" />
     <MESSAGE value="Robot beeing first geopoint of route" />
@@ -568,17 +592,22 @@
     <MESSAGE value="RobotChooser finished up." />
     <MESSAGE value="Introduction of overView Fragment with savedState" />
     <MESSAGE value="Merge with cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge with cleanup" />
+    <MESSAGE value="Update dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update dependencies" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="801" y="265" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1597312163858">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="801" y="265" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1853.1053@67.27.1853.1053" timestamp="1597312163858" />
     <state x="667" y="198" width="642" height="709" key="#control_app" timestamp="1597307309362">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="667" y="198" width="642" height="709" key="#control_app/67.27.1853.1053@67.27.1853.1053" timestamp="1597307309362" />
-    <state x="579" y="129" width="818" height="847" key="CommitChangelistDialog2" timestamp="1591348211349">
+    <state x="579" y="129" width="818" height="847" key="CommitChangelistDialog2" timestamp="1597309081767">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="579" y="129" width="818" height="847" key="CommitChangelistDialog2/67.27.1853.1053@67.27.1853.1053" timestamp="1591348211349" />
+    <state x="579" y="129" width="818" height="847" key="CommitChangelistDialog2/67.27.1853.1053@67.27.1853.1053" timestamp="1597309081767" />
     <state width="1807" height="276" key="GridCell.Tab.0.bottom" timestamp="1597308183701">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -619,14 +648,22 @@
       <screen x="67" y="27" width="1853" height="887" />
     </state>
     <state width="867" height="188" key="GridCell.Tab.1.right/67.27.1853.887@67.27.1853.887" timestamp="1593089337680" />
+    <state x="576" y="298" width="824" height="508" key="IDE.errors.dialog" timestamp="1597312629568">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="576" y="298" width="824" height="508" key="IDE.errors.dialog/67.27.1853.1053@67.27.1853.1053" timestamp="1597312629568" />
     <state x="482" y="104" key="SettingsEditor" timestamp="1593086744707">
       <screen x="67" y="27" width="1853" height="887" />
     </state>
     <state x="482" y="104" key="SettingsEditor/67.27.1853.887@67.27.1853.887" timestamp="1593086744707" />
-    <state x="588" y="277" width="800" height="551" key="Vcs.Push.Dialog.v2" timestamp="1591348214083">
+    <state x="588" y="277" width="800" height="551" key="Vcs.Push.Dialog.v2" timestamp="1597309085259">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="588" y="277" width="800" height="551" key="Vcs.Push.Dialog.v2/67.27.1853.1053@67.27.1853.1053" timestamp="1591348214083" />
+    <state x="588" y="277" width="800" height="551" key="Vcs.Push.Dialog.v2/67.27.1853.1053@67.27.1853.1053" timestamp="1597309085259" />
+    <state x="267" y="127" width="1653" height="855" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1597311991557">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="267" y="127" width="1653" height="855" key="com.intellij.history.integration.ui.views.FileHistoryDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1597311991557" />
     <state x="649" y="383" key="com.intellij.ide.util.TipDialog" timestamp="1593767576517">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

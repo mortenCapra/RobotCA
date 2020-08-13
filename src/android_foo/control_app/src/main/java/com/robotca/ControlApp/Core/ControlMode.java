@@ -4,7 +4,6 @@ import com.robotca.ControlApp.ControlApp;
 import com.robotca.ControlApp.Core.Plans.RandomTrackPlan;
 import com.robotca.ControlApp.Core.Plans.RobotPlan;
 import com.robotca.ControlApp.Core.Plans.RoutePlan;
-import com.robotca.ControlApp.UnusedCode.Plans.WaypointPlan;
 
 /**
  * Enum for different ways to control the Robot.
@@ -14,7 +13,6 @@ import com.robotca.ControlApp.UnusedCode.Plans.WaypointPlan;
 public enum ControlMode {
     Joystick (true), // Joystick control
     Tilt (true), // Tilt sensor control
-    // Waypoint (false), // Potential field waypoint control
     Routing (false),
     RandomTrack (false),
     Obstacles (false);

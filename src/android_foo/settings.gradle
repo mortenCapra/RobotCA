@@ -14,5 +14,4 @@
  * the License.
  */
 
-include 'control_app_lib'
 include 'control_app'

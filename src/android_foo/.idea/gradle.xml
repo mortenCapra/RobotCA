@@ -13,7 +13,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/control_app" />
-            <option value="$PROJECT_DIR$/control_app_lib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
